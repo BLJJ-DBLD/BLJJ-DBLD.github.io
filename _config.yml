@@ -108,5 +108,5 @@ theme: hexo-theme-snippet
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/BLJJ-DBLD/BLJJ-DBLD.github.io.git
+  repo: https://github.com/BLJJ-DBLD/bljj-dbld.github.io.git
   branch: main
