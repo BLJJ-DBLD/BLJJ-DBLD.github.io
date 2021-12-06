@@ -45,7 +45,10 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true # 设置文章自己的文件夹
+marked:
+  prependRoot: true
+  postAsset: true
 relative_link: false
 future: true
 highlight:
