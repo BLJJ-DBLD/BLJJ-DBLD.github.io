@@ -468,6 +468,7 @@ pre {
 .post .post-media img {
   width: 100%;
   height: 100%;
+  object-fit: cover;
 }
 .post .post-content .home-post-head {
   text-align: left;
