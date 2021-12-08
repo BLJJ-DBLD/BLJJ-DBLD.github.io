@@ -170,3 +170,145 @@ store.dispatch(action1)
     }
     ```
 2. 当 node 版本在 13.2.x 以上时，只需加入 `"type": "module"`
+
+## Redux 的解耦
+
+前面，我们将 `Redux` 的基本使用，以及如何的运作基本了解清楚了。当我们还只是轻量使用时，或许会编写到一个 `store.js` 文件内，但是当内容增加后，难免到最后会变得难以维护。
+
+因此我们也会依据各个模块的不同功能来进行不同的文件划分。会在项目的顶级目录下创建一个 `./store` 文件夹以用来保存各种文件
+
+``` javascript
+...
+|- store
+|-  |- actionCreator.js
+|-  |- constants.js
+|-  |- index.js
+|-  |- reducer.js
+...
+```
+
+### actionCreator.js
+
+`actionCreator` 即是 `action` 的集合。
+
+> action 就是一个普通 JavaScript 对象（注意到没，这儿没有任何魔法!）用来描述发生了什么。
+
+``` javascript
+import {
+    ADD_COUNT,
+    SUB_COUNT,
+    INCREMENT,
+    DECREMENT
+} from "./constants.js";
+
+export const addCount = (count) => ({
+    type: ADD_COUNT,
+    count
+})
+export const subCount = (count) => ({
+    type: SUB_COUNT,
+    count
+})
+export const increament = () => ({
+    type: INCREMENT
+})
+export const decreament = () => ({
+    type: DECREMENT
+})
+```
+
+> 其中将 `type` 字段的值通过 `constants.js` 来引入，以来确保唯一性
+
+### reducer.js
+
+``` javascript
+import {
+    ADD_COUNT,
+    SUB_COUNT,
+    INCREMENT,
+    DECREMENT
+} from './constants.js'
+
+const initalState = {
+    count: 0
+}
+
+export default function (state = initalState, action) {
+    switch (action.type) {
+        case ADD_COUNT:
+            return {
+                ...state,
+                count: state.count + action.count
+            }
+        case SUB_COUNT:
+            return {
+                ...state,
+                count: state.count - action.count
+            }
+        case INCREMENT:
+            return {
+                ...state,
+                count: state.count + 1
+            }
+        case DECREMENT:
+            return {
+                ...state,
+                count: state.count - 1
+            }
+        default:
+            return {
+                ...state
+            }
+    }
+}
+```
+
+### 在组件内使用 `store`
+
+1. 首先在组件内导入该 `store`，包含的有 `store` 对象本身以及所用到的 `action`
+
+``` javascript
+...
+import store, {
+    addCount,
+    subCount
+} from "../store";
+...
+```
+
+2. 之后在类组件内使用该 `store`
+
+``` javascript
+class About extends PureComponent {
+    state = store.getState() // 通过 getState 方法获取到数据
+    render() {
+        return (
+            <>
+                ABOUT
+                <h2>当前值：{this.state.count}</h2>
+                <button onClick={this.addCount}>+10</button>
+                <button onClick={this.subCount}>-5</button>
+                <hr />
+            </>
+        );
+    }
+    addCount () {
+        store.dispatch(addCount(10))
+    }
+    subCount () {
+        store.dispatch(subCount(5))
+    }
+    componentDidMount () {
+        // 订阅方法会返回一个对象，且是一个取消订阅方法
+        this.unsubscribe = store.subscribe(() => {
+            this.setState(store.getState())
+        })
+    }
+    componentWillUnmount () {
+        // 通过执行这个方法去注销订阅
+        this.unsubscribe()
+    }
+}
+```
+
+至此，就完成了 `Redux` 的解耦和在组件内的正常使用。
