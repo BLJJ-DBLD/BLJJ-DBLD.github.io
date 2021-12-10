@@ -3,8 +3,8 @@ title: P15 React 的深入浅出(一)
 tags: []
 categories:
   - React
+abbrlink: 1612587612
 date: 2021-12-08 21:14:09
-abbrlink:
 ---
 
 > 通过上一节[P14](https://bljj-dbld.github.io/posts/2578506661.html),我们基本的认识了 Redux 是如何编写与解耦，以及学习到 Redux 与 React 的基本结配合使用。
