@@ -154,7 +154,7 @@ binary-extensions@^2.0.0:
   resolved "https://rg.cnpmjs.org/binary-extensions/download/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha1-dfUC7q+f/eQvyYgpZFvk6na9ni0=
 
-bluebird@^3.2.2, bluebird@^3.5.1, bluebird@^3.5.2, bluebird@^3.5.5:
+bluebird@^3.2.2, bluebird@^3.5.0, bluebird@^3.5.1, bluebird@^3.5.2, bluebird@^3.5.5, bluebird@^3.7.2:
   version "3.7.2"
   resolved "https://rg.cnpmjs.org/bluebird/download/bluebird-3.7.2.tgz#9f229c15be272454ffa973ace0dbee79a1b0c36f"
   integrity sha1-nyKcFb4nJFT/qXOs4NvueaGww28=
@@ -178,6 +178,11 @@ browser-process-hrtime@^1.0.0:
   version "1.0.0"
   resolved "https://rg.cnpmjs.org/browser-process-hrtime/download/browser-process-hrtime-1.0.0.tgz#3c9b4b7d782c8121e56f10106d84c0d0ffc94626"
   integrity sha1-PJtLfXgsgSHlbxAQbYTA0P/JRiY=
+
+buffer-from@^1.0.0:
+  version "1.1.2"
+  resolved "https://rg.cnpmjs.org/buffer-from/download/buffer-from-1.1.2.tgz#2b146a6fd72e80b4f55d255f35ed59a3a9a41bd5"
+  integrity sha1-KxRqb9cugLT1XSVfNe1Zo6mkG9U=
 
 bytes@3.0.0:
   version "3.0.0"
@@ -260,6 +265,11 @@ command-exists@^1.2.8:
   resolved "https://rg.cnpmjs.org/command-exists/download/command-exists-1.2.9.tgz#c50725af3808c8ab0260fd60b01fbfa25b954f69"
   integrity sha1-xQclrzgIyKsCYP1gsB+/oluVT2k=
 
+commander@^2.20.0:
+  version "2.20.3"
+  resolved "https://rg.cnpmjs.org/commander/download/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
+  integrity sha1-/UhehMA+tIgcIHIrpIA16FMa6zM=
+
 commander@^5.1.0:
   version "5.1.0"
   resolved "https://rg.cnpmjs.org/commander/download/commander-5.1.0.tgz#46abbd1652f8e059bddaef99bbdcb2ad9cf179ae"
@@ -321,6 +331,14 @@ css-parse@~2.0.0:
   dependencies:
     css "^2.0.0"
 
+css-tree@^1.1.2:
+  version "1.1.3"
+  resolved "https://rg.cnpmjs.org/css-tree/download/css-tree-1.1.3.tgz#eb4870fb6fd7707327ec95c2ff2ab09b5e8db91d"
+  integrity sha1-60hw+2/XcHMn7JXC/yqwm16NuR0=
+  dependencies:
+    mdn-data "2.0.14"
+    source-map "^0.6.1"
+
 css@^2.0.0:
   version "2.2.4"
   resolved "https://rg.cnpmjs.org/css/download/css-2.2.4.tgz#c646755c73971f2bba6a601e2cf2fd71b1298929"
@@ -330,6 +348,13 @@ css@^2.0.0:
     source-map "^0.6.1"
     source-map-resolve "^0.5.2"
     urix "^0.1.0"
+
+csso@^4.0.3:
+  version "4.2.0"
+  resolved "https://rg.cnpmjs.org/csso/download/csso-4.2.0.tgz#ea3a561346e8dc9f546d6febedd50187cf389529"
+  integrity sha1-6jpWE0bo3J9UbW/r7dUBh884lSk=
+  dependencies:
+    css-tree "^1.1.2"
 
 cssom@^0.4.4:
   version "0.4.4"
@@ -643,6 +668,14 @@ has@^1.0.3:
   dependencies:
     function-bind "^1.1.1"
 
+hexo-abbrlink@^2.2.1:
+  version "2.2.1"
+  resolved "https://rg.cnpmjs.org/hexo-abbrlink/download/hexo-abbrlink-2.2.1.tgz#03a3bbf73816ed19279e97452ce617c6caf98b5a"
+  integrity sha1-A6O79zgW7RknnpdFLOYXxsr5i1o=
+  dependencies:
+    hexo-front-matter "^1.0.0"
+    hexo-fs "^3.1.0"
+
 hexo-cli@^4.0.0:
   version "4.3.0"
   resolved "https://rg.cnpmjs.org/hexo-cli/download/hexo-cli-4.3.0.tgz#4bb2bf11a30fae601f2f53ac0cb833fee3187649"
@@ -658,6 +691,25 @@ hexo-cli@^4.0.0:
     minimist "^1.2.5"
     resolve "^1.11.0"
     tildify "^2.0.0"
+
+hexo-deployer-git@^3.0.0:
+  version "3.0.0"
+  resolved "https://rg.cnpmjs.org/hexo-deployer-git/download/hexo-deployer-git-3.0.0.tgz#da82f7a3445df2b213926dc8d030ba5499b68cf3"
+  integrity sha1-2oL3o0Rd8rITkm3I0DC6VJm2jPM=
+  dependencies:
+    bluebird "^3.5.0"
+    chalk "^4.0.0"
+    hexo-fs "^3.0.1"
+    hexo-util "^2.1.0"
+    moment "^2.18.0"
+    nunjucks "^3.2.1"
+
+hexo-front-matter@^1.0.0:
+  version "1.0.0"
+  resolved "https://rg.cnpmjs.org/hexo-front-matter/download/hexo-front-matter-1.0.0.tgz#0b48b1c1ed143e8cb25b3b223a9037385d910655"
+  integrity sha1-C0ixwe0UPoyyWzsiOpA3OF2RBlU=
+  dependencies:
+    js-yaml "^3.13.1"
 
 hexo-front-matter@^2.0.0:
   version "2.0.0"
@@ -719,6 +771,17 @@ hexo-log@^2.0.0:
   dependencies:
     chalk "^4.0.0"
 
+hexo-optimize@^2.5.1:
+  version "2.5.1"
+  resolved "https://rg.cnpmjs.org/hexo-optimize/download/hexo-optimize-2.5.1.tgz#9050b158fe3af48377b27171253fb45b621e1d65"
+  integrity sha1-kFCxWP469IN3snFxJT+0W2IeHWU=
+  dependencies:
+    bluebird "^3.7.2"
+    csso "^4.0.3"
+    jsdom "^16.3.0"
+    micromatch "^4.0.2"
+    terser "^4.8.0"
+
 hexo-pagination@1.0.0:
   version "1.0.0"
   resolved "https://rg.cnpmjs.org/hexo-pagination/download/hexo-pagination-1.0.0.tgz#c9c0ca3665267b9e9d0a89fc3edcaf3276907dc1"
@@ -731,7 +794,7 @@ hexo-renderer-ejs@^2.0.0:
   dependencies:
     ejs "^3.1.6"
 
-hexo-renderer-marked@^4.0.0:
+hexo-renderer-marked@^4.1.0:
   version "4.1.0"
   resolved "https://rg.cnpmjs.org/hexo-renderer-marked/download/hexo-renderer-marked-4.1.0.tgz#332e9aaee75981d89ba4ab6e9f75ce35904e7780"
   integrity sha1-My6arudZgdibpKtun3XONZBOd4A=
@@ -768,7 +831,7 @@ hexo-theme-landscape@^0.0.3:
   resolved "https://rg.cnpmjs.org/hexo-theme-landscape/download/hexo-theme-landscape-0.0.3.tgz#87d1f4d613da9be5245dad0d4b80479eab70d386"
   integrity sha1-h9H01hPam+UkXa0NS4BHnqtw04Y=
 
-hexo-util@^2.0.0, hexo-util@^2.4.0, hexo-util@^2.5.0:
+hexo-util@^2.0.0, hexo-util@^2.1.0, hexo-util@^2.4.0, hexo-util@^2.5.0:
   version "2.5.0"
   resolved "https://rg.cnpmjs.org/hexo-util/download/hexo-util-2.5.0.tgz#de5635341116ba2563a789a0ebceb55a875221ad"
   integrity sha1-3lY1NBEWuiVjp4mg6861WodSIa0=
@@ -963,7 +1026,7 @@ js-yaml@^4.0.0:
   dependencies:
     argparse "^2.0.1"
 
-jsdom@^16.7.0:
+jsdom@^16.3.0, jsdom@^16.7.0:
   version "16.7.0"
   resolved "https://rg.cnpmjs.org/jsdom/download/jsdom-16.7.0.tgz#918ae71965424b197c819f8183a754e18977b710"
   integrity sha1-kYrnGWVCSxl8gZ+Bg6dU4Yl3txA=
@@ -1025,6 +1088,11 @@ marked@^2.1.3:
   version "2.1.3"
   resolved "https://rg.cnpmjs.org/marked/download/marked-2.1.3.tgz#bd017cef6431724fd4b27e0657f5ceb14bff3753"
   integrity sha1-vQF872Qxck/Usn4GV/XOsUv/N1M=
+
+mdn-data@2.0.14:
+  version "2.0.14"
+  resolved "https://rg.cnpmjs.org/mdn-data/download/mdn-data-2.0.14.tgz#7113fc4281917d63ce29b43446f701e68c25ba50"
+  integrity sha1-cRP8QoGRfWPOKbQ0RvcB5owlulA=
 
 micromatch@^4.0.2:
   version "4.0.4"
@@ -1092,7 +1160,7 @@ moment-timezone@^0.5.21:
   dependencies:
     moment ">= 2.9.0"
 
-"moment@>= 2.9.0", moment@^2.22.2:
+"moment@>= 2.9.0", moment@^2.18.0, moment@^2.22.2:
   version "2.29.1"
   resolved "https://rg.cnpmjs.org/moment/download/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
   integrity sha1-sr52n6MZQL6e7qZGnAdeNQBvo9M=
@@ -1383,6 +1451,14 @@ source-map-resolve@^0.5.2:
     source-map-url "^0.4.0"
     urix "^0.1.0"
 
+source-map-support@~0.5.12:
+  version "0.5.21"
+  resolved "https://rg.cnpmjs.org/source-map-support/download/source-map-support-0.5.21.tgz#04fe7c7f9e1ed2d662233c28cb2b35b9f63f6e4f"
+  integrity sha512-uBHU3L3czsIyYXKX88fdrGovxdSCoTGDRZ6SYXtSRxLZUzHg5P/66Ht6uoUlHu9EZod+inXhKo3qQgwXUT/y1w==
+  dependencies:
+    buffer-from "^1.0.0"
+    source-map "^0.6.0"
+
 source-map-url@^0.4.0:
   version "0.4.1"
   resolved "https://rg.cnpmjs.org/source-map-url/download/source-map-url-0.4.1.tgz#0af66605a745a5a2f91cf1bbf8a7afbc283dec56"
@@ -1395,7 +1471,7 @@ source-map@0.1.x:
   dependencies:
     amdefine ">=0.0.4"
 
-source-map@^0.6.1, source-map@~0.6.1:
+source-map@^0.6.0, source-map@^0.6.1, source-map@~0.6.1:
   version "0.6.1"
   resolved "https://rg.cnpmjs.org/source-map/download/source-map-0.6.1.tgz#74722af32e9614e9c287a8d0bbde48b5e2f1a263"
   integrity sha1-dHIq8y6WFOnCh6jQu95IteLxomM=
@@ -1478,6 +1554,15 @@ symbol-tree@^3.2.4:
   version "3.2.4"
   resolved "https://rg.cnpmjs.org/symbol-tree/download/symbol-tree-3.2.4.tgz#430637d248ba77e078883951fb9aa0eed7c63fa2"
   integrity sha1-QwY30ki6d+B4iDlR+5qg7tfGP6I=
+
+terser@^4.8.0:
+  version "4.8.0"
+  resolved "https://rg.cnpmjs.org/terser/download/terser-4.8.0.tgz#63056343d7c70bb29f3af665865a46fe03a0df17"
+  integrity sha1-YwVjQ9fHC7KfOvZlhlpG/gOg3xc=
+  dependencies:
+    commander "^2.20.0"
+    source-map "~0.6.1"
+    source-map-support "~0.5.12"
 
 text-table@^0.2.0:
   version "0.2.0"

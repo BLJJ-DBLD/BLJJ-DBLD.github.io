@@ -1,5 +1,5 @@
 ---
-title: P15 React 的深入浅出(一)
+title: P15 React 的深入浅出
 tags: []
 categories:
   - React
@@ -7,11 +7,16 @@ abbrlink: 1612587612
 date: 2021-12-08 21:14:09
 ---
 
+# Redux 与组件的藕断丝连
+
+## 使 Redux 更加复用
+
 > 通过上一节[P14](https://bljj-dbld.github.io/posts/2578506661.html),我们基本的认识了 Redux 是如何编写与解耦，以及学习到 Redux 与 React 的基本结配合使用。
 
 通过在组件内引入 `./store` 文件夹，利用 `store.getState`, `store.dispath`, `store.subscribue` 等方法与组件配合在一起使用，但其中存在着一些高重复性的代码，例如：
 
 ``` javascript
+// About.js
 ...
 // 通过 store.getState 方法获取 state 数据
 state = {
@@ -42,16 +47,17 @@ subCount () {
 
 根据这个思想，我们可以在顶级目录内创建 `./utils/connect.js`，用来保存一个 `connect` 函数，将组件与 `redux` 通过这个函数连接在一起。
 
-![connect 做用图](image_1.png)
+![connect 作用图](image_1.png)
 
 将重复性代码删除后，组件内部就变得非常的简洁（注释掉的即要删除的重复性代码）
 
 ``` javascript
+// About.js
 import React, { PureComponent } from 'react';
 import store, {
     addCount,
     subCount
-} from "../store";
+} from "@/store";
 
 class About extends PureComponent {
     /* state = store.getState() */
@@ -62,7 +68,7 @@ class About extends PureComponent {
                 <h2>当前值：{this.props.count}</h2>
                 <button onClick={this.addCount}>+10</button>
                 {/* <button onClick={this.subCount}>-5</button> */}
-                <button onClick={this.props.dispatch(5)}>-5</button>
+                <button onClick={this.props.subCount(5)}>-5</button>
                 <hr />
             </>
         );
@@ -92,23 +98,342 @@ export default About;
 最后再简化些就可以直接定义成 **函数式组件** 了
 
 ``` javascript
+// About.js
 import React from 'react';
-import store, {
-    addCount,
-    subCount
-} from "../store";
 
 export default function About(props) {
-    render() {
-        return (
-            <>
-                ABOUT
-                <h2>当前值：{props.count}</h2>
-                <button onClick={props.addCount(10)}>+10</button>
-                <button onClick={props.dispatch(5)}>-5</button>
-                <hr />
-            </>
-        );
-    }
+    return (
+        <>
+            ABOUT
+            <h2>当前值：{props.count}</h2>
+            <button onClick={props.addCount(10)}>+10</button>
+            <button onClick={props.subCount(5)}>-5</button>
+            <hr />
+        </>
+    );
 } 
 ```
+
+但是此时我们还不能从 `props` 中获取到相应的值与方法，因此我们就要借助 `connect` 函数来牵线搭桥。此时在 `connect.js` 文件内编写内容
+
+``` javascript
+// connect.js
+import React, {PureComponent} from 'react';
+
+export function connect (mapStateToProps, mapDispatchToProps) {
+    // 返回一个 高阶组件（HOC），组件内部再返回一个类组件组件
+    return function (ComponentWrapper) {
+        return class extends PureComponent {
+            render () {
+                return <ComponentWrapper/>
+            }
+        }
+    }
+}
+```
+
+此时在 `About.js` 文件内，将 `connect` 函数添加
+
+``` javascript
+// About.js
+...
++ import {connect} from '@/utils/connect'
+...
+// 此时 mapStateToProps, mapDispatchToProps 这俩参数还未定义，目前只是占位
++ connect(参数1, 参数2)(About) // 这样子，就对 About 组件做了增强
+```
+
+当我们想对 `About` 组件进行自定义增强时，就通过 参数1，参数2 来传值
+
+``` javascript
+// About.js
++ import {
+    addCount,
+    subCount
+} from "@/store/actionCreator";
+...
+/* const mapStateToProps = {
+    count: store.getState().count
+};
+const mapDispatchToProps = {
+    addCount (num) {
+        store.dispatch(addCount(num))
+    }
+    subCount (num) {
+        store.dispatch(subCount(num))
+    }
+}; */
+// 上面这般写是错误的，会导致还是需要依赖 store 对象
+// 我们应该将这两个参数写成函数的形式，这么做的目的是，在 About 中由参数返回给我们 store.getState() / store.dispatch
+const mapStateToProps = state => {
+    return {
+        count: state.count
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        addCount (num) {
+            dispatch(addCount(num))
+        }
+        subCount (num) {
+            dispatch(subCount(num))
+        }
+    }
+}
+...
+- connect(参数1, 参数2)(About)
++ export default connect(mapStateToProps, mapDispatchToProps)(About)
+```
+
+此时我们就将参数传给了 `connect` 方法，就能在 `WrapperComponent` 中使用
+
+``` javascript
+// connect.js
+import store from '@/store'
+...
+- return <ComponentWrapper/>
++ return <ComponentWrapper {
+            ...this.props,
+            ...mapStateToProps(store.getState()),
+            ...mapDispatchToProps(store.dispatch)
+        }/>
+...
+```
+
+最后别忘记在返回的类组件内部对 `store.subscribe` 进行监听
+
+``` javascript
+// connect.js
+...
+constructor (props) {
+    super(props)
+    this.state = {
+        storeState: mapStateToProps(store.getState())
+    }
+}
+componentDidMount () {
+    this.unsubscribe = store.subscribe(() => {
+        this.setState({
+            storeState: mapStateToProps(store.getState())
+        }
+    })
+}
+componentWillUnmount () {
+    this.unsubscribe()
+}
+...
+```
+
+至此，就完成了 `About` 组件通过 `connet.js` 对 `Redux` 的使用
+
+---
+
+`connect.js` 的全部代码
+
+``` javascript
+import React, {PureComponent} from 'react'
+import store from '@/store'
+
+export function connect (mapStateToProps, mapDispatchToProps) {
+    return function EnhanceHOC (ComponentWrapper) {
+        return class extends PureComponent {
+            constructor (props) {
+                super(props)
+                this.state = {
+                    storeState: mapStateToProps(store.getState())
+                }
+            }
+            render () {
+                return <ComponentWrapper {
+                    ...this.props,
+                    ...mapStateToProps(store.getState()),
+                    ...mapDispatchToProps(store.dispatch)
+                }>
+            }
+            componentDidMount () {
+                this.unsubscribe = store.subscribe(() => {
+                    this.setState({
+                        storeState: mapStateToProps(store.getState())
+                    }
+                })
+            }
+            componentWillUnmount () {
+                this.unsubscribe()
+            }
+        }
+    }
+}
+```
+
+---
+
+`About.js` 的全部优化后代码
+
+``` javascript
+import React from 'react'
+import {connect} from '@/utils/connect'
+import {
+    addCount,
+    subCount
+} from "@/store/actionCreator";
+
+function About (props) {
+    return (
+        <>
+            ABOUT
+            <h2>当前值：{props.count}</h2>
+            <button onClick={props.addCount(10)}>+10</button>
+            <button onClick={props.subCount(5)}>-5</button>
+            <hr />
+        </>
+    )
+}
+
+const mapStateToProps = state => {
+    return {
+        count: state.count
+    }
+}
+const mapDispatchToProps = dispatch => {
+    return {
+        addCount (num) {
+            dispatch(addCount(num))
+        }
+        subCount (num) {
+            dispatch(subCount(num))
+        }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(About)
+```
+
+## 配合 context.js 实现通用性
+
+假如我们想将 `connect.js` 上传到，这种情况下，`connect.js` 并不完全独立，而还需要手动的在 `connect.js` 中引入 `store`（有依赖）
+
+因此，我们要想的是，**我们依然要拿到 `store` 但不是通过导入的方式**
+
+我们在 `utils` 文件夹内再创建一个 `context.js`
+
+``` javascript
+// context.js
+import React from 'react'
+
+const StoreContext = React.createContext()
+
+export {
+    StoreContext
+}
+```
+
+这样，我们就可以在 `connect.js` 中将 `store` 的引入去除
+
+``` javascript
+// connect.js
+
+import React, {PureComponent} from 'react'
+import {StoreContext} form './context'
+- import store from '@/store'
+
+export function connect (mapStateToProps, mapDispatchToProps) {
+    return function EnhanceHOC (ComponentWrapper) {
+        class EnhanceComponent extends PureComponent {
+            - constructor (props) {
+            + constructor (props, context) {
+                - super(props)
+                + super(props, context)
+                this.state = {
+                    - storeState: mapStateToProps(store.getState())
+                    storeState: mapStateToProps(context.getState())
+                }
+            }
+            render () {
+                return <ComponentWrapper {
+                    ...this.props,
+                    - ...mapStateToProps(store.getState()),
+                    - ...mapDispatchToProps(store.dispatch)
+                    + ...mapStateToProps(context.getState()),
+                    + ...mapDispatchToProps(context.dispatch)
+                }>
+            }
+            componentDidMount () {
+                - this.unsubscribe = store.subscribe(() => {
+                + this.unsubscribe = context.subscribe(() => {
+                    this.setState({
+                        - storeState: mapStateToProps(store.getState())
+                        + storeState: mapStateToProps(context.getState())
+                    }
+                })
+            }
+            componentWillUnmount () {
+                this.unsubscribe()
+            }
+        }
+        EnhanceComponent.contextType = StoreContext
+        return EnhanceComponent
+    }
+}
+```
+
+最后在入口文件 `App.js` 中将 `store` 引入
+
+``` javascript
+// App.js
+...
+import { StoreContext } from "@/utils/context";
+import store from "@/store";
+
+ReactDOM.render(
+  <React.StrictMode>
+    <StoreContext.Provider value={store}>
+      <App />
+    </StoreContext.Provider>
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+...
+```
+
+## 最后 react-redux 的使用
+
+> 其实，上面的实现， `React` 已经帮我们做好了封装，那就是 `react-redux`，专门为 `React` 设计使用的，在使用，与我们自己的 `connect` & `context` 的使用是相似的。
+
+首先我们在项目内安装 `react-redux`：`npm intsall react-redux --save`
+
+我们在原先的基础上，对项目再做一些改动，在入口文件 `index.js` 中
+
+``` javascript
+// index.js
+...
+- import { StoreContext } from "./utils/context";
++ import { Provider } from "react-redux";
+...
+- <StoreContext.Provider value={store}>
++ <Provider store={store}>
+    <App />
+- </StoreContext.Provider>
++ </Provider>
+...
+```
+
+之后我们在 `About` 组件也做一些改进
+
+``` javascript
+// About.js
+...
+- import connect from "../utils/connect";
++ import { connect } from "react-redux";
+...
+```
+
+# 组件内的异步操作
+
+通过之前简单的案例，`redux` 中保存的 `count` 是一个本地定义的数据，但事实，真实开发中，`redux` 中保存的很多数据有可能来自服务器，我们需要进行异步的请求，再将数据保存到 `redux` 中。
+
+## 简单的异步操作
+
+> 一般我们的想法都是，先进行异步请求然后等请求结果响应后，在将数据保存在 `redux` 中。
+
+![一般网络请求图](image_2.png)
+
