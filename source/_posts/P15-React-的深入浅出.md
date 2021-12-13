@@ -433,7 +433,87 @@ ReactDOM.render(
 
 ## 简单的异步操作
 
-> 一般我们的想法都是，先进行异步请求然后等请求结果响应后，在将数据保存在 `redux` 中。
+### 将请求放在 `componentDidMount`
+
+> 一般我们的想法都是，先进行异步请求然后等请求结果响应后，在将数据保存在 `redux` 中。如下图：
 
 ![一般网络请求图](image_2.png)
+
+下面只展示出异步请求数据的组件代码，其他的与之前的相类似：
+
+``` javascript
+// GetDataByAxios
+import React, {PureComponent} from 'react';
+import { connect } from "react-redux";
+import {
+    getTableList,
+} from "@/store";
+import axios from "@/axios";
+
+class GetDataByAxios extends PureComponent {
+    componentDidMount () {
+        axios.get(
+            '/elementTable/list' // 自己定义的请求路径
+        ).then((res) => {
+            console.log(res);
+            this.props.getTableList(res.data.rows)
+        })
+    }
+    render() { 
+        return (
+            <>
+                GetDataByAxios1
+                <ul>
+                    {
+                        this.props.tableRows.map((item) => {
+                            return <li key={item.date}>{item.date}</li>
+                        })
+                    }
+                </ul>
+                <hr />
+            </>
+        );
+    }
+}
+
+const mapStateToPorps = state => ({
+    tableRows: state.tableRows
+})
+const mapDispatchToProps = dispatch => {
+    return {
+        getTableList: (rows) => {
+            dispatch(getTableList(rows))
+        }
+    }
+}
+
+
+export default connect(mapStateToPorps, mapDispatchToProps)(GetDataByAxios);
+```
+> 请求路径是从 [http://rap2.taobao.org/](http://rap2.taobao.org/) 这边做的✔
+
+---
+
+> 是否要将所有数据都放在 `redux` 中 ? 官方这边做了详细的解读 [点这里](https://redux.js.org/faq/organizing-state#organizing-state)
+
+- 应用程序的其他部分是否关心这些数据？
+- 您是否需要能够基于这些原始数据创建进一步的派生数据？
+- 是否使用相同的数据来驱动多个组件？
+- 能够将这种状态恢复到给定的时间点（即时间旅行调试）对您来说是否有价值？
+- 您是否要缓存数据（即，如果它已经存在，则使用它的状态而不是重新请求它）？
+- 您是否希望在热重载 UI 组件（交换时可能会丢失其内部状态）时保持此数据一致？
+
+---
+
+### 将请求放在 `Redux` 中管理
+
+> 首先得认清楚一件事，在 `Redux` 中，默认是无法进行异步请求的。
+
+在 `Redux` 中如何进行异步的操作呢？
+
+答案是使用**中间件（Middleware）**
+
+如下图：
+
+![利用中间件](image_3.png)
 
