@@ -7,7 +7,7 @@ abbrlink: 522225208
 date: 2021-12-07 19:57:27
 ---
 
-# 1. react-transition-group 使用
+# react-transition-group 使用
 
 > [官网](https://reactcommunity.org/react-transition-group/)
 
@@ -27,7 +27,7 @@ date: 2021-12-07 19:57:27
 4. `<TransitionGroup/>`
     - 将多个动画组件包裹在其中，一般用于列表中元素的动画
 
-# 2. CSSTransition 的使用
+# CSSTransition 的使用
 
 - `<CSSTransition />` 是基于 `<Transition />` 构建的
 - `CSSTransition` 一共有三种状态：`appear(首次加载)`, `enter(进入)`, `exit(离开)`
@@ -143,7 +143,7 @@ export default CSSTransitionDemo;
 - `appear`：是否在初次进入添加动画（需要和 `in` 同时为 `true`）
 - `unmountOnExit`：退出后卸载
 
-# 3. SwitchTransition
+# SwitchTransition
 
 `<SwitchTransition />` 可以完成两个组件之间切换的炫酷动画。这个动画在 Vue 中被称为 `vue transition modes`
 
@@ -214,7 +214,7 @@ export default SwitchTransitionDemo;
 }
 ```
 
-# 4. TransitionGroup
+# TransitionGroup
 
 当有一系列的元素需要添加相同的动画时使用
 

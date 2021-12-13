@@ -7,7 +7,7 @@ categories:
 date: 2021-12-07 05:56:26
 ---
 
-# 1. 认识 JSX
+# 认识 JSX
 
 看一段代码：
 
@@ -32,7 +32,7 @@ ReactDOM.render(element, document.getElementById("app"))
     - jsx 中的标签可以是单标签，也可以是双标签
         - 注意：如果是单标签，必须以 `/>` 结尾（即使用严格语法）
 
-# 2. 为什么 React 选择了 JSX
+# 为什么 React 选择了 JSX
 
 - React 认为渲染逻辑本质上与其他 UI 逻辑存在内在耦合
     - 比如 UI 需要绑定事件（button、a 原生等等）
@@ -40,9 +40,9 @@ ReactDOM.render(element, document.getElementById("app"))
 
 - 他们之间是密不可分的，所以 React 没有将标记分离到不同的文件中，而是组合在了一起
 
-# 3. JSX 的使用
+# JSX 的使用
 
-## 3.1 jsx 中的注释
+## jsx 中的注释
 
 > 推荐使用一种，如下：
 
@@ -50,7 +50,7 @@ ReactDOM.render(element, document.getElementById("app"))
 {/**/}
 ```
 
-## 3.2 jsx 中嵌入变量
+## jsx 中嵌入变量
 
 - 情况一：当变量是 `Number, String, Array` 类型时，可以直接显示。
 - 情况二：当变量是 `null, undefined, Boolean` 类型时，内容为空；
@@ -59,7 +59,7 @@ ReactDOM.render(element, document.getElementById("app"))
         - `null, undefined` 它们没有 `toString` 方法，可以是利用 `String()` 方法，或者是和 空字符串（""） 做拼接
 - 情况三：对象 类型不能作为子元素（not valid as a React child）。但是 数组 类型可以
 
-## 3.3 jsx 绑定属性
+## jsx 绑定属性
 
 - 元素中的 title 属性
 - img 元素中的 src 属性
@@ -67,7 +67,7 @@ ReactDOM.render(element, document.getElementById("app"))
 - 元素需要绑定 class 类
 - 原生使用内联样式 style
 
-### 3.3.1 绑定普通属性
+### 绑定普通属性
 
 1. 比如每个元素都有的一个属性：`title`
 2. 比如 `img` 中的 `src` 属性中需要动态的添加路径。 
@@ -96,7 +96,7 @@ function getSizeImage (url, size) {
 ...
 ```
 
-### 3.3.2 绑定 className(html 中的 class)
+### 绑定 className(html 中的 class)
 
 > 在 render 中的 return 中，编写的是 jsx 语法。而 class 在语法中是代指类。与 html 中的 class 有冲突，所以在 jsx 中将 html 中的 class 需要写成 className。诸如此类的，还有比如 label 中的 for 属性，在 jsx 中需要写成 htmlFor。
 
@@ -110,7 +110,7 @@ function getSizeImage (url, size) {
 ...
 ```
 
-### 3.3.3 绑定 style 属性
+### 绑定 style 属性
 
 > 需要注意的是要分清楚两层花括号的含义。
 
@@ -121,9 +121,9 @@ function getSizeImage (url, size) {
 <div style={{color: "red", fontSize: "20px"}}>我是div，我绑定了 style 属性</div>
 ```
 
-## 3.4 jsx 绑定事件
+## jsx 绑定事件
 
-### 3.4.1 通过 `bind` 显示绑定 this
+### 通过 `bind` 显示绑定 this
 
 ``` javascript
 ...
@@ -149,7 +149,7 @@ constructor () {
 ...
 ```
 
-### 3.4.2 利用箭头函数的特性
+### 利用箭头函数的特性
 
 1. 在类中定义变量，赋值其箭头函数方法
 
@@ -182,7 +182,7 @@ decrement (name) {
 }
 ```
 
-### 3.4.3 向绑定事件中添加参数
+### 向绑定事件中添加参数
 
 > 这时，就体现出了在事件绑定时，直接利用箭头函数的优势了！
 
@@ -241,7 +241,7 @@ liClick (event, index, item) {
 ...
 ```
 
-## 3.4 jsx 中的条件渲染
+## jsx 中的条件渲染
 
 1. 方案一：通过 `if` 判断，适合逻辑代码多的情况
 2. 方案二：通过 三元运算符
@@ -284,7 +284,7 @@ btnClick () {
 }
 ```
 
-## 3.5 jsx 中的列表渲染
+## jsx 中的列表渲染
 
 > 多去了解 Array 中的纯函数，比如：`map, slice, filter` 等
 
@@ -325,7 +325,7 @@ render () {
 }
 ```
 
-## 3.6 jsx 的本质
+## jsx 的本质
 
 - 实际上，jsx 仅仅只是 `React.creatElement(component, props, ...children)` 函数的语法糖。
     - 所有的 jsx 最终都会被转换成 React.createElement 的函数调用
@@ -341,7 +341,7 @@ render () {
         - 存放在标签内的内容，以 children 数组的方式存储；
         - 当然如果是多个元素，React 内部会对它们做处理
 
-### 3.6.1 jsx 的基本写法
+### jsx 的基本写法
 
 使用 jsx 的语法写出来的代码，最终会通过 babel 将其转换成 `React.createELement()` 的形式。
 
@@ -356,7 +356,7 @@ render () {
 </script>
 ```
 
-### 3.6.2 jsx 的 bable 转换
+### jsx 的 bable 转换
 
 其实上面我已经简单的做了个 jsx -> babel 的例子了。
 
@@ -402,7 +402,7 @@ ReactDOM.render(App, document.getElementById('app'))
 
 > /*#__PURE__*/: 含义是说明该 `React.createElement` 函数是一个纯函数。在 React 中纯函数尤其重要
 
-## 3.7 虚拟 DOM 创建过程
+## 虚拟 DOM 创建过程
 
 我们是通过 `React.createElement` 最终创建出一个 ReactElement 对象
 
@@ -447,7 +447,7 @@ ReactDOM.render(<App />, document.getElementById('app'))
 
 > jsx -> babel -> React.createElement() -> ReactElement 对象树(虚拟 DOM 树) -> ReactDOM.render() -> 真实 DOM 树
 
-### 3.7.1 为什么使用虚拟 DOM
+### 为什么使用虚拟 DOM
 
 - 为什么要采用虚拟 DOM，而不是直接修改真实的 DOM 呢？
 
@@ -465,7 +465,7 @@ ReactDOM.render(<App />, document.getElementById('app'))
 
 但是不管是哪种方法，都是非常低效的。因为我们通过 document.createElement 创建元素，再通过 ul.appendChild() 方法渲染到 DOM 上，会进行多次的 DOM 操作；当然对于批量操作，最好的办法不是一次次修改 DOM，而是对批量的操作进行合并；（比如可以通过 DocumentFragment 生成一块游离在 DOM 树外的元素，之后进行统一合并）。
 
-### 3.7.2 命名式编程向声明式编程的转换
+### 命名式编程向声明式编程的转换
 
 - **虚拟 DOM 帮助我们从命令式编程转到了声明式编程的模式**
 - React 官方的说法：Virtual DOM 是一种编程理念

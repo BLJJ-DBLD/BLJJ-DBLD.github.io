@@ -7,7 +7,7 @@ categories:
   - React
 ---
 
-# 1. 如何使用 ref
+# 如何使用 ref
 
 > 在 React 的开发模式中，通常情况下不需要、也不建议直接操作 DOM 元素，但是在某些特殊情况下，确实需要获取到 DOM 进行某些操作，比如：
 > 1. 管理焦点，文本选择或媒体播放
@@ -19,7 +19,7 @@ categories:
 2. 对象（React 推荐的方式）
 3. 函数
 
-## 1.1 字符串：` ref = "xxx"`
+## 字符串：` ref = "xxx"`
 
 - （官方回答）我们不建议使用它，因为 string 类型的 refs 存在 [一些问题](https://github.com/facebook/react/pull/8333)。**它已过时并可能会在未来的版本被移除。**
     - 链接中的内容翻译过来：
@@ -36,7 +36,7 @@ categories:
 ...
 ```
 
-## 1.2 对象：`ref = {this.xxx}`
+## 对象：`ref = {this.xxx}`
 
 > 并不是任意的对象都能够被赋值 `ref` 的，必须是通过执行 `React.createRef` 方法创建出来的。
 
@@ -59,7 +59,7 @@ constructor (props) {
 ...
 ```
 
-## 1.3 回调函数：`ref = {(el) => xxx}`
+## 回调函数：`ref = {(el) => xxx}`
 
 ``` javascript
 {/* 3. ref=回调函数 */}
@@ -73,7 +73,7 @@ constructor (props) {
 }}>修改文案 By ref=回调函数</button>
 ```
 
-# 2. ref 的类型
+# ref 的类型
 
 ref 的值根据节点的类型而有所不同：
 - 当 ref 属性用于 html 元素时，构造函数中使用 `React.createRef` 方法创建的 ref 接收底层 DOM 元素作为其 current 属性；
@@ -140,7 +140,7 @@ this.inputEl2 = null
 ...
 ```
 
-# 3. 受控组件
+# 受控组件
 
 在 HTML 中，表单元素（如 `<input>`、 `<textarea>` 和 `<select>`）通常自己维护 state，并根据用户输入进行更新。而在 React 中，可变状态（mutable state）通常保存在组件的 state 属性中，并且只能通过使用 `setState()` 来更新。
 
@@ -192,7 +192,7 @@ handleSubmit (e) {
 | `<textarea />` | `value={string}` | `onChange` | `event.target.value` |
 | `<select />` | `value={option.value}` | `onChange` | `event.target.value` |
 
-# 4. 非受控组件
+# 非受控组件
 
 > 在大多数情况下，我们推荐使用 **受控组件** 来处理表单数据。在一个受控组件中，表单数据是由 React 组件来管理的。另一种替代方案是使用 **非受控组件**，这时表单数据将交由 DOM 节点来处理。
 > 

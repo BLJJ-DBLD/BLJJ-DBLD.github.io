@@ -6,7 +6,7 @@ categories:
   - React
 date: 2021-12-06 13:31:58
 ---
-# 1. React 的特点
+# React 的特点
 
 声明式编程
 
@@ -17,7 +17,7 @@ date: 2021-12-06 13:31:58
     
 - 将复杂的界面拆解成一个个小的组件
     
-# 2. React 的开发依赖
+# React 的开发依赖
 
 - 必须依赖的三个库：
     - react: 包含 react 所必须的核心代码
@@ -34,7 +34,7 @@ date: 2021-12-06 13:31:58
     - web 端：react-dom 会将 jsx 最终渲染成真实的 DOM，显示在浏览器上
     - navtive 端：react-dom 会将 jsx 最终渲染成原生的控件（比如 Android 中的 Button，IOS 中的 UIButton）
         
-# 3. 认识 Babel
+# 认识 Babel
 
 babel 是什么呢？
 
@@ -48,7 +48,7 @@ React 和 Babel 的关系：
 - 但是前提是我们自己使用 React.creactElement 来编写源代码，它编写的代码非常的繁琐和可读性差。
 - 那么我们就可以直接编写 jsx （JavaScript XML）的语法，并且让 babel 帮助我们转换成 React.createElement
     
-# 4. 引入 React 依赖
+# 引入 React 依赖
 
 > 所以，我们在编写 React 代码时，这三个依赖都是必不可少的。
 

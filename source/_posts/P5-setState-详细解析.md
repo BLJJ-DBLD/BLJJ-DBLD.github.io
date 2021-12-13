@@ -7,7 +7,7 @@ abbrlink: 3526460681
 date: 2021-12-07 06:03:26
 ---
 
-# 1. 为什么使用 setState
+# 为什么使用 setState
 
 在开发中，我们并不能直接通过修改 state 的值来让界面发生更新，因为 React 并没有实现类似 Vue2 中 Object.definedProerty 或者 Vue3 中的 Proxy 的方式监听数据的变化；我们必须通过 setState 来告知 React 数据发生了改变
 
@@ -15,9 +15,9 @@ date: 2021-12-07 06:03:26
 >
 > 原因是，setState 是从 Component 中继承过来的。
 
-# 2. setState 是异步更新的？我们来探究一下
+# setState 是异步更新的？我们来探究一下
 
-## 2.1 为什么 setState 设计为异步呢？
+## 为什么 setState 设计为异步呢？
 
 1. setState 设计为异步，可以显著的提升性能；
     - 如果每次调用 setState 都进行一次更新，那么意味着 render 方法会被频繁调用，界面重新渲染，这样效率会很低；
@@ -25,7 +25,7 @@ date: 2021-12-07 06:03:26
 2. 如果同步更新了 state，但是还没有执行 render 函数，那么父组件内的 state 与子组件内的 prop 将不能保持同步。
     - state 和 props 不能保持一致，会在开发中产生很多的问题
 
-## 2.2 如何获取异步的结果
+## 如何获取异步的结果
 
 方式一：通过 setState 的第二个参数（回调函数）等待更新后，再去获取具体的值
 
@@ -52,7 +52,7 @@ componentDidUpdate() {
 
 > 方式二会在方式一之前被调用到。
 
-## 2.3 setState 一定是异步的吗？
+## setState 一定是异步的吗？
 
 > 首先说出结论：不一定的。
 
@@ -60,7 +60,7 @@ componentDidUpdate() {
 - 在组件生命周期或 React 合成事件中，setState 是异步的；
 - 在 `setTimeout` 或者原生 `DOM` 事件内，setState 是同步的；
 
-### 2.3.1 什么是 React 的合成事件？为什么要这样子做？
+### 什么是 React 的合成事件？为什么要这样子做？
 
 1. 什么是 React 的合成事件：指的是 jsx 中的事件绑定，例如 `onClick` 等此类事件。甚至于，合成事件内的 `event` 对象也是 React 合成的。
 2. 为何要如此做法：
@@ -73,15 +73,15 @@ componentDidUpdate() {
 
 > 总结：合成对象 `event` 会根据不同的平台（浏览器 / 原生）会发生相应的变化。
 
-### 2.3.2 在 React 当中，到底是如何决定是同步还是异步的？
+### 在 React 当中，到底是如何决定是同步还是异步的？
 
 > 探究源码：
 >
 > 总结：React 源码当中做过一个判断，它会根据我们当前处于的上下文不同情况来返回当前这里到底是同步的还是异步的 
 
-# 3. setState 中的合并
+# setState 中的合并
 
-## 3.1 setState 中的**数据**合并
+## setState 中的**数据**合并
 
 上源码讲解：
 
@@ -99,7 +99,7 @@ changeMessage () {
 
 此时的 `name` 并不会消失，因为在 React 对 state 的更新手法是：`Object.assgin({}, prevState, partialState)`
 
-## 3.2 setState 中自身的合并
+## setState 中自身的合并
 
 依旧上源码：
 
@@ -176,7 +176,7 @@ increment () {
 >
 > 2. 当参数时函数时，会对多个 `setState` 进行合并，但是，会将每次的函数都执行一次；函数中需要至少传递一个参数 `prevState` 指代的是上一次执行后的 `state` 值，在此基础上就可以在上次的前提下进行累加操作了。
 
-# 4. React 的更新机制
+# React 的更新机制
 
 React 的渲染流程：`jsx -> 虚拟 DOM -> 真实 DOM`
 
@@ -230,7 +230,7 @@ React 的更新流程：`props/state 改变 -> render 方法的重新执行 —>
 		- key 尽量不要使用随机数
 		- 使用 index 作为 key 时，对性能是没有优化的
 
-## 4.1 render 方法被无效调用
+## render 方法被无效调用
 
 我们在使用之前的一个嵌套案例：当 App 中，我们增加一个计数器的代码；当点击 +1 时，会重新调用 render 方法，而当 App 的 render 方法被调用时，所有的子组件的 render 方法也会被重新调用；
 
@@ -240,7 +240,7 @@ React 的更新流程：`props/state 改变 -> render 方法的重新执行 —>
 
 那如何自由的控制组件内的 render 是否被调用呢？答案是通过 `shouldComponentUpdate` 方法即可；
 
-###  4.1.1 shouldComponentUpdate 方法
+### shouldComponentUpdate 方法
 
 React 提供了一个生命周期方法 `shouldComponentUpdate`，这个方法接受参数。并且需要有返回值：
 
@@ -255,7 +255,7 @@ React 提供了一个生命周期方法 `shouldComponentUpdate`，这个方法�
 > 1. 需要在每一个组件内一次次的声明该方法
 > 2. 无法对函数组件使用该方法
 
-### 4.1.2 PureComponent 类
+### PureComponent 类
 
 只能是类组件通过继承 `PureComponent` 类：
 
@@ -280,7 +280,7 @@ class Children extends PureComponent {
 }
 ```
 
-### 4.1.3 memo 高阶函数组件
+### memo 高阶函数组件
 
 > 高阶函数组件：能够对一个函数操作并且返回一个函数
 
@@ -296,3 +296,31 @@ const MemoChildren = memo(function Children () {
     )
 })
 ```
+
+---
+
+# 钻个🐂尖
+
+## 深入理解 `setState` 的“异步”
+
+Q: `setState` 为什么给人的感觉是异步的？
+
+A:
+在 `setState()` 之后无法立即获取到最新的 `state`
+
+Q: 那为什么 `React` 要把状态的更新设计成这种方式呢？直接 `this.state.count = 1` 不好吗？
+
+A:
+首先，`this.state.count = 1` 这般做法是不能触发更新。 `React` 与 `Vue` 不同，`Vue` 是响应式系统（Reactivity System），在 Vue3 中通过 `Proxy` 监听对象或 Vue2.x 中通过 `Object.defineProperty` 监听对象的属性来实现更新视图的。而 `React` 是通过 `setState()` 触发更新视图的。
+
+`React` 设计成这种方式的原因，设计者已经正面回答了。[点这里](https://github.com/facebook/react/issues/11527#issuecomment-360199710)。总结起来：
+
+- 保证内部的一致性：即使 `state` 是同步更新，`props` 也不是。（你只有在父组件重新渲染时才能知道`props`）
+- 将 `state` 的更新延缓到最后批量合并再去渲染对于应用的性能优化是有极大好处的，如果每次的状态改变都去重新渲染真实dom，那么它将带来巨大的性能消耗。
+
+Q: `setState` 真的是异步吗？
+
+A:
+其实不然，`setState` 内部是没有编写异步代码的。它只是模拟了异步的行为。就像上文说的，`setState` 根据**上下文环境**来判断是异步更新还是同步更新。再通俗点是，`React` 会维护一个标识（`isBatchingUpdates`），判断是直接更新还是先暂存 state 到队列。
+
+而这个上下文环境指的是执行 `setState` 方法时，是在 合成方法和钩子函数【1】 中，还是在 原生事件和 `setTimeout`【2】 中。在 【1】 中会表现成 “异步”，在 【2】 中时会表现成 同步。并且在 “异步” 状态下，`setState` 会进行批量更新优化，对同一个值进行多次 `setState`，`setState` 的批量更新策略会对其进行覆盖，去最后一次的执行；如果是同时多个值进行多次 `setState`，则会合并批量更新。

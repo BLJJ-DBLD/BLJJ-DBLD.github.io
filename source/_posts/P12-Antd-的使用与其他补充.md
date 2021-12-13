@@ -9,7 +9,7 @@ date: 2021-12-07 19:53:58
 
 # 使用前需了解的内容
 
-## 1. 兼容环境
+## 兼容环境
 
 - 现代浏览器 和 IE11(需要 polyfills)
 - 支持服务端渲染
@@ -21,14 +21,14 @@ date: 2021-12-07 19:53:58
 
 > `antd@2.0` 之后不再支持 `IE8`。 `antd@4.0` 之后不再支持 `React 15` 和 `IE9/10`。
 
-## 2. 安装
+## 安装
 
 使用 npm 、 yarn 安装
 
 - npm: `npm install antd --save`
 - yarn: `yarn add antd`
 
-## 3. Antd 的使用
+## Antd 的使用
 
 ``` javascript
 /* App.js */
@@ -56,7 +56,7 @@ render() {
 
 ![已加入 css 的 Antd 控件](image_3.png)
 
-## 4. 对 Antd 的高级配置
+## 对 Antd 的高级配置
 
 > 我们需要对 `create-react-app` 的默认配置进行自定义，这里我们使用 [craco](https://github.com/gsoft-inc/craco) （一个对 `create-react-app` 进行自定义配置的社区解决方案）。
 
@@ -83,7 +83,7 @@ module.exports = {
 };
 ```
 
-### 4.1 对 Antd 配置自定义主题
+### 对 Antd 配置自定义主题
 
 有了 `craco` 能够自定义默认配置后，自定义主题需要用到类似 `less-loader` 提供的 `less` 变量覆盖功能。我们可以引入 `craco-less` 来帮助加载 `less` 样式和修改变量。
 
@@ -125,7 +125,7 @@ module.exports = {
 
 > 也可以使用 `create-react-app` 提供的 `yarn run eject` 命令将所有内建的配置暴露出来。不过这种配置方式不太建议使用。
 
-## 5. 设置路径别名
+## 设置路径别名
 
 以前设置路径别名时，需要通过 `yarn eject` 把 `webpack` 的配置暴露出来，之后修改 `工程名/config/webpack.config.js` 文件
 
@@ -165,7 +165,7 @@ module.exports = {
 
 > 注意：与在 `webpack.config.js` 的 `resolve` 修改配置不同，而是在 `webpack` 中修改。
 
-# 6. 自定义 eslint 文件配置解决方案
+# 自定义 eslint 文件配置解决方案
 
 首先，自定义的 eslint 配置方案并不是针对 `Antd` 来使用的，而是针对 `create-react-app` 来使用的。方案有多种：
 
@@ -176,7 +176,7 @@ module.exports = {
 3. 在 `react-script 4.x` 版本以下时，也可以使用 `react-app-rewired` 和 `customize-cra` 对 `react-scripts` 手脚架包装一次进行使用，可不对 `react eject` 就可以对项目自定义 `webpack`。
 4. `react-script 4.x` 版本以上，`react17` 官方团队修改了脚手架允许直接在外部声明 `.eslintrc` 文件覆盖 `eslint` 配置。不需要对 `package.json` 和 `react-app-rewired` 和 `customize-cra` 就可用实现 `eslint` 配置。
 
-## 6.1 方案三 `react-app-rewired` 和 `customize-cra`
+## 方案三 `react-app-rewired` 和 `customize-cra`
 
 1. 先安装依赖：`yarn add react-app-rewired customize-cra --save-dev`
 2. 在项目跟目录下创建 `config-overrides.js` 文件，内容如下：
@@ -289,7 +289,7 @@ module.exports = override(
 }
 ```
 
-## 6.2 `react-script 4.x` 方案
+## `react-script 4.x` 方案
 
 > react17 官方团队修改了脚手架允许直接在外部声明 `.eslintrc` 文件覆盖 `eslint` 配置。不需要对 `package.json` 和 `react-app-rewired` 和 `customize-cra` 就可用实现 `eslint` 配置。
 
