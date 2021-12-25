@@ -395,7 +395,7 @@ ReactDOM.render(
 ...
 ```
 
-## 最后 react-redux 的使用
+## 了解 react-redux 的使用
 
 > 其实，上面的实现， `React` 已经帮我们做好了封装，那就是 `react-redux`，专门为 `React` 设计使用的，在使用，与我们自己的 `connect` & `context` 的使用是相似的。
 
@@ -427,7 +427,7 @@ ReactDOM.render(
 ...
 ```
 
-# 组件内的异步操作
+# Redux 内的异步操作
 
 通过之前简单的案例，`redux` 中保存的 `count` 是一个本地定义的数据，但事实，真实开发中，`redux` 中保存的很多数据有可能来自服务器，我们需要进行异步的请求，再将数据保存到 `redux` 中。
 
@@ -442,7 +442,7 @@ ReactDOM.render(
 下面只展示出异步请求数据的组件代码，其他的与之前的相类似：
 
 ``` javascript
-// GetDataByAxios
+// GetDataByAxios.js
 import React, {PureComponent} from 'react';
 import { connect } from "react-redux";
 import {
@@ -516,4 +516,123 @@ export default connect(mapStateToPorps, mapDispatchToProps)(GetDataByAxios);
 如下图：
 
 ![利用中间件](image_3.png)
+
+#### `redux-thunk` 的使用
+
+默认情况下的 `dispatch(action)`，`action` 是一个 javascript 对象。`redux-thunk` 可以是 `dispatch(action函数)`，action **可以是一个函数**。
+
+`action` 函数会被调用，并且会传给这个函数一个 `dispatch` 函数和 `getState` 函数
+- `dispatch` 函数用于我们之后再次派发 `action` 对象
+- `getState` 函数考虑让我们可以便携获取之前的一些状态
+
+在 './store' 入口文件 `index.js` 内，对 `store` 对象进行增强
+
+``` javascript
+// index.js
+...
+- const store = redux.createStore(reducer)
++ const store = redux.createStore(reducer, storeEnhancer)
+...
+```
+
+而这个 `storeEnhancer` 从哪里来呢？
+
+在 `redux` 中有个 `applyMiddleware` 的函数，用来应用一些中间件
+
+``` javascript
+// index.js
+- import {createStore} from 'redux'
++ import {createStore, applyMiddleware} from 'redux'
+// 应用一些中间件
+const storeEnhancer = applyMiddleware(中间件1, 中间件2, 中间件3)
+...
+const store = redux.createStore(reducer, storeEnhancer)
+...
+
+```
+
+当我们想引入 `redux-thunk` 时
+
+``` javascript
+// index.js
+...
++ import thunkMiddleware from 'redux-thunk'
+
+- applyMiddleware(中间件1, 中间件2, 中间件3)
++ const storeEnhancer = applyMiddleware(thunkMiddleware)
+...
+```
+
+---
+
+完整的 `index.js` 更改后代码是：
+
+``` javascript
+// index.js
+import {createStore, applyMiddleware} from 'redux'
+import reducer from './reducer.js'
+import thunkMiddleware from 'redux-thunk'
+
+const storeEnhancer = applyMiddleware(thunkMiddleware)
+const store = createStore(reducer, storeEnhancer)
+
+export default store
+```
+---
+
+这样子，我们就完成了对 `store` 应用 `thunk` 中间件了。之后我们就可以在 `actionCretors.js` 中定义 `action` 函数。
+
+代码如下：
+
+``` javascript
+// actionCretors.js
+...
++ import axios from 'axios'
+...
++ export const getAsyncData = (dispatch, getState) => {
+    // 做一些异步操作，之后通过 dispatch 继续做常规操作
+    axios.get(
+        '/elementTable/list' // 自己定义的请求路径
+    ).then((res) => {
+        dispatch(getTableList(res.data.rows))
+    })
+}
+...
+```
+
+在 `actionCretors.js` 中创建好 `action` 函数后，就可以在组件中，正常使用该 `action` 函数。
+
+代码如下：
+
+``` javascript
+// GetDataByAxios.js
+...
+import {
+    - getTableList,
+    + getAsyncData
+} from "@/store";
+- import axios from 'axios'
+...
+componentDidMount () {
+    - axios.get(
+        '/elementTable/list' // 自己定义的请求路径
+    ).then((res) => {
+        console.log(res);
+        this.props.getTableList(res.data.rows)
+    })
+    + this.props.getAsyncData()
+}
+...
+const mapDispatchToProps = dispatch => {
+    return {
+        getAsyncData: (rows) => {
+            - dispatch(getTableList())
+            + dispatch(getAsyncData) // 注意！这里不再直接调用函数
+        }
+    }
+}
+...
+```
+
+#### `react-saga` 的使用
 
