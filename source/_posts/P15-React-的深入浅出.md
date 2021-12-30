@@ -634,5 +634,126 @@ const mapDispatchToProps = dispatch => {
 ...
 ```
 
+##### redux-devtools 插件
+
+> It can be used as a browser extension (for Chrome, Edge and Firefox), as a standalone app or as a React component integrated in the client app.
+
+chrome 版安装地址【[点这里](https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd)】
+
+其他版本请查阅 (GitHub 地址)[https://github.com/reduxjs/redux-devtools]
+
+安装完毕后，还需要对代码进行增强才能够使用，具体的操作可查阅 (GitHub 地址)[https://github.com/zalmoxisus/redux-devtools-extension]
+
 #### `react-saga` 的使用
+
+在学习 `react-saga` 前，需要先复习一下 `Generator` 生成器函数。
+
+先做特点总结：
+
+1. `function` 函数关键字与函数名之间有一个星号
+2. 函数体内部使用 `yield` 表达式
+3. 返回一个遍历器对象，即内部指针对象
+4. `next`方法的作用是分阶段执行迭代器。`next` 方法返回一个对象，`value` 属性就是当前`yield` 表达式的值，`done` 属性的 `false` 值，表示遍历还没有结束。
+5. 通过向 `next` 方法内传值能向下传递。
+
+----
+
+直接上代码
+
+``` javascript
+// 1. 普通函数的定义
+function f0 () {}
+const result0 = f0()
+console.log(result0)
+
+// 2. 生成器函数的定义
+// 生成器函数
+function* f1 () {}
+const result1 = f1()
+console.log(result1)
+```
+
+上面的代码中，`result0` 和 `result1` 有区别吗？单从函数声明上看区别只是在生成器函数上加了个 “*” 符号（放置位置可选：`function* f1` 或者 `function *f1`）。但是结果却不同而语：
+
+普通函数返回：`undefined`;
+
+生成器函数返回： **iterator 迭代器**;
+
+使用时也与平常的函数差别甚大。具体迭代器如何使用，如何返回数据，继续下文代码展示：
+
+``` javascript
+// 接上文代码
+// 2. 生成器函数的定义
+// 生成器函数
+function* f1 () {
+    yield "Hello";
+    yield "World";
+    yield "BLJJ-DBLD"
+}
+// iterator：迭代器
+const result1 = f1()
+// 3. 使用迭代器
+const res1 = result1.next()
+console.log(res1)
+```
+
+上文代码末尾的 `console` 输出什么呢？ 答案是输出一个对象：`{value: "Hello", done: false}`。
+
+其中 `value` 代表的含义就是输出的结果。而 `done` 的布尔值代表什么含义呢？通过代码的继续执行，我们就可以揭晓了~
+
+``` javascript
+// 3. 使用迭代器
+// 通过调用 next，就会消耗一次迭代器
+const res1 = result1.next() // {value: "Hello", done: false}
+const res2 = result1.next() // {value: "World", done: false}
+const res3 = result1.next() // {value: "BLJJ-DBLD", done: false}
+const res4 = result1.next() // {value: "", done: true}
+```
+
+从执行上可以看出，当迭代器消耗完毕后，再执行一次时， `done` 的结果就等于 `true`，因此我们可以得出结论， `done` 是用来**判断该迭代器是否结束**。
+
+有趣的事情发生了，加入我们使用 `Generator + Promise`，配合 `setTimeout` 设计假的请求时又该如何的样子呢？
+
+``` javascript
+function* bar () {
+    console.log(1)
+    const result = yield new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve('Hello Generator')
+        }, 3000)
+    })
+    console.log(result)
+}
+const it = bar()
+```
+
+此时，我们如何让 `result` 获取到 `resolve` 的值呢？
+
+第一步，我们得清楚知道，迭代器消耗一次时，生成器函数内部都是如何在执行的：
+
+``` javascript
+// 接上文代码
+// 执行 it 迭代器,会发生什么呢？
+it.next()
+// 此时会输出：
+// 1
+// Promise 对象
+```
+
+从上面代码可知，当消耗一次迭代器时，执行了 `log(1)`，返回了 Promise 对象。后续的 `result` 赋值和打印 `result` 的值并未执行。此时，我们如此写时：
+
+``` javascript
+it.next().value.then((res) => {
+    it.next(res)
+})
+// 此时总体来会输出：
+// 1
+// 延缓 3000ms 后...
+// Hello Generator
+```
+
+通过上面代码的执行， `Generator` 生成器函数内部执行的过程，我们大致就清楚了：
+
+1. 当消耗一次迭代器时，只会执行当前 `yield` 之前及当前的语句， `result = ` 也当属于此次 `yield` 后的执行内容。
+2. 当再次执行 `it.next()` 方法时，向其内传输数据，将会赋值给 `result`。
 
