@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "watch": "hexo generate --watch",
+    "new_page": "hexo new",
     "build": "hexo generate",
     "clean": "hexo clean",
     "deploy": "hexo deploy",
