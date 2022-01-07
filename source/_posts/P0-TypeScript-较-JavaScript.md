@@ -3,8 +3,8 @@ title: P0 TypeScript 较 JavaScript
 tags: []
 categories:
   - TypeScript
+abbrlink: 396870629
 date: 2022-01-05 21:37:26
-abbrlink:
 ---
 
 # TypeScript 较 JavaScript

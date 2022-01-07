@@ -3,8 +3,8 @@ title: P2 编写的第一个 TypeScript 程序
 tags: []
 categories:
   - TypeScript
+abbrlink: 3961060538
 date: 2022-01-05 21:48:08
-abbrlink:
 ---
 
 # 编写的第一个 TypeScript 程序
