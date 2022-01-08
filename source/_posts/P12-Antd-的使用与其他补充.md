@@ -121,7 +121,7 @@ module.exports = {
 
 这里利用了 `less-loader` 的 `modifyVars` 来进行主题配置，变量和其他配置方式可以参考 配置主题 文档。修改后重启 `yarn start`，如果看到一个红色的按钮就说明配置成功了。
 
-![自定义主题色](file://C:/Users/Jamediii/Documents/Gridea/post-images/1619444980804.png)
+![自定义主题色](image_4.png)
 
 > 也可以使用 `create-react-app` 提供的 `yarn run eject` 命令将所有内建的配置暴露出来。不过这种配置方式不太建议使用。
 
