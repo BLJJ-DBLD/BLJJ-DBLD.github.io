@@ -5,8 +5,7 @@
   "scripts": {
     "create_page": "hexo new",
     "clean": "hexo clean",
-    "generate": "hexo generate",
-    "publish": "hexo deploy",
+    "publish": "hexo generate & hexo deploy",
     "server": "hexo server",
     "hidden_pages": "hexo hidden:list"
   },
