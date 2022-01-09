@@ -7,6 +7,7 @@
 
   .archive-item
     margin-left 2rem
+    position relative
 
 .archive-item-link
     display inline-block
@@ -35,3 +36,19 @@
 
     .dark-theme & 
       color $dark-font-secondary-color
+
+.archive-item-categories
+  display block
+  font-size: 12px
+  position: absolute
+  right: 0
+  top: 15px
+  max-width: 40%
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+
+  .label
+    & + .label
+      &::before
+        content ' - '

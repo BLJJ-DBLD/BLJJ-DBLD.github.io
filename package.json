@@ -3,12 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "new_page": "hexo new",
+    "create_page": "hexo new",
     "clean": "hexo clean",
     "generate": "hexo generate",
     "publish": "hexo deploy",
     "server": "hexo server",
-    "my_hidden_pages": "hexo hidden:list"
+    "hidden_pages": "hexo hidden:list"
   },
   "hexo": {
     "version": "5.4.0"

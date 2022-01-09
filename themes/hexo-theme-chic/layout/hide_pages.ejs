@@ -1,0 +1,48 @@
+<%#
+
+this page will judge whether current page is 'hide_pages.'
+url:'http://localhost:4000/hide_pages/' return false.
+url:'http://localhost:4000/hide_pages/test/' return true.
+
+if you enter 'hide_pages' page by click link will show all categories.
+otherwise if you enter 'categories' by click post header link will show the single hide_pages of this post.
+
+how to add a hide_pages page:
+
+    1. hexo new page "hide_pages"
+    2. cd source/hide_pages/index.md
+    3. add layout pattern like this:
+    ---
+    title: '''hide_pages'''
+    date: 2019-06-09 09:56:49
+    layout: hide_pages
+    ---
+
+ %>
+<div class="container">
+    <div class="post-wrap categories">
+        <h2 class="post-title">Hide Pages</h2>
+        <div class="categories-card">
+            <% site.hidden_posts.forEach((hide_pages_item, index = 0)=>{ %>
+                <%# console.log("hehe") %>
+                <% if(++index <= 5){ %>
+                    <article class="archive-item">
+                        <a class="archive-item-link"
+                            href="<%- url_for(hide_pages_item.path) %>">
+                            <%- hide_pages_item.title %>
+                        </a>
+                        <% if (hide_pages_item.categories.length) { %>
+                            <span class="archive-item-categories">
+                                cg: 
+                                <% hide_pages_item.categories.forEach(category_item=>{ %>
+                                    <span class="label"><%- category_item.name %></span>
+                                <% }) %>
+                            </span>
+                        <% } %>
+                    </article>
+                <% } %>
+            <% }) %>
+        </div>
+
+    </div>
+</div>

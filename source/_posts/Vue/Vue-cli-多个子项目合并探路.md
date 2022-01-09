@@ -1,8 +1,8 @@
 ---
 title: Vue CLI4.x 多个子项目合并探路
-tags: []
+tags: ["Vue CLI", "vue@3"]
 categories:
-  - Vue CLI
+  - Vue
 abbrlink: 3044239623
 date: 2021-12-31 14:57:22
 ---
