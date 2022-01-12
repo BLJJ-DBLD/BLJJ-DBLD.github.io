@@ -5,8 +5,8 @@ tags:
 categories:
   - Vue
 hidden: true
+abbrlink: 152167171
 date: 2022-01-12 15:16:04
-abbrlink:
 ---
 
 # Vue 响应式原理
@@ -63,4 +63,14 @@ methodsToPatch.forEach(function (method) {
 
 总结
 
-`Vue` 采用数据劫持结合发布-订阅模式的方法，通过 `Object.defineProperty` 来劫持各个属性的 `getter`、`setter`。在数据变化时发布消息给订阅者，触发相应的监听回调
+`Vue` 采用数据劫持结合发布-订阅模式的方法，通过 `Object.defineProperty` 来劫持各个属性的 `getter`、`setter`。在数据变化时发布消息给订阅者，触发相应的监听回调。
+
+![new MVVM() 所发生的事儿](image_2.png)
+
+- `Observer`: 遍历数据对象，给所有属性上加 `setter` 和 `getter`，监听数据的变化
+- `Compile`: 解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图。
+
+> `Watcher` 订阅者是 `Observer` 和 `Compile` 之间通信的桥梁，主要做的事情有：
+> - 在自身实例化时往属性订阅器 `Dep` 里添加自己
+> - 待属性变动 `dep.notice()` 通知时，调用自身的 `update()` 方法，并触发 `Compile` 中绑定的回调
+
