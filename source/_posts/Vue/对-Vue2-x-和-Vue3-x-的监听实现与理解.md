@@ -47,7 +47,7 @@ index.html 中对 index.js 做引入，并且创建标签 `<h2/>`
 // 模拟 Vue 实例中 data 属性
 let data = {
     msg: 'hello',
-    obj: {}
+    list: []
 }
 
 // 模拟 Vue 实例中的 vm 对象
@@ -75,14 +75,14 @@ Object.defineProperty(vm, 'msg', {
 
 ![绑定属性值是基本类型](image_1.png)
 
-此时，我们就对 `Object.defineProperty` 有了一个基本的使用了。当 `data` 中有多个属性时，我们可以对 `data` 的属性做遍历添加监听器。
+此时，我们就对 `Object.defineProperty` 有了一个基本的使用了。当 `data` 中有多个属性时，我们可以将 `Object.defineProperty` 封装到一个函数中，对 `data` 的属性做遍历添加监听器。
 
 ``` javascript
 // 模拟 Vue 实例中 data 属性
 let data = {
     msg: 'hello',
     name: '布利啾啾 DBLD',
-    obj: {}
+    list: []
 }
 
 // 模拟 Vue 实例中的 vm 对象
@@ -109,4 +109,5 @@ Object.keys(data).forEach(key => {
 })
 ```
 
-这样子就实现了对多个属性的监听器，但是，我现在在控制台输入 `vm.obj.msg = 'hello world'` 时，并不能监听到 `obj` 属性的变化。这是因为我们并没有对 `obj` 做到监听。此时就得递归遍历这类属性，进行深度监听了，所以需要将添加监听器的过程封装起来。
+我在控制台输入 `vm.list.push('hello')` 时，并不能监听到 `list` 属性的变化。
+此时，`data` 中的属性值都是基本类型，但如果是 `object` 类型呢？此时就得递归遍历这类属性，进行深度监听了，所以需要将添加监听器的过程封装起来。
