@@ -1,5 +1,5 @@
 ---
-title: Vue 进阶篇
+title: Vue 进阶篇 - Vue 响应式原理
 tags:
   - 深入原理
 categories:
@@ -74,3 +74,60 @@ methodsToPatch.forEach(function (method) {
 > - 在自身实例化时往属性订阅器 `Dep` 里添加自己
 > - 待属性变动 `dep.notice()` 通知时，调用自身的 `update()` 方法，并触发 `Compile` 中绑定的回调
 
+那 `Object.defineProperty` 的用法是什么，优缺点是什么？
+
+优点：
+- 可以检测对象中数据发生的修改
+缺点：
+- 对于复杂的对象，层级很深的话，需要去做深度监听（即递归到底）
+- 对于一个对象中，如果新增/删除属性，`Object.definedProperty` 是不能观测到的。但是可以通过 `vue.set()` 和 `vue.delete()` 来实现的。
+
+``` javascript
+// 模拟 Vue 中 data 实现
+let data = {
+  msg: 'hello'
+}
+// 模拟 Vue 的实例
+let vm = {}
+// 数据劫持：当访问或者设置 vm 中的成员的时候，可以设置一些干预操作
+// defineProperty 有三个参数：param1：对象；param2：为vm对象添加的属性；param3：属性描述符
+Object.defineProperty(vm, 'msg', {
+  // 可枚举（可遍历）
+  enumerable: true,
+  // 可配置（可以使用 delete 删除，可以通过 defineProperty 重新定义）
+  configurable: true,
+  // 访问器，当获取值得时候执行
+  get () {
+    console.log('get', data.msg)
+    return data.msg
+  },
+  set (newVal) {
+    console.log('set', newVal)
+    if (newVal === data.msg) {
+      return;
+    }
+    data.msg = newVal
+    // 数据变更，更新 DOM 的值
+    document.getElementById('#app').textContent = data.msg
+  }
+})
+
+// 测试：当 vm.msg 改变时，视图中的数据随之改变
+vm.msg = 'Hello World'
+console.log(vm.msg) // 'Hello World'
+```
+
+Vue3.x响应式数据原理
+
+`Vue3.x` 改用 `Proxy` 代替 `Object.defineProperty`。因为 `Proxy` 可以直接监听 **对象和数组** 的变化，并且有多达 13 种拦截方法。并且作为新标准将受到浏览器厂商重点持续的性能优化。
+
+常见的几种拦截方法有：
+
+- handler.get(): 属性读取操作的捕捉器。
+- handler.set(): 属性设置操作的捕捉器。
+- handler.deleteProperty(): delete 操作符的捕捉器。
+...等 [其他拦截器](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
+
+Q: `Proxy` 只会代理对象的第一层，那 `Vue3.x` 是如何处理的呢？
+
+A: 判断当前 `Reflect.get` 的返回值是否为 `object`，如果是则通过 `reactive` 方法做代理，这样子就实现了深度监听。
