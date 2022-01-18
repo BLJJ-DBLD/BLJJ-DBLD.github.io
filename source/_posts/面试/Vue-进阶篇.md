@@ -128,6 +128,308 @@ Vue3.x响应式数据原理
 - handler.deleteProperty(): delete 操作符的捕捉器。
 ...等 [其他拦截器](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy)
 
-Q: `Proxy` 只会代理对象的第一层，那 `Vue3.x` 是如何处理的呢？
+> Q: `Proxy` 只会代理对象的第一层，那 `Vue3.x` 是如何处理的呢？
+>
+> A: 判断当前 `Reflect.get` 的返回值是否为 `object`，如果是则通过 `reactive` 方法做代理，这样子就实现了深度监听。
 
-A: 判断当前 `Reflect.get` 的返回值是否为 `object`，如果是则通过 `reactive` 方法做代理，这样子就实现了深度监听。
+> Q: 监测数组的时候可能触发多次 `get/set`，那如何防止触发多次呢？
+>
+> A: 
+>
+> 1. 判断 `key` 是否为当前被代理对象 `target` 自身属性；
+> 2. 判断旧值与新值是否相等
+>
+> 只有满足以上两个条件之一时，才有可能执行trigger
+
+``` javascript
+// 模拟 Vue 中的 data 选项 
+let data = {
+  msg: 'hello',
+  count: 0 
+}
+// 模拟 Vue 实例
+let vm = new Proxy(data, {
+  // 当访问 vm 的成员会执行
+  get (target, key) {
+    console.log('get, key: ', key, target[key])
+    return target[key]
+  },
+  // 当设置 vm 的成员会执行
+  set (target, key, newValue) {
+    console.log('set, key: ', key, newValue)
+    if (target[key] === newValue) {
+      return
+    }
+    target[key] = newValue
+    document.querySelector('#app').textContent = target[key]
+  }
+})
+
+// 测试
+vm.msg = 'Hello World'
+console.log(vm.msg)
+```
+
+## 总结
+
+![数据监听-发布订阅模式](image_2.png)
+
+- Vue
+  - 记录传入的选项，设置 `$data/$el`
+  - 把 `data` 的成员注入到 `Vue` 实例
+  - 负责调用 `Observer` 实现数据响应式处理(数据劫持)
+  - 负责调用 `Compiler` 编译指令/插值表达式等
+- Observer
+  - 数据劫持
+  - 负责把 `data` 中的成员转换成 `getter/setter`
+  - 负责把多层属性转换成 `getter/setter`
+  - 如果给属性赋值为新对象，把新对象的成员设置为 `getter/setter`
+  - 添加 `Dep` 和 `Watcher` 的依赖关系
+  - 数据变化发送通知
+- Compiler
+  - 负责编译模板，解析指令/插值表达式
+  - 负责页面的首次渲染过程
+  - 当数据变化后重新渲染
+- Dep
+  - 收集依赖，添加订阅者(`watcher`)
+  - 通知所有订阅者
+- Watcher
+  - 自身实例化的时候往 `dep` 对象中添加自己
+  - 当数据变化 `dep` 通知所有的 `Watcher` 实例更新视图
+
+# 发布/订阅模式和观察者模式
+
+## 发布/订阅模式
+
+- 发布者
+- 信号中心
+- 订阅者
+
+> 我们假定，存在一个“信号中心”，某个任务执行完成，就向信号中心“发布（publish）”一个信号，其他任务可以向信号中心“订阅（subscribe）”这个信号，从而知道自己什么时候开始执行。这就叫做“发布/订阅模式（publish-subscribe pattern）”
+
+Vue 的自定义事件
+
+``` javascript
+// eventBus.js
+// 事件中心
+let eventHub = new Vue()
+
+// ComponentA.vue
+// 发布者
+addTodo: function () {
+  // 发布消息(事件)
+  eventHub.$emit('add-todo', { text: this.newTodoText }) 
+  this.newTodoText = ''
+}
+// ComponentB.vue
+// 订阅者
+created: function () {
+  // 订阅消息(事件)
+  eventHub.$on('add-todo', this.addTodo)
+}
+```
+
+模拟 Vue 自定义事件的实现
+
+``` javascript
+// 实现 EventEmitter
+class EventEmitter {
+    constructor () {
+        // { eventType: [ handler1, handler2 ] }
+        this.subs = {}
+    }
+    $on (eventType, fn) {
+        this.subs[eventType] = this.subs[eventType] || []
+        this.subs[eventType].push(fn)
+    }
+    $emit (eventType, data) {
+        if (this.subs[eventType]) {
+            this.subs[eventType].forEach(fn => {
+                fn(data)
+            })
+        }
+    }
+    $off (eventType, fn) {
+        if (this.subs[eventType]) {
+            if (fn) {
+                const findIndex = this.subs[eventType].findIndex
+                if (findIndex !== -1) {
+                    this.subs[eventType].splice(findIndex, 1)
+                }
+            } else {
+                delete this.subs[eventType]
+            }
+        }
+    }
+}
+```
+
+## 观察者模式
+
+- 观察者（订阅者）：`Wather`
+	- `update()`：当事件发生时，具体要做的事情
+- 目标（发布者）：`Dep`
+	- `subs` 数组：存储所有的观察者
+	- `addSub()`：添加观察者
+	- `notify()`：当事件发生时，调用所有的观察者的 `update()` 方法
+- 没有事件中心
+
+``` javascript
+// 目标（发布者）
+// Dependency
+class Dep {
+	constructor () {
+		this.subs = []
+	}
+	// 添加观察者
+	addSub (sub) {
+		if (sub && sub.update) {
+			this.subs.push(sub)
+		}
+	}
+	// 通知所有观察者
+	notify () {
+		this.subs.forEach(sub => sub.update())
+	}
+}
+
+// 观察者（订阅者）
+class Watcher {
+	update () {
+		console.log('update')
+	}
+}
+
+// 测试
+let dep = new Dep()
+let watcher = new Watcher()
+dep.addSub(watcher) 
+dep.notify()
+```
+
+## 总结
+
+- **观察者模式** 是具体目标调度，如当事件触发，`Dep` 就会去调用观察者的方法，所以观察者模式的 *订阅者* 和 *发布者* 之间是存在依赖的
+- **发布/订阅模式** 是由统一调度中心调用，因此发布者和订阅者不需要知道对方的存在
+
+![两种模式的区别](image_3.png)
+
+# 为什么使用 Virtual DOM
+
+- 手动操作 `DOM` 比较麻烦，还需要考虑浏览器兼容性问题，虽然有 `jQuery` 等库简化 `DOM` 操作，但是随着项目的复杂 DOM 操作复杂提升
+- 为了简化 `DOM` 的复杂操作于是出现了各种 `MVVM` 框架，`MVVM` 框架解决的是视图与状态的同步问题
+- 为了简化视图的操作，我们使用了模板引擎，但是模板引擎没有解决跟踪状态变化的问题，于是 `Virtual DOM` 出现
+- `Virtual DOM` 的好处是当状态改变时不需要立即更新 `DOM`，只需要创建一个虚拟树来描述 `DOM`，`Virtual DOM` 内部将弄清楚如何有效（`diff`）的更新 `DOM`
+- 虚拟 `DOM` 可以维护程序的状态，跟踪上一次的状态
+- 通过比较前后两次状态的差异更新真实 `DOM`
+
+## 虚拟 DOM 的作用
+
+- 维护视图和状态的关系
+- 复杂视图情况下提升渲染性能
+- 除了渲染 `DOM` 外，还可以实现 `SSR(Nuxt.js)`、原生应用（`Wexx/React Native`）、小程序（`mpvue/uni-app`）等
+
+![Virtual DOM](image_4.png)
+
+## VDOM：三个部分
+
+- 虚拟节点类：将真实 `DOM` 节点用 `js` 对象的形式进行展示，并提供 `render` 方法，将虚拟节点渲染成真实 `DOM`
+- 节点 `diff` 比较：对虚拟节点进行 `js` 层面的计算，并将不同的操作都记录到 `patch` 对象
+- `re-render`：解析 `patch` 对象，进行 `re-render`
+
+### 节点 `diff` 比较详细过程：
+
+- 同级比较，再比较子节点
+- 先判断一方有子节点一方没有子节点的情况(如果新的 `children` 没有子节点，将旧的子节点移除)
+- 比较都有子节点的情况(**核心 `Diff`**)
+
+正常 `Diff` 两个树的时间复杂度是 `O(n^3)`，但实际情况下我们很少会进行跨层级的移动 `DOM`，所以 Vue 将 `Diff` 进行了优化，从 `O(n^3) -> O(n)`，只有当新旧 `children` 都为多个子节点时才需要用 **核心 `Diff`** 算法进行同层级比较。
+
+Vue2.x 的 **核心 `Diff`** 算法采用的了两端比较的算法，同时从新旧 `children` 的两端开始进行比较，借助 `key` 值找到可复用的节点，再进行相关操作。相比 React 的 `diff` 算法，同样情况下可以减少移动节点次数，减少不必要的性能损耗，更加的优雅。
+
+Vue3.x 在创建 `VNode` 时就确定其类型，以及在 `mount/patch` 的过程中采用位运算来判断一个 `VNode` 的类型，在这个基础之上再配合 **核心 `Diff`** 算法，使得性能上较 Vue2.x 有了提升
+
+####  `key` 属性的作用
+
+- 新旧 `children` 中的节点只有顺序是不同的时候，最佳的操作应该是通过移动元素的位置来达到更新的目的
+- 需要在新旧 `children` 的节点中保存映射关系，以便能够在旧 `children` 的节点中找到可复用的节点。`key` 也就是`children` 中节点的唯一标识
+
+### 补充1：VDOM 的必要性
+
+- **创建真实 `DOM` 的代价高**：真实 `DOM` 节点 `node` 实现的属性很多，而 `vnode` 仅仅实现一些必要的属性，相比较，创建一个 `vnode` 的成本比较低
+- **触发多次浏览器重绘及回流**：使用 `vnode`，相当于加了一个缓冲，让一次数据的变动所带来的所有 `node` 变化，现在 `vnode` 中进行修改，然后 `diff` 之后对所有产生差异的节点集中一次对	`DOM tree` 进行修改，以减少浏览器的重绘与回流
+
+#### 重绘（Repaint）与回流（Reflow）
+
+- **重绘**：是当节点需要更改外观而不影响布局的，比如改变 `color` 就叫做重绘
+- **回流**：是布局或者几何属性需要改变就称为回流
+
+> 回流必定会发生重绘，重绘不一定引发回流。回流所需的成本比重绘高得多，改变深层次的节点很可能导致父节点的一系列回流。
+
+**很多人不知道的是，重绘和回流其实和 `Event loop` 有关**
+
+- 当 `Event loop` 执行完 `Microtasks` 后，会判断 `document` 是否需要更新，因为浏览器是 `60Hz` 的刷新率，每 `16ms` 才会更新一次。
+- 然后判断是否有 `resize` 或者 `scroll`，有的话就会触发事件，所以 `resize` 和 `scroll` 事件也是至少 `16ms` 才会触发一次，并且自带节流功能
+- 判断是否触发了 `media query`
+- 更新动画并且发送事件
+- 判断是否有全屏操作事件
+- 执行 [`requestAnimationFrame`](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestAnimationFrame) 回调
+- 执行 [`IntersectionObserver`](https://developer.mozilla.org/zh-CN/docs/Web/API/IntersectionObserver) 回调，该方法用于判断元素是否可见，可以用于懒加载上，但是兼容性不好
+- 更新界面
+
+以上就是一帧中可能会做的事情。如果在一帧中有空闲时间，就会去执行 [`requestIdleCallback`](https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback) 回调
+
+所以以下几个动作可能会导致性能问题：
+- 改变 `window` 大小
+- 改变字体
+- 添加或删除样式
+- 文字改变
+- 定位或者浮动
+- 盒模型
+
+常见的引起重绘的属性
+
+- color
+- border-style
+- border-radius
+- background
+- background-image
+- background-position
+- background-repeat
+- background-size
+- outline
+- outline-color
+- outline-style
+- outline-width
+- box-shadow
+- visibility
+- text-decoration
+
+常见引起回流属性和方法
+
+- 添加或者删除可见的 `DOM` 元素；
+- 元素尺寸改变——边距、填充、边框、宽度和高度
+- 内容变化，比如用户在 `input` 框中输入文字
+- 浏览器窗口尺寸改变——`resize` 事件发生时
+- 计算 `offsetWidth` 和 `offsetHeight` 属性
+- 设置 `style` 属性的值
+
+减少重绘和回流
+- 使用 `translate` 代替 `top`
+- 使用 `visibility` 代替 `display: none`，前者只会引起重绘，后者会引发回流（改变了布局）
+- 不要使用 `table` 布局，可能因为一个很小的改动会造成整个 `table` 的重新布局
+- 动画实现的速度的选择，动画速度越快，回流次数越多。也可以选择使用 `requestAnimationFrame`
+- `CSS` 选择符是从右往左匹配查找，避免 `DOM` 层级过深
+- 将频繁运行的动画变为图层，图层能够阻止该节点回流影响别的元素。比如对于 `video` 标签，浏览器会自动将该节点变为图层。
+
+
+### 补充2：vue 为什么采用 vdom ？
+
+> 引入 `Virtual DOM` 在性能方面的考量仅仅是一方面。
+
+vue 之所以引入 `Virtual DOM`，更重要的原因是为了解耦 `HTML` 依赖，这带来了两个非常重要的好处：
+
+1. 不再依赖 `HTML` 解析器进行模板解析，可以进行更多的 `AOT` 工作提高运行时效率：通过模板 `AOT` 编译，Vue 的运行时体积可以进一步压缩，运行时效率	可以进一步提升。
+2. 可以渲染到 `DOM` 以外的平台，实现 `SSR`，同时渲染这些高级特性，`weex` 等框架应用的就是这一特性。
+
+综上，`Virtual DOM` 在性能上的收益并不是最主要的，更重要的是它使得 `vue` 具备了现代框架应有的高级特性。
