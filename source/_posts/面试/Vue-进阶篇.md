@@ -117,7 +117,7 @@ vm.msg = 'Hello World'
 console.log(vm.msg) // 'Hello World'
 ```
 
-Vue3.x响应式数据原理
+## Vue3.x响应式数据原理
 
 `Vue3.x` 改用 `Proxy` 代替 `Object.defineProperty`。因为 `Proxy` 可以直接监听 **对象和数组** 的变化，并且有多达 13 种拦截方法。并且作为新标准将受到浏览器厂商重点持续的性能优化。
 
@@ -433,3 +433,248 @@ vue 之所以引入 `Virtual DOM`，更重要的原因是为了解耦 `HTML` 依
 2. 可以渲染到 `DOM` 以外的平台，实现 `SSR`，同时渲染这些高级特性，`weex` 等框架应用的就是这一特性。
 
 综上，`Virtual DOM` 在性能上的收益并不是最主要的，更重要的是它使得 `vue` 具备了现代框架应有的高级特性。
+
+# Vue 和 React 的技术选型
+
+相同点：
+1. 数据驱动页面，提供响应式的视图组件
+2. 都有 `Virtual DOM`，组件化开发，实现了 `props` 传参进行父子组件之间传递数据，都实现了 `WebComponents` 规范
+3. 数据流动单向，都支持服务器的渲染 `SSR`
+4. 都有支持 `Native` 的方法，React 有 `React native`，Vue 有 `Weex`
+
+不同点：
+1. 数据绑定：
+	- Vue 实现了双向的数据绑定
+	- React 数据流动是单向的
+2. 数据渲染：
+	- 大规模的数据渲染时，React 更快
+3. 使用场景：
+	- React 配合 Redux 架构适合大规模多人协作复杂项目，Vue 更适合小快项目
+4. 开发风格：
+	- React 推荐做法 jsx + inline style 把 html 和 css 都写在 js 中
+	- Vue 采用 webpack + vue-loader 单文件组件格式。
+
+
+## 为什么 React 比 Vue 更适合大型应用？
+
+1. 大型项目的庞大带来的是代码优化以及性能优化。
+- React 提倡的更细粒度的封装，带来的组件的复用性提高。
+- 更高自由度的编写（几乎无 `api`）可以为手动优化性能带来更大的便利性
+
+2. React 社区的活跃性
+- 这点会反复提及，因为这点更加重要
+- 社区提供了多样性的解决方案和更多的选择，这对于一个大型项目（大量的坑）来说也是至关重要的
+
+> 但是这些问题，经过时间的沉淀，Vue 终会解决，并且现在也不差。
+
+# nextTick
+
+> nextTick 可以让我们在下次 `DOM` 更新循环结束后执行延迟回调，用于获得更新后得 `DOM`
+
+`nextTick` 主要使用了 宏任务 和 微任务。根据执行环境分别尝试采用。
+- `Promise`
+- `MutationObserver`
+- `setImmediate`
+- 如果以上都不行则采用 `setTimeout`
+
+> 定义了一个异步方法，多次调用 `nextTick` 会将方法存入队列中，通过这个异步方法清空当前队列
+
+## Event Loop
+
+### JS 中的 Event Loop
+
+> 总所周知 `JS` 是门非阻塞单线程语言，因为在最初 `JS` 就是为了和浏览器交互而诞生的。如果 `JS` 是门多线程的语言，我们在多线程中处理 `DOM` 就可能发生问题（一个线程中新加节点，另一个线程中删除节点）
+
+`JS` 在执行的过程中会产生执行环境，这些执行环境会被顺序的加入到执行栈中。如果遇到异步的代码，会被挂起并加入到 `Task`（有多种 `task`） 队列中。一旦执行栈为空，`Event Loop` 就会从 `Task` 队列中拿出需要执行的代码并放入执行栈中执行，所以本质上来说 `JS` 中的异步还是同步行为
+
+> 不同的任务源会被分配到不同的 `Task` 队列中，任务源可以分为 微任务（`microtask`） 和 宏任务（`macrotask`）。在 `ES6` 规范中，`microtask` 称为 `jobs`，`macrotask` 称为 `task`
+
+简单的例子
+
+``` javascript
+console.log('script start');
+
+setTimeout(function() {
+  console.log('setTimeout');
+}, 0);
+
+new Promise((resolve) => {
+    console.log('Promise')
+    resolve()
+}).then(function() {
+  console.log('promise1');
+}).then(function() {
+  console.log('promise2');
+});
+
+console.log('script end');
+
+// script start -> Promise -> script end -> promise1 -> promise2 -> setTimeout
+```
+
+![JS 执行过程](image_5.png)
+
+微任务：
+- `process.nextTick`
+- `promise`
+- `Object.observe`
+- `MutationObserver`
+
+宏任务：
+- `script`
+- `setTimeout`
+- `setInterval`
+- `setImmediate`
+- `I/O`
+- `UI rendering`
+
+> 宏任务中包括了 `script`，浏览器会先执行一个宏任务，接下来有异步代码的话就先执行微任务。
+
+#### 正确的一次 `Event Loop` 顺序是这样的
+
+- 执行同步代码，这属于宏任务
+- 执行栈为空，查询是否有微任务需要执行
+- 执行所有微任务
+- 必要的话渲染 UI
+- 然后开始下一轮 `Event Loop`，执行宏任务中的异步代码
+
+> 通过上述的 `Event Loop` 顺序可知，如果宏任务中的异步代码有大量的计算并且需要操作 DOM 的话，为了更快的响应界面响应，我们可以把操作 `DOM` 放入微任务中
+
+### Node 中的 Event Loop
+
+`Node` 中的 `Evenet Loop` 和浏览器的不同。而是分为  **6个阶段**，它们会按照顺序反复运行
+
+``` bash
+   ┌───────────────────────┐
+┌─>│        timers         │
+│  └──────────┬────────────┘
+│  ┌──────────┴────────────┐
+│  │     I/O callbacks     │
+│  └──────────┬────────────┘
+│  ┌──────────┴────────────┐
+│  │     idle, prepare     │
+│  └──────────┬────────────┘      ┌───────────────┐
+│  ┌──────────┴────────────┐      │   incoming:   │
+│  │         poll          │<──connections───     │
+│  └──────────┬────────────┘      │   data, etc.  │
+│  ┌──────────┴────────────┐      └───────────────┘
+│  │        check          │
+│  └──────────┬────────────┘
+│  ┌──────────┴────────────┐
+└──┤    close callbacks    │
+   └───────────────────────┘
+```
+
+
+
+timers
+- `timers` 阶段会执行 `setTimeout` 和 `setInterval`
+- 一个 `timer` 指定的时间并不是准确时间，而是在达到这个时间后尽快执行回调，可能会因为系统正在执行别的事务而延迟
+
+I/O
+- `I/O` 阶段会执行除了 `close` 事件、定时器和 `setImmediate` 的回调
+
+poll
+- `poll` 阶段很重要，这一阶段中，系统会做两件事
+	- 执行到点的定时器
+	- 执行 `poll` 队列中的事件
+- 并且当 `poll` 中没有定时器的情况下，会发生以下两件事
+	1. 如果 `poll` 队列不为空，会遍历回调队列并同步执行，直到队列为空或者系统限制
+	2. 如果 `poll` 队列为空，会有两件事发生
+		- 如果有 `setImmediate` 需要执行，`poll` 阶段会停止并且进入到 `check` 阶段执行 `setImmediate`
+		- 如果没有 `setImmediate` 需要执行，会等待回调被加入到队列中并立即执行回调
+		- 如果有别的定时器需要被执行，会回到 `timer` 阶段执行回调。
+
+check
+- `check` 阶段执行 `setImmediate`
+
+close callbacks
+- `close callbacks` 阶段执行 `close` 事件
+- 并且在 `NodeJS` 中，有些情况下的定时器执行顺序是随机的
+
+``` javascript
+setTimeout(() => {
+    console.log('setTimeout');
+}, 0);
+setImmediate(() => {
+    console.log('setImmediate');
+})
+// 这里可能会输出 setTimeout，setImmediate
+// 可能也会相反的输出，这取决于性能
+// 因为可能进入 event loop 用了不到 1 毫秒，这时候会执行 setImmediate
+// 否则会执行 setTimeout
+```
+
+> 上面介绍的都是 `macrotask` 的执行情况，`microtask` 会在以上每个阶段完成后立即执行
+
+``` javascript
+setTimeout(()=>{
+    console.log('timer1')
+
+    Promise.resolve().then(function() {
+        console.log('promise1')
+    })
+}, 0)
+
+setTimeout(()=>{
+    console.log('timer2')
+
+    Promise.resolve().then(function() {
+        console.log('promise2')
+    })
+}, 0)
+
+// 以上代码在浏览器和 node 中打印情况是不同的
+// 浏览器中一定打印 timer1, promise1, timer2, promise2
+// node 中可能打印 timer1, timer2, promise1, promise2
+// 也可能打印 timer1, promise1, timer2, promise2
+```
+
+`NodeJS` 中的 `process.nextTick` 会先于其他 `microtask` 执行
+
+``` javascript
+setTimeout(() => {
+ console.log("timer1");
+
+ Promise.resolve().then(function() {
+   console.log("promise1");
+ });
+}, 0);
+
+process.nextTick(() => {
+ console.log("nextTick");
+});
+// nextTick, timer1, promise1
+```
+
+# 生命周期
+
+![Vue 生命周期解释图](image_6.png)
+
+文字解释版：
+
+*init*：
+- `initLifecycle/Event`，往 `vm` 上挂载各种属性
+- `callHook: beforeCreated`: 实例刚创建
+- `initInjection/initState`: 初始化注入和 `data` 响应性
+- `created`: 创建完成，属性已经绑定， 但还未生成真实 `dom`
+- 进行元素的挂载： `$el / vm.$mount()`
+- 是否有 `template`: 解析成 `render function`
+  - `*.vue` 文件: `vue-loader` 会将 `<template>` 编译成 `render function`
+- `beforeMount`: 模板编译/挂载之前
+- 执行 `render function`，生成真实的 `dom`，并替换到 `dom tree` 中
+- `mounted`: 组件已挂载
+
+*update*：
+- 执行 `diff` 算法，比对改变是否需要触发 UI 更新
+- `flushScheduleQueue`
+- `watcher.before`: 触发 `beforeUpdate` 钩子 - `watcher.run()`: 执行 `watcher` 中的 `notify`，通知所有依赖项更新 UI
+- 触发 `updated` 钩子: 组件已更新
+- `actived / deactivated(keep-alive)`: 不销毁，缓存，组件激活与失活
+- `destroy`
+  - `beforeDestroy`: 销毁开始
+  - 销毁自身且递归销毁子组件以及事件监听
+    - `remove()`: 删除节点
+    - `watcher.teardown()`: 清空依赖
+    - `vm.$off()`: 解绑监听
+- `destroyed`: 完成后触发钩子
