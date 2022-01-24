@@ -61,7 +61,7 @@ methodsToPatch.forEach(function (method) {
 
 > 可以看到，`arrayMethods` 首先继承了 `Array`，然后对数组中所有**能够改变数组自身的方法进行重写（如 `push`、`pop`等）**。重写后的方法会先执行它们本身原有的逻辑，并对能增加数组长度的 3 个方法 `push`、`unshift`、`splice` 方法做判断，获取到插入的值，然后把新添加的值变成一个响应式对象。并且再调用 `ob.dep.notify()` 手动触发依赖通知。这就很好的解释了用 `vm.items.splice(newLength)` 方法可以检测到变化。
 
-总结
+### 总结
 
 `Vue` 采用数据劫持结合发布-订阅模式的方法，通过 `Object.defineProperty` 来劫持各个属性的 `getter`、`setter`。在数据变化时发布消息给订阅者，触发相应的监听回调。
 
@@ -117,7 +117,7 @@ vm.msg = 'Hello World'
 console.log(vm.msg) // 'Hello World'
 ```
 
-## Vue3.x响应式数据原理
+## Vue3.x 响应式数据原理
 
 `Vue3.x` 改用 `Proxy` 代替 `Object.defineProperty`。因为 `Proxy` 可以直接监听 **对象和数组** 的变化，并且有多达 13 种拦截方法。并且作为新标准将受到浏览器厂商重点持续的性能优化。
 
@@ -678,3 +678,273 @@ process.nextTick(() => {
     - `watcher.teardown()`: 清空依赖
     - `vm.$off()`: 解绑监听
 - `destroyed`: 完成后触发钩子
+
+# vue-router
+
+mode：
+- `hash`
+  - 模式：在浏览器中符号 `#`，以及 `#` 后面的字符称为 `hash`，用 `window.location.hash` 读取。
+  - 特点：`hash` 虽然在 `URL` 中，但是不会被包括在 `HTTP` 请求中；用来指导浏览器动作，对服务端安全无用，`hash` 不会重加载页面。
+  - 监听：`hashchange` 事件
+- `history`
+  - 模式：采用 `HTML5` 的新特性；提供了两个新方法：`pushState()`，`replaceState()` 可以对浏览器历史记录栈进行修改。
+  - 监听：`popState` 事件
+
+导航守卫：
+- 全局守卫
+  - `router.beforeEach`：全局前置守卫，进入路由之前
+  - `router.beforeResolve`：全局解析守卫(2.5.0+)在 `beforeRouteEnter` 调用之后调用
+  - `router.afterEach`：全局后置守卫，进入路由之后
+
+``` javascript
+// main.js 入口文件
+import router from './router'; // 引入路由
+router.beforeEach((to, from, next) => { 
+  next();
+});
+router.beforeResolve((to, from, next) => {
+  next();
+});
+router.afterEach((to, from) => {
+  console.log('afterEach 全局后置钩子');
+});
+```
+
+- 路由独享守卫
+
+``` javascript
+const router = new VueRouter({
+  routes: [
+    {
+      path: '/foo',
+      component: Foo,
+      beforeEnter: (to, from, next) => { 
+        // 参数用法什么的都一样,调用顺序在全局前置守卫后面，所以不会被全局守卫覆盖
+        // ...
+      }
+    }
+  ]
+})
+```
+
+- **路由组件**内的守卫
+  - `beforeRouteEnter`：进入路由前，在路由独享守卫之后被调用。**不能获取组件实例 `this`，因为此时实例还未创建。**
+  - `beforeRouteUpdate`(2.2)：路由复用同一个组件时，在当前路由改变，但是该组件被复用时调用。**可以访问组件实例 `this`**
+  - `beforeRouteLeave`：离开当前路由时，导航离开组件的对应路由时调用，**可以访问组件实例 `this`**
+
+``` javascript
+const Foo = {
+  template: `...`,
+  beforeRouteEnter (to, from, next) {
+    // 在渲染该组件的对应路由被 confirm 前调用
+    // 不！能！获取组件实例 `this`
+    // 因为当守卫执行前，组件实例还没被创建
+  },
+  beforeRouteUpdate (to, from, next) {
+    // 在当前路由改变，但是该组件被复用时调用
+    // 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，
+    // 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。
+    // 可以访问组件实例 `this`
+  },
+  beforeRouteLeave (to, from, next) {
+    // 导航离开该组件的对应路由时调用，我们用它来禁止用户离开
+    // 可以访问组件实例 `this`
+    // 比如还未保存草稿，或者在用户离开前，
+    // 将setInterval销毁，防止离开之后，定时器还在调用。
+  }
+}
+```
+
+## `vue-router` 源码实现
+
+- 作为一个插件存在:实现 `VueRouter` 类和 `install` 方法
+- 实现两个全局组件: `router-view` 用于显示匹配组件内容，`router-link` 用于跳转
+- 监控 `url` 变化:监听 `hashchange` 或 `popstate` 事件
+- 响应最新 `url`:创建一个响应式的属性 `current`，当它改变时获取对应组件并显示
+
+``` javascript
+class VueRouter {
+  // 核心任务：
+  // 1.监听url变化
+  constructor(options) {
+    this.$options = options;
+
+    // 缓存path和route映射关系
+    // 这样找组件更快
+    this.routeMap = {}
+    this.$options.routes.forEach(route => {
+      this.routeMap[route.path] = route
+    })
+
+    // 数据响应式
+    // 定义一个响应式的current，则如果他变了，那么使用它的组件会rerender
+    Vue.util.defineReactive(this, 'current', '')
+
+    // 请确保onHashChange中this指向当前实例
+    window.addEventListener('hashchange', this.onHashChange.bind(this))
+    window.addEventListener('load', this.onHashChange.bind(this))
+  }
+
+  onHashChange() {
+    // console.log(window.location.hash);
+    this.current = window.location.hash.slice(1) || '/'
+  }
+}
+
+// 插件需要实现install方法
+// 接收一个参数，Vue构造函数，主要用于数据响应式
+VueRouter.install = function (_Vue) {
+  // 保存Vue构造函数在VueRouter中使用
+  Vue = _Vue
+
+  // 任务1：使用混入来做router挂载这件事情
+  Vue.mixin({
+    beforeCreate() {
+      // 只有根实例才有router选项
+      if (this.$options.router) {
+        Vue.prototype.$router = this.$options.router
+      }
+
+    }
+  })
+
+  // 任务2：实现两个全局组件
+  // router-link: 生成一个a标签，在url后面添加#
+  // <a href="#/about">aaaa</a>
+  // <router-link to="/about">aaa</router-link>
+  Vue.component('router-link', {
+    props: {
+      to: {
+        type: String,
+        required: true
+      },
+    },
+    render(h) {
+      // h(tag, props, children)
+      return h('a',
+        { attrs: { href: '#' + this.to } },
+        this.$slots.default
+      )
+      // 使用jsx
+      // return <a href={'#'+this.to}>{this.$slots.default}</a>
+    }
+  })
+  Vue.component('router-view', {
+    render(h) {
+      // 根据current获取组件并render
+      // current怎么获取?
+      // console.log('render',this.$router.current);
+      // 获取要渲染的组件
+      let component = null
+      const { routeMap, current } = this.$router
+      if (routeMap[current]) {
+        component = routeMap[current].component
+      }
+      return h(component)
+    }
+  })
+}
+
+export default VueRouter
+```
+
+# Vue3.x 带来了哪些新特性/亮点
+
+## 压缩包体积更小
+
+在 Vue3.x 中，实现了将大多数全局 API 和内部帮助程序移至 ES 模块导出来。这使得现代的打包工具可以静态分析模块依赖性并删除未使用的导出相关的代码。模板编译器还会生成友好的 Tree-shaking 代码，在模板中实际使用了该功能时才导入该功能的帮助程序。
+但是，框架的某些部分永远不会被 Tree-shaking，因为它们对于任何类型的应用都是必不可少的。将这些必不可少的部分的度量标准成为基准尺寸。尽管新增了许多新功能，但 Vue3.x 的基准大小压缩后约为 `10kb`，还不到 Vue2.x(约 `22kb`) 的一半
+
+## Object.defineProperty -> Proxy
+
+- `Object.defineProperty` 是一个相对昂贵的操作，因为它直接操作对象的属性，颗粒度比较小。将它替换成 ES6 的 `Proxy`，在目标对象之上架上一层拦截，代理的是对象而不再是对象的属性。这样可以将原本对对象属性的操作变为对整个对象的操作，颗粒度变大。
+- `javascript` 引擎在解析的时候希望对象的结构越稳定越好，如果对象一直在变，可优化性降低，`Proxy` 不需要对原始对象做太多操作。
+
+### Proxy 相比于 Object.defineProperty 的优势
+
+`Object.defineProperty` 的问题主要有三个：
+1. 不能监听数组的变化
+2. 必须遍历对象的每个属性
+3. 必须深层遍历嵌套的对象
+
+`Proxy` 在 ES2015(ES6) 规范中被正式加入，它有以下几个特点
+1. 针对对象：针对整个对象，而不是对象的某个属性，所以也就不需要对 `keys` 进行遍历
+2. 原生支持数组：`Proxy` 不需要对数组的方法进行重载，省去了众多 hack，减少代码量等于减少了维护成本，而且标准就是最好的。
+
+除了上述两点之外，`Proxy` 还拥有以下优势：
+1. `Proxy` 的第二个参数有 13 种拦截方法，这比起 `Object.defineProperty` 要更加丰富
+2. `Proxy` 作为新标准受到浏览器厂商的重点关注和性能优化，相比之下 `Object.defineProperty` 是一个已有的老方法。
+
+## Virtual DOM 重构
+
+> vdom 的本质是一个抽象层，用 javascript 描述界面渲染成什么样子。React 用 jsx，没办法检测出可以优化的动态代码，所以做时间分片。Vue 中足够快的话可以不用时间分片
+> React 做时间分片的原因是：当 js 线程占着主线程时，渲染线程就无法工作，如果时间超过 16ms 就会给用户卡顿的感觉，所以采用时间分片，这也是为什么 React15 -> React16 会将原来的 `Stack Reconciler` 重构为 `Fiber Reconciler`
+
+### 传统 vdom 的性能瓶颈
+
+- 虽然 Vue 能够保证触发更新的组件最小化，但在单个组件内部依然需要便利该组件的整个 vdom 树。
+- 因此，传统的 vdom 的性能跟模板的大小正相关，跟动态节点的数量无关。在一些组件整个模板内只有少量动态节点的情况下，这些遍历都是性能的浪费。
+- JSX 和手写的 render function 是完全动态的，过度的灵活性导致运行时可以用于优化的信息不足
+
+### Q: 那为什么不直接抛弃 vdom 呢?
+
+A:
+1. 高级场景下手写 `render function` 获得更强的表达力
+2. 生成的代码更简洁
+3. 兼容 Vue2.x
+
+> 虚拟 DOM(`Virtual DOM`)（简称：vdom） 本质上是 JS 和 DOM 之间的一个映射缓存，它在形态上表现为一个能够描述 DOM 结构及其属性信息的 JS 对象
+
+就 vdom 而言，需要把握住两个点：
+1. vdom 是 JS 对象
+2. vdom 是真实 DOM 的描述
+
+#### vdom 如何解决问题
+
+![Virtual DOM 的作用](image_7.png)
+
+> 注意图中的绿色加粗 **<font color=#30C7A1>模板</font>**，这是因为 vdom 在实现上并不总是借助模板。比如 React 就使用了 JSX，JSX 本质不是模板，而是一种使用体验和模板相似的 JS 语法糖。
+
+区别就在于多出了一层 vdom 作为缓冲层。这个缓冲层带来的利好是：当 DOM 操作（渲染更新）比较频繁时，它会先将前后两次的 vdom 树进行对比，定位出具体需要更新的部分，生成一个“补丁集”，最后只把“补丁”打在需要更新的那部分真实 DOM 上，实现精准的“差量更新”。这个过程对应的 vdom 工作流如下图所示：
+
+![vdom 工作流程](image_8.png)
+
+> 注：图中的 `diff` 和 `patch` 其实都是函数名，这些函数取材于一个独立的 vdom 库
+
+#### 选用 vdom，真的是为了更好的性能吗？
+
+[更详细的信息在这里](http://interview.poetries.top/principle-docs/react/15-%E7%9C%9F%E6%AD%A3%E7%90%86%E8%A7%A3%E8%99%9A%E6%8B%9FDOM.html#%E5%BF%AB%E9%80%9F%E6%90%9E%E5%AE%9A%E8%99%9A%E6%8B%9F-dom-%E7%9A%84%E4%B8%A4%E4%B8%AA-%E5%A4%A7%E9%97%AE%E9%A2%98)
+
+以下只是对信息的摘取
+
+> 在整个 DOM 操作的演化过程中，主要矛盾并不在于性能，而在于开发者写得爽不爽，在于研发体验/研发效率。`虚拟 DOM 不是别的，正是前端开发们为了追求更好的研发体验和研发效率而创造出来的高阶产物`。
+
+vdom 并不一定会带来更好的性能，`vdom 的优越之处在于，它能够在提供更爽、更高效的研发模式（也就是函数式的 UI 编程方式）的同时，仍然保持一个还不错的性能`
+
+总归 **虚拟 DOM 的价值不在性能，而在别处**
+
+虚拟 DOM 解决的关键问题有以下两个：
+1. **研发体验/研发效率的问题**：虚拟 DOM 的出现，为数据驱动视图这一思想提供了高度可用的载体，使得前端开发能够基于函数式 UI 的编程方式实现高效的声明式编程。
+2. **跨平台的问题**：虚拟 DOM 是对真实渲染内容的一层抽象。若没有这一层抽象，那么视图层将和渲染平台紧密耦合在一起，为了描述同样的视图内容，你可能要分别在 Web 端和 Native 端写完全不同的两套甚至多套代码。
+
+除了差量更新以外，“批量更新”也是 vdom 在性能方面所做的一个重要努力：“批量更新”在通用虚拟 DOM 库里是由 `batch` 函数来处理的。在差量更新速度非常快的情况下（比如极短的时间里多次操作同一个 DOM），用户实际上只能看到最后一次更新的效果。这种场景下，前面几次的更新动作虽然意义不大，但都会触发重渲染流程，带来大量不必要的高耗能操作
+
+这时就需要请 `batch` 来帮忙了，`batch` 的作用是缓冲每次生成的补丁集，它会把收集到的多个补丁集暂存到队列中，再将最终的结果交给渲染函数，最终实现集中化的 DOM 批量更新
+
+## diff 算法的优化
+
+Vue2.x 中的 vdom 是全量的对比（每个节点不论写死还是动态的都会一层一层比较，这就浪费了大部分时间在对比静态节点上）
+
+Vue3.x 新增了静态标记（`patch flag`），与上次虚拟节点对比时，只对比带有 `patch flag` 的节点（动态数据所在的节点）；并可通过 `flag` 信息知道当前节点要对比的具体内容。
+
+vue 的特点是底层为 Virtual DOM，上层包含有大量静态信息的模版。为了兼容手写 `render function`，最大化利用模版静态信息，vue3.x 采用了**动静结合的解决方案**，将 vdom 的操作颗粒度变小，每次触发更新不再以组件为单位进行遍历，主要更改如下
+
+- Vue3.x 提出动静结合的 `DOM diff` 思想，动静结合的 `DOM diff` 其实是在**预编译阶段进行了优化**。之所以能够做到预编译优化，是因为 `Vue core` 可以静态分析 `template`，在解析模版时，整个 `parse` 的过程是利用正则表达式顺序解析模板，当解析到开始标签、闭合标签和文本的时候都会分别执行对应的回调函数，来达到构造 `AST` 树的目的。
+- 借助预编译过程，Vue 可以做到的预编译优化就很强大了。比如在预编译时标记出模版中可能变化的组件节点，再次进行渲染前 `diff` 时就可以跳过“永远不会变化的节点”，而只需要对比“可能会变化的动态节点”。**这也就是动静结合的 `DOM diff` 将 `diff` 成本与模版大小正相关优化到与动态节点正相关的理论依据**。
+
+### Q: 预编译是什么
+
+A:
+对于 Vue 组件来说，模板编译只会在组件实例化的时候编译一次，生成渲染函数之后在也不会进行编译。因此，编译对组件的 runtime 是一种性能损耗。
+
+而模板编译的目的仅仅是将 `template` 转化为 `render function`，这个过程，正好可以在项目构建的过程中完成，这样可以让实际组件在 runtime 时直接跳过模板渲染，进而提升性能，这个在**项目构建的编译 `template` 的过程，就是预编译**。
