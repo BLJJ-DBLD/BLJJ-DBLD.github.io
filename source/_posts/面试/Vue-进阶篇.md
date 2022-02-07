@@ -948,3 +948,383 @@ A:
 对于 Vue 组件来说，模板编译只会在组件实例化的时候编译一次，生成渲染函数之后在也不会进行编译。因此，编译对组件的 runtime 是一种性能损耗。
 
 而模板编译的目的仅仅是将 `template` 转化为 `render function`，这个过程，正好可以在项目构建的过程中完成，这样可以让实际组件在 runtime 时直接跳过模板渲染，进而提升性能，这个在**项目构建的编译 `template` 的过程，就是预编译**。
+
+## update 性能提高
+
+### hoistStatic 静态提升
+
+Vue2.x 无论元素是否参与更新，每次都会重新创建然后再渲染
+Vue3.x 对于不参与更新的元素，会进行静态提升，只会被创建一次，在渲染时直接复用即可
+
+例如：下面我们利用 Vue3.x Template Explorer 来直观感受一下：
+
+``` html
+<div>
+    <div>共创1</div>
+    <div>共创2</div>
+    <div>{{name}}</div>
+</div>
+```
+
+静态提升前
+
+``` javascript
+export function render(...) {
+    return (
+        _openBlock(),
+        _createBlock('div', null, [
+            _createVNode('div', null, '共创1'),
+            _createVNode('div', null, '共创2'),
+            _createVNode(
+                'div',
+                null,
+                _toDisplayString(_ctx.name),
+                1 /* TEXT */
+            ),
+        ])
+    )
+}
+```
+
+静态提升之后
+
+``` javascript
+const _hoisted_1 = /*#__PURE__*/ _createVNode(
+    'div',
+    null,
+    '共创1',
+    -1 /* HOISTED */
+)
+const _hoisted_2 = /*#__PURE__*/ _createVNode(
+    'div',
+    null,
+    '共创2',
+    -1 /* HOISTED */
+)
+
+export function render(...) {
+    return (
+        _openBlock(),
+        _createBlock('div', null, [
+            _hoisted_1,
+            _hoisted_2,
+            _createVNode(
+                'div',
+                null,
+                _toDisplayString(_ctx.name),
+                1 /* TEXT */
+            ),
+        ])
+    )
+}
+```
+
+从以上代码中我们可以看出，`_hoisted_1` 和 `_hoisted_2` 两个方法被提升到了渲染函数 `render` 之外，也就是我们说的静态提升。通过静态提升可以避免每次渲染的时候都要重新创建这些对象，从而大大提高了渲染效率。
+
+### cacheHandlers 事件侦听器缓存
+
+Vue2.x 中，绑定事件每次触发都要重新生成全新的 function 去更新，cacheHandlers 是 Vue3.x 中提供的事件缓存对象，当 cacheHandlers 开启，会自动生成一个内联函数，同时生成一个静态节点。当事件再次触发时，只需从缓存中调用即可，无需再次更新。
+默认情况下onClick会被视为动态绑定，所以每次都会追踪它的变化，但是同一个函数没必要追踪变化，直接缓存起来复用即可。
+
+例如：下面我们同样是通过 Vue 3 Template Explorer，来看一下事件监听器缓存的作用：
+
+``` html
+<div>
+    <div @click="todo">做点有趣的事</div>
+</div>
+```
+
+该段 html 经过编译后变成我们下面的结构(未开启事件监听缓存)：
+
+``` javascript
+export function render(...) {
+    return (_openBlock(),_createBlock('div', null, [
+            _createVNode('div',{ onClick: _ctx.todo}, '做点有趣的事', 8 /* PROPS */,
+                ['onClick']),
+        ])
+    )
+}
+```
+
+当我们开启事件监听器缓存后：
+
+``` javascript
+export function render(...) {
+    return (_openBlock(),_createBlock('div', null, [
+            _createVNode('div',{
+                    onClick:    //开启监听后
+                        _cache[1] || (_cache[1] = (...args) =>_ctx.todo(...args)),
+                },'做点有趣的事'),
+        ])
+    )
+}
+```
+
+我们可以对比开启事件监听缓存前后的代码，转换之后的代码, 大家可能还看不懂, 但是不要紧，我们只需要观察有没有静态标记即可，在 Vue3.x 的 diff 算法中, 只有有静态标记的才会进行比较, 才会进行追踪。
+
+### SSR 渲染
+
+Vue2.x 中也是有 SSR 渲染的，但是 Vue3.x 中的 SSR 渲染相对于 Vue2 来说，性能方面也有对应的提升。
+
+当存在大量静态内容时，这些内容会被当作纯字符串推进一个 buffer 里面，即使存在动态的绑定，会通过模版插值潜入进去。这样会比通过虚拟 dmo 来渲染的快上很多。
+
+当静态内容大到一个量级的时候，会用_createStaticVNode 方法在客户端去生成一个 static node，这些静态 node，会被直接 innerHtml，就不需要再创建对象，然后根据对象渲染。
+
+## 按需编译，体积比 Vue2.x 更小（Tree-shaking support）
+
+在 Vue 3 中，通过**将大多数全局 API 和内部帮助程序移至 ES 模块导出来**，实现了这一目标。这使现代的打包工具可以静态分析模块依赖性并删除未使用的导出相关的代码。模板编译器还会生成友好的 Tree-shaking 代码，在模板中实际使用了该功能时才导入该功能的帮助程序。
+框架的某些部分永远不会 Tree-shaking，因为它们对于任何类型的应用都是必不可少的。我们将这些必不可少的部分的度量标准称为基准尺寸。尽管增加了许多新功能，但 Vue 3 的基准大小压缩后约为 10 KB，还不到 Vue 2 (运行时大小压缩为 23 KB) 的一半。
+
+## Compostion API: 组合API/注入API
+
+> Vue2.x 中，我们一般会采用 mixin 来复用逻辑代码，用倒是挺好用的，不过也存在一些问题：**例如代码来源不清晰、方法属性等冲突**。基于此在 Vue3.x 中引入了 Composition API（组合API），**使用纯函数分隔复用代码**。和 React 中的 hooks 的概念很相似。
+
+优点：
+- 更好的逻辑复用和代码组织
+- 更好的类型推导
+
+``` html
+<template>
+    <div>X: {{ x }}</div>
+    <div>Y: {{ y }}</div>
+</template>
+
+<script>
+import { defineComponent, onMounted, onUnmounted, ref } from "vue";
+
+const useMouseMove = () => {
+    const x = ref(0);
+    const y = ref(0);
+
+    function move(e) {
+        x.value = e.clientX;
+        y.value = e.clientY;
+    }
+
+    onMounted(() => {
+        window.addEventListener("mousemove", move);
+    });
+
+    onUnmounted(() => {
+        window.removeEventListener("mousemove", move);
+    });
+
+    return { x, y };
+};
+
+export default defineComponent({
+    setup() {
+        const { x, y } = useMouseMove();
+
+        return { x, y };
+    }
+});
+</script>
+```
+
+compositon api 提供了以下几个函数：
+- `setup`
+- `ref`
+- `reactive`
+- `watchEffect`
+- `watch`
+- `computed`
+- `toRefs`
+- 生命周期的 `hooks`
+
+### 都说 Composition API 与 React Hook 很像，说说区别
+
+从 `React Hook` 的实现角度看，`React Hook` 是根据 `useState` 调用的顺序来确定下一次重渲染时的 `state` 是来源于哪个 `useState`，所以出现了以下限制
+
+- 不能在循环、条件、嵌套函数中调用Hook
+- 必须确保总是在你的 React 函数的顶层调用 Hook
+- `useEffect、useMemo` 等函数必须手动确定依赖关系
+
+而 `Composition API` 是基于 Vue 的响应式系统实现的，与 `React Hook` 的相比
+
+- 声明在 `setup` 函数内，一次组件实例化只调用一次 `setup`，而 `React Hook` 每次重渲染都需要调用 Hook，使得 React 的 GC 比 Vue 更有压力，性能也相对于 Vue 来说也较慢。
+- `Compositon API` 的调用不需要顾虑调用顺序，也可以在循环、条件、嵌套函数中使用
+- 响应式系统自动实现了依赖收集，进而组件的部分的性能优化由 Vue 内部自己完成，而 `React Hook` 需要手动传入依赖，而且必须必须保证依赖的顺序，让 `useEffect、useMemo` 等函数正确的捕获依赖变量，否则会由于依赖不正确使得组件性能下降。
+
+> 虽然 `Compositon API` 看起来比 `React Hook` 好用，但是其设计思想也是借鉴 `React Hook` 的。
+
+##  新增的三个组件 Fragment、Teleport、Suspense
+
+### Fragment
+
+> 在书写 Vue2 时，由于组件必须只有一个根节点，很多时候会添加一些没有意义的节点用于包裹。 `Fragment` 组件就是用于解决这个问题的（这和 React 中的 `Fragment` 组件是一样的）。
+
+这意味着现在可以这样写组件了。
+
+``` html
+/* App.vue */
+<template>
+  <header>...</header>
+  <main v-bind="$attrs">...</main>
+  <footer>...</footer>
+</template>
+
+<script>
+export default {};
+</script>
+```
+
+或者这样子写
+
+``` javascript
+// app.js
+import { defineComponent, h, Fragment } from 'vue';
+
+export default defineComponent({
+    render() {
+        return h(Fragment, {}, [
+            h('header', {}, ['...']),
+            h('main', {}, ['...']),
+            h('footer', {}, ['...']),
+        ]);
+    }
+});
+```
+
+### Teleport
+
+> `Teleport` 其实就是 React 中的 `Portal`。`Portal` 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的优秀的方案。
+
+一个 `portal` 的典型用例是当父组件有 `overflow: hidden` 或 `z-index` 样式时，但你需要子组件能够在视觉上“跳出”其容器。例如，对话框、悬浮卡以及提示框。
+
+``` html
+/* App.vue */
+<template>
+    <div>123</div>
+    <Teleport to="#container">
+        Teleport
+    </Teleport>
+</template>
+
+<script>
+import { defineComponent } from "vue";
+
+export default defineComponent({
+    setup() {}
+});
+</script>
+
+/* index.html */
+<div id="app"></div>
+<div id="container"></div>
+```
+
+![Teleport 示例](image_9.png)
+
+### Suspense
+
+> `Suspense` 让你的组件在渲染之前进行“等待”，并在等待时显示 `fallback` 的内容。这和React中的Supense是一样的。
+
+``` html
+// App.vue
+<template>
+    <Suspense>
+        <template #default>
+            <AsyncComponent />
+        </template>
+        <template #fallback>
+            Loading...
+        </template>
+    </Suspense>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+import AsyncComponent from './AsyncComponent.vue';
+
+export default defineComponent({
+    name: "App",
+    
+    components: {
+        AsyncComponent
+    }
+});
+</script>
+
+// AsyncComponent.vue
+<template>
+    <div>Async Component</div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from "vue";
+
+const sleep = () => {
+    return new Promise(resolve => setTimeout(resolve, 1000));
+};
+
+export default defineComponent({
+    async setup() {
+        await sleep();
+    }
+});
+</script>
+```
+
+
+# computed 及 watch 的理解
+
+## computed 的实现原理
+
+> `computed` 本质是一个惰性求值的观察者 `computed watcher`。其内部通过 `this.dirty` 属性标记计算属性是否需要重新求值。
+
+当 `computed` 的依赖状态发生改变时,就会通知这个惰性的 `watcher`，`computed watcher` 通过 `this.dep.subs.length` 判断有没有订阅者
+- 有的话，会重新计算，然后对比新旧值，如果变化了，会重新渲染。 (Vue 想确保不仅仅是计算属性依赖的值发生变化，而是当计算属性最终计算的值发生变化时才会触发渲染 `watcher` 重新渲染，本质上是一种优化。)
+- 没有的话，仅仅把 `this.dirty = true` (当计算属性依赖于其他数据时，属性并不会立即重新计算，只有之后其他地方需要读取属性的时候，它才会真正计算，即具备 `lazy`（懒计算）特性。)
+
+## watch 的理解
+
+`watch` 没有缓存性，更多的是观察的作用，可以监听某些数据执行回调。当我们需要深度监听对象中的属性时，可以打开 `deep:true` 选项，这样便会对对象中的每一项进行监听。**这样会带来性能问题，优化的话可以使用字符串形式监听**。
+
+> 注意：`Watcher`: 观察者对象，实例分为 `渲染 watcher`(render watcher)，`计算属性 watcher`(computed watcher)，`侦听器 watcher`(user watcher)三种。
+
+# Vue 渲染过程
+
+![Vue 渲染过程](image_10.png)
+
+调用 `compile` 函数，生成 `render 函数字符串`，编译过程如下：
+- `parse` 使用大量的正则表达式对 `template` 字符串进行解析，将标签、指令、属性等转化为抽象语法树 AST。`模板 -> AST （最消耗性能）`
+- `optimize` 遍历 AST，找到其中的一些静态节点并进行标记，方便在页面重渲染的时候进行 diff 比较时，直接跳过这一些静态节点，**优化 runtime 的性能**
+- `generate` 将最终的 AST 转化为 `render 函数字符串`
+
+调用 `new Watcher` 函数，监听数据的变化，当数据发生变化时，Render 函数执行生成 vnode 对象
+调用 `patch` 方法，对比新旧 vnode 对象，通过 DOM diff 算法，添加、修改、删除真正的 DOM 元素
+
+# keep-alive 实现原理
+
+> `keep-alive` 组件接受三个参数：`include`，`exclude`，`max`
+
+- `include`：指定需要缓存的 `组件 name` 集合，参数格式支持 `String, RegExp, Array`。当为字符串时，多个组件名称以逗号隔开
+- `exclude`：指定不需要缓存的 `组件 name` 集合，参数格式与 `include` 一致
+- `max`：指定最多可缓存组件的数量，超出上限使用 [LRU的策略](https://baike.baidu.com/item/LRU) 置换缓存数据。，参数格式支持 `String, Number`
+
+## 原理
+
+`keep-alive` 实例会缓存对应组件的 `VNode`，如果命中缓存，直接从缓存对象中返回对应的 `VNode`
+
+`LRU(Last recently used)` 算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率更高”。（墨菲定律：越担心的事情越会发生）
+
+# 为什么访问 data 属性不需要带 data
+
+> vue 中访问属性代理 `this.data.xxx` 转换 `this.xxx` 的实现
+
+``` javascript
+/** 将 某一个对象的属性 访问 映射到 对象的某一个属性成员上 */
+function proxy (target, prop, key) {
+  Object.defineProperty(target, key, {
+    enumerable: true,
+    configurable: true,
+    get () {
+      return target[prop][key];
+    },
+    set (newVal) {
+      target[prop][key] = newVal;
+    }
+  })
+}
+```
