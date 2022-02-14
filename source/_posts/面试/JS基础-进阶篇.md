@@ -22,3 +22,22 @@ date: 2022-02-14 15:59:11
   - 检测当前实例是否属于这个类的
   - 底层机制：只要当前类出现在实例的原型上，结果都是 `true`
   - 不能检测基本数据类型
+
+`constructor`：
+  - 支持基本类型
+  - `constructor` 可以随便更改，所以不准确
+  ``` javascript
+    function Fn() {}
+    Fn.prototype = new Array()
+    var f = new Fn()
+    console.log(f.constructor === Fn) // false
+    console.log(f.constructor === Array) // true
+  ```
+
+`Object.prototype.toString.call()`
+  - 返回当前实例所属类信息
+
+判断 `Target` 的类型，单单用 `typeof` 并无法完全满足，这其实并不是 bug，本质原因是 JS 的万物皆对象的理论。因此要真正完美判断时，我们需要区分对待：
+
+- 基本类型(`string / number / boolean / undefined`) + `function`: - 直接使用 `typeof` 即可
+- 其余引用类型(`Array / Date / RegExp Error`): 调用 `toString` 后根据 `[object XXX]` 进行判断
