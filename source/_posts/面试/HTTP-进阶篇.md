@@ -562,10 +562,45 @@ A:
 
 WebSocket 的握手**是一个标准的 HTTP GET 请求**，但**要带上两个协议升级的专用头字段**：
 
-- “Connection: Upgrade”，表示要求协议“升级”；
-- “Upgrade: websocket”，表示要“升级”成 WebSocket 协议。
+- `Connection: Upgrade`，表示要求协议“升级”；
+- `Upgrade: websocket`，表示要“升级”成 WebSocket 协议。
 
 另外，为了防止普通的 HTTP 消息被“意外”识别成 WebSocket，握手消息还增加了两个额外的认证用头字段（所谓的“挑战”，Challenge）：
 
 - `Sec-WebSocket-Key`：一个 Base64 编码的 16 字节随机数，作为简单的认证密钥；
 - `Sec-WebSocket-Version`：协议的版本号，当前必须是 13。
+
+``` http
+Get HTTP/1.1
+Upgrade: websocket
+Host: location
+Sec-WebSocket-Key: y7KXwBSpVrxtkR0O+bQt+Q==
+Sec-WebSocket-Version: 13
+Connection: Upgrade
+```
+
+服务器收到 HTTP 请求报文，看到上面的四个字段，就知道这不是一个普通的 GET 请求，而是 WebSocket 的升级请求，于是就不走普通的 HTTP 处理流程，而是构造一个特殊的 `“101 Switching Protocols”` 响应报文，通知客户端，接下来就不用 HTTP 了，全改用 WebSocket 协议通信，服务器端返回后的 `Header`：
+
+- `Sec-WebSocket-Accept`：值是服务端采用与客户端一致的密钥计算出来后返回客户端的。
+
+``` http
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: K7DJLdLooIwIG/MOpvWFB3y3FE8=
+```
+
+# UDP 和 TCP 的区别
+
+- TCP协议在传输数据段的时候要给段标号；UDP协议不
+- TCP协议可靠；UDP协议不可靠
+- TCP协议是面向连接；UDP协议采用无连接
+- TCP协议的发送方要确认接收方是否收到数据段（3次握手协议）
+- TCP协议采用窗口技术和流控制
+
+| 特性 | TCP | UDP |
+| :--: | :--: | :--: |
+| 是否连接 | 面向连接 | 面向非连接 |
+| 传输可靠性 | 可靠 | 不可靠 |
+| 应用场景 | 传输大量数据 | 传输少量数据 |
+| 速度 | 慢 | 快 |
