@@ -416,3 +416,30 @@ int2.getAge()
 
 子类通过 `Object.create`，让子类的原型对象的隐式原型（`__proto__`）指向父类的原型对象，完成方法的继承（可复用）
 
+# 事件机制
+
+> 事件流是一个事件沿着特定数据结构传播的过程。冒泡和捕获是事件流在 DOM 中两种不同的传播方法
+
+事件流有三个阶段
+- 事件捕获阶段
+- 事件目标阶段
+- 事件冒泡阶段
+
+![事件触发流程](image_2.png)
+
+## 事件对象
+
+IE 属性
+
+| 属性 | 描述 | 标准属性 |
+|:--:|:--:|:--:|
+| cancelBubble | 如果事件句柄想阻止事件传播到包容对象，必须把该属性设置为 `true` | `stopPropagation()` |
+| keyCode | 对于 `keypress` 事件，该属性声明了被敲击的键生成的 `unicode` 字符码。对于 `keydown` 和 `keyup` 事件，它指定了被敲击的键的虚拟键盘码。 | |
+| offsetX、offsetY | 发生事件的地点在事件源的坐标系中的 x 坐标和 y 坐标 | |
+| returnValue | 如果设置了该属性，它的值比事件句柄的返回值优先级高。把这个值设置为 `false`，可以取消发生事件的源元素的默认动作。 | `preventDefault()` |
+| srcElement | 对于生成事件的 `window` 对象、`document` 对象或 `Element` 对象的引用 | `target` |
+| x、y | 事件发生的位置的 x 坐标和 y 坐标，它们相当于用 CSS 动态定位的最内层包含元素 | |
+
+## 事件流阻止
+
+- `event.preventDefault() / event.returnValue = false`：取消事件对象的默认
