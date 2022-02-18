@@ -443,3 +443,51 @@ IE 属性
 ## 事件流阻止
 
 - `event.preventDefault() / event.returnValue = false`：取消事件对象的默认
+- `event.stopPropagation()/ event.cancelBubble = true`：阻止事件冒泡
+  - `event.stopPropagation()` 对 IE9 以下的浏览器无效
+  - `event.stopPropagation()` 不但能阻止事件冒泡也能阻止事件捕获
+- `event.stopImmediatePropagation`：同样也能实现阻止事件，但是还能阻止该事件目标执行别的注册事件
+``` javascript
+node.addEventListener('click',(event) =>{
+	event.stopImmediatePropagation()
+	console.log('冒泡')
+},false);
+// 点击 node 只会执行上面的函数，该函数不会执行
+node.addEventListener('click',(event) => {
+	console.log('捕获 ')
+},true)
+```
+
+## 事件注册
+
+通常我们使用 `addEventListener` 注册事件，该函数的第三个参数可以是布尔值/对象。
+``` javascript
+target.addEventListener(type, listener, options);
+target.addEventListener(type, listener, useCapture);
+```
+- `options`:
+  - `capture`:  Boolean，表示 listener 会在该类型的**事件捕获阶段传播到该 EventTarget 时触发**。
+  - `once`:  Boolean，表示 listener 在添加之后最多只调用一次。如果是 true， listener 会在其被调用之后自动移除。
+  - `passive`: 设置为true时，表示 listener 永远不会调用 preventDefault()。如果 listener 仍然调用了这个函数，客户端将会忽略它并抛出一个控制台警告。
+    - 使用 passive 改善的滚屏性能
+
+# 模块化
+
+理解：
+- 我对模块的理解是，一个模块是实现一个特定功能的一组方法。在最开始的时候，js 只实现一些简单的功能，所以并没有模块的概念，但随着程序越来越复杂，代码的模块化开发变得越来越重要。
+- 由于函数具有独立作用域的特点，最原始的写法是使用函数来作为模块，几个函数作为一个模块，但是这种方式容易造成全局变量的污染，并且模块间没有联系。
+- 后面提出了对象写法，通过将函数作为一个对象的方法来实现，这样解决了直接使用函数作为模块的一些缺点，但是这种办法会暴露所有的所有的模块成员，外部代码可以修改内部属性的值。
+- 现在最常用的是立即执行函数的写法，通过利用闭包来实现模块私有作用域的建立，同时不会对全局作用域造成污染。
+
+# Promise
+
+我们自己要写一个Promise，肯定需要知道有哪些工作需要做，我们先从Promise的使用来窥探下需要做啥:
+
+> 新建 `Promise` 需要使用 `new关键字`，那他肯定是作为面向对象的方式调用的，`Promise` 是一个类。
+> 我们 `new Promise(fn)` 的时候需要传一个函数进去，说明 `Promise` 的参数是一个函数
+> 构造函数传进去的 `fn` 会收到 `resolve` 和 `reject` 两个函数，用来表示 `Promise` 成功和失败，说明构造函数里面还需要 `resolve` 和 `reject` 这两个函数，这两个函数的作用是改变 `Promise` 的状态。
+> 根据规范，`promise` 有 `pending`，`fulfilled`，`rejected` 三个状态，初始状态为 `pending`，调用 `resolve` 会将其改为`fulfilled` ，调用 `reject` 会改为 `rejected`。
+> `promise` 实例对象建好后可以调用 `then` 方法，而且是可以链式调用 `then` 方法，说明 `then` 是一个实例方法。链式调用的实现这篇有详细解释，我这里不再赘述。简单的说就是 `then` 方法也必须返回一个带 `then` 方法的对象，可以是 `this` 或者新的 `promise` 实例。
+
+## 构造函数
+
