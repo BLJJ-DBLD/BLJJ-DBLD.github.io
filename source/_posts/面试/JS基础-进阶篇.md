@@ -489,5 +489,357 @@ target.addEventListener(type, listener, useCapture);
 > 根据规范，`promise` 有 `pending`，`fulfilled`，`rejected` 三个状态，初始状态为 `pending`，调用 `resolve` 会将其改为`fulfilled` ，调用 `reject` 会改为 `rejected`。
 > `promise` 实例对象建好后可以调用 `then` 方法，而且是可以链式调用 `then` 方法，说明 `then` 是一个实例方法。链式调用的实现这篇有详细解释，我这里不再赘述。简单的说就是 `then` 方法也必须返回一个带 `then` 方法的对象，可以是 `this` 或者新的 `promise` 实例。
 
-## 构造函数
+[这里写的特别的棒(๑•̀ㅂ•́)و✧](http://www.dennisgo.cn/Articles/JavaScript/Promise.html)
 
+# async/await
+
+> `Generator` 函数的语法糖。有更好的语义、更好的适用性、返回值是 `Promise`。
+
+- `await` 相比直接使用 `Promise` 来说：
+  - 优势在于处理 `then` 调用链，能够更清晰准确的写出代码。
+  - 缺点在于滥用 `await` 可能会导致性能问题，因为 `await` 会阻塞代码，也许之后的异步代码并不依赖前者，但仍需要等待前者完成，导致代码失去了并发性，此时更应该使用 `Promise.all`
+
+``` javascript
+async function asyncFn () {
+  console.log(1)
+  // await xx ==> promise.resolve(()=>{ xx })
+  // console.log(2) 放到 promise.resolve 或立即执行
+  await setTimeout(() => {
+    console.log(2)
+  })
+  // 相当于把 console.log(3) 放到了 promise.resolve(()=>{console.log(2)}).then(()=>{
+  //   console.log(3)
+  // })
+  // 微任务谁先注册谁先执行
+  console.log(3)
+}
+asyncFn()// 1 -> 4 -> 3 -> 2
+console.log(4)
+```
+
+# 事件循环
+
+![事件循环](image_3.png)
+
+- 默认代码从上到下执行，执行环境通过script来执行（宏任务）
+- 在代码执行过程中，调用定时器 promise click事件...不会立即执行，需要等待当前代码全部执行完毕
+- 给异步方法划分队列，分别存放到微任务（立即存放）和宏任务（时间到了或事情发生了才存放）到队列中
+- script执行完毕后，会清空所有的微任务
+- **微任务执行完毕后，会渲染页面（不是每次都调用）**
+- 再去宏任务队列中看有没有到达时间的，拿出来其中一个执行
+- 执行完毕后，按照上述步骤不停的循环
+
+``` javascript
+// script.js
+document.body.style.background = 'red'
+console.log(1)
+Promise.resolve().then(() => {
+  console.log(2)
+  document.body.style.background = 'yellow'
+})
+console.log(3)
+```
+
+上面代码会输出：`1 -> 3 -> 2 -> 背景变成黄色`
+
+``` javascript
+document.body.style.background = 'red'
+console.log(1)
+setTimeout(() => {
+  console.log(2)
+  document.body.style.background = 'yellow'
+})
+console.log(3)
+```
+
+上面代码会输出：`1 -> 3 -> 背景变成红色 -> 2 -> 背景变成黄色`
+
+综合题目
+
+``` javascript
+console.log(1)
+
+async function asyncFunc(){
+  console.log(2)
+  await setTimeout(() => {
+    console.log(3)
+  }, 0)
+  console.log(4)
+}
+
+setTimeout(()=>{console.log(5)})
+
+const promise = new Promise((resolve,reject)=>{
+  console.log(6)
+  resolve(7)
+})
+
+promise.then(d=>{console.log(d)})
+
+asyncFunc()
+
+console.log(8)
+
+// 1 -> 6 -> 2 -> 8 -> 7 -> 4 - 5 -> 3
+```
+
+## 浏览器事件循环
+
+> 涉及面试题：异步代码执行顺序？解释一下什么是 `Event Loop` ？
+
+#### Q: 解释一下什么是 `Event Loop`
+
+A:
+- 同步和异步任务分别进入不同的执行"场所"，同步的进入主线程，异步的进入 Event Table 并注册函数。
+- 当指定的事情完成时，Event Table 会将这个函数移入 Event Queue。
+- 主线程内的任务执行完毕为空，会去 Event Queue 读取对应的函数，进入主线程执行。
+- 上述过程会不断重复，也就是常说的 Event Loop(事件循环)。
+
+![事件执行机制](image_4.png)
+
+#### Q: 主线程执行栈何时为空呢？
+
+A: JS 引擎存在监控(`monitoring process`)进程，会持续不断的检查主线程执行栈是否为空，一旦为空，就会去 `Event Queue` 中检查是否有等待被调用的函数
+
+### 总结性回答
+
+- 首先 js 是单线程运行的，在代码执行的时候，通过将不同函数的执行上下文压入执行栈中来保证代码的有序执行
+- 在执行同步代码的时候，如果遇到了异步事件，js 引擎并不会一直等待其返回结果，而是会将这个事件挂起，继续执行执行栈中的其他任务
+- 当同步事件执行完毕后，再将异步事件对应的回调加入到与当前执行栈中不同的另一个任务队列中等待执行
+- 任务队列可以分为宏任务对列和微任务对列，当当前执行栈中的事件执行完毕后，js 引擎首先会判断微任务对列中是否有任务可以执行，如果有就将微任务队首的事件压入栈中执行。
+- 当微任务对列中的任务都执行完成后再去判断下一次宏任务对列中的任务。
+
+### 宏任务/微任务
+
+微任务
+- `process.nextTick`
+- `promise.then`
+- `Object.observe`
+- `MutationObserver`
+
+宏任务
+- `script`
+- `setTimeout`
+- `setInterval`
+- `setImmediate`
+- `I/O` 网络请求完成、文件读取完成事件
+- `UI rendering`
+- 用户交互事件（比如鼠标点击、滚动页面、放大缩小等）
+
+> 一次 `Eventloop` 循环会处理一个宏任务和所有这次循环中产生的微任务
+
+## Node.js 中的事件循环
+
+![Node.js 事件循环](image_5.png)
+
+- 每次执行一个宏任务后会清空微任务（执行顺序和浏览器一致，在 node11 版本以上）
+- `process.nextTick` node 中的微任务，当前执行栈的底部，优先级比 `promise` 要高
+
+整个流程分为六个阶段，当这六个阶段执行完一次之后，才可以算得上执行了一次 Eventloop 的循环过程。我们来分别看下这六个阶段都做了哪些事情：
+- **Timers 阶段**：这个阶段执行 `setTimeout` 和 `setInterval` 的回调函数，简单理解就是由这两个函数启动的回调函数
+- **I/O callbacks 阶段**：这个阶段主要执行系统级别的回调函数，比如 TCP 连接失败的回调
+- **idle, prepare 阶段**：仅系统内部使用，只需要知道有这 2 个阶段就可以
+- **poll 阶段**：这个阶段重要且复杂，几乎所有 `I/O` 相关的回调都在这个阶段执行（除了 `setTimeout`、`setInterval`、`setImmediate` 以及一些因 `exception` 意外关闭产生的回调）。`检索新的 I/O 事件，执行与 I/O 相关的回调`，其他情况 Node.js 将在适当的时候在此阻塞。这也是最复杂的一个阶段，所有的事件循环以及回调处理都在这个阶段执行。这个阶段的主要流程如下图所示。
+
+![poll 阶段流程](image_6.png)
+
+- **check 阶段**：`setImmediate` 回调函数在这里执行，`setImmediate` 并不是立马执行，而是当事件循环 `poll 中没有新的事件处理时执行该部分`
+
+``` javascript
+const fs = require('fs');
+setTimeout(() => { // 新的事件循环的起点
+    console.log('1'); 
+}, 0);
+setImmediate(() => {
+    console.log('setImmediate 1');
+});
+/// fs.readFile 将会在 poll 阶段执行
+fs.readFile('./test.conf', {encoding: 'utf-8'}, (err, data) => {
+    if (err) throw err;
+    console.log('read file success');
+});
+/// 该部分将会在首次事件循环中执行
+Promise.resolve().then(()=>{
+    console.log('poll callback');
+});
+// 首次事件循环执行
+console.log('2');
+```
+
+在这一代码中有一个非常奇特的地方，就是 `setImmediate` 会在 `setTimeout` 之后输出。有以下几点原因：
+- `setTimeout` 如果不设置时间或者设置时间为 0，则会默认为 **1ms**
+- 主线程执行完成后，超过 1ms 时，会将 `setTimeout` 回调函数逻辑插入到待执行回调函数 `poll` 队列中
+- 由于当前 `poll` 队列存在可执行回调函数，因此需要先执行完，待完全执行完成后，才会执行 `check: setImmediate`。
+
+> 因此：先执行回调函数，再执行 `setImmediate`
+
+- **close callbacks 阶段**：执行一些关闭的回调函数，如 `socket.on('close', ...)`
+
+> 除了把 EventLoop 的宏任务细分到不同阶段外。node 还引入了一个新的任务队列 `Process.nextTick`
+> 可以认为，`Process.nextTick` 会在上述各个阶段结束时，在**进入下一个阶段之前立即执行**（优先级甚至超过 `microtask` 队列）
+
+#### Q: 事件循环的主要包含微任务和宏任务。具体是怎么进行循环的呢
+
+A:
+![Node.js 事件循环图解](image_7.png)
+
+- **微任务**：在 Node.js 中微任务包含 2 种。**微任务在事件循环中优先级是最高的**，因此在同一个事件循环中有其他任务存在时，优先执行微任务队列。并且 `process.nextTick` 的优先级高于 `Promise`
+  - `process.nextTick`
+  - `Promise`
+- **宏任务**：在 Node.js 中宏任务包含 4 种。宏任务在微任务执行后执行，因此在同一个事件循环周期内，优先将微任务队列清空，再执行宏任务队列
+  - `setTimeout`
+  - `setInterval`
+  - `setImmediate`
+  - `I/O`
+
+从事件循环图中，有一个核心的主线程，它的执行阶段主要处理三个核心逻辑：
+- 同步代码
+- 将异步任务插入到微任务队列中或者宏任务队列中
+- 执行微任务或者宏任务的回调函数。在主线程处理回调函数的同时，也需要判断是否插入微任务和宏任务。根据优先级，先判断微任务队列是否存在任务，存在则先执行微任务，不存在则判断在宏任务队列中是否有任务，有则执行。
+
+``` javascript
+const fs = require('fs');
+// 首次事件循环执行
+console.log('start');
+/// 将会在新的事件循环中的阶段执行
+fs.readFile('./test.conf', {encoding: 'utf-8'}, (err, data) => {
+    if (err) throw err;
+    console.log('read file success');
+});
+setTimeout(() => { // 新的事件循环的起点
+    console.log('setTimeout'); 
+}, 0);
+/// 该部分将会在首次事件循环中执行
+Promise.resolve().then(()=>{
+    console.log('Promise callback');
+});
+/// 执行 process.nextTick
+process.nextTick(() => {
+    console.log('nextTick callback');
+});
+// 首次事件循环执行
+console.log('end');
+
+// start -> end -> nextTick callback -> Promise callback -> setTimeout -> read file success
+```
+
+> 当微任务和宏任务又产生新的微任务和宏任务时，又应该如何处理呢？如下代码所示：
+
+``` javascript
+const fs = require('fs');
+setTimeout(() => { // 新的事件循环的起点
+    console.log('1'); 
+    fs.readFile('./config/test.conf', {encoding: 'utf-8'}, (err, data) => {
+        if (err) throw err;
+        console.log('read file sync success');
+    });
+}, 0);
+/// 回调将会在新的事件循环之前
+fs.readFile('./config/test.conf', {encoding: 'utf-8'}, (err, data) => {
+    if (err) throw err;
+    console.log('read file success');
+});
+/// 该部分将会在首次事件循环中执行
+Promise.resolve().then(()=>{
+    console.log('poll callback');
+});
+// 首次事件循环执行
+console.log('2');
+
+// 2 -> poll callback -> 1 -> read file success -> read file sync success
+```
+
+Node.js 和浏览器端宏任务有一个很重要的不同点是，浏览器端任务队列每轮事件循环仅出对一个回调函数接着去执行微任务队列；而 Node.js 端只要轮到执行某个宏任务队列，则会执行完队列中所有的当前任务，但是当前轮次新添加到队尾的任务则会等到下一次轮次才会执行。
+
+``` javascript
+setTimeout(() => {
+    console.log('setTimeout');
+}, 0)
+setImmediate(() => {
+    console.log('setImmediate');
+})
+// 这里可能会输出 setTimeout，setImmediate
+// 可能也会相反的输出，这取决于性能
+// 因为可能进入 event loop 用了不到 1 毫秒，这时候会执行 setImmediate
+// 否则会执行 setTimeout
+```
+
+> 上面介绍的都是 `macrotask` 的执行情况，`microtask` 会在以上每个阶段完成后立即执行
+
+``` javascript
+setTimeout(()=>{
+    console.log('timer1')
+
+    Promise.resolve().then(function() {
+        console.log('promise1')
+    })
+}, 0)
+
+setTimeout(()=>{
+    console.log('timer2')
+
+    Promise.resolve().then(function() {
+        console.log('promise2')
+    })
+}, 0)
+// 以上代码在浏览器和 node 中打印情况是不同的
+// 浏览器中一定打印 timer1, promise1, timer2, promise2
+// node 中可能打印 timer1, timer2, promise1, promise2
+// 也可能打印 timer1, promise1, timer2, promise2
+```
+
+> Node.js 中的 `process.nextTick` 会先于其他 `microtask` 执行
+
+``` javascript
+setTimeout(() => {
+ console.log("timer1");
+
+ Promise.resolve().then(function() {
+   console.log("promise1");
+ });
+}, 0);
+
+// poll阶段执行
+fs.readFile('./test',()=>{
+  // 在poll阶段里面 如果有setImmediate优先执行，setTimeout处于事件循环顶端 poll下面就是setImmediate
+  setTimeout(()=>console.log('setTimeout'),0)
+  setImmediate(()=>console.log('setImmediate'),0)
+})
+
+process.nextTick(() => {
+ console.log("nextTick");
+});
+
+// nextTick -> timer1 -> promise1 -> setImmediate -> setTimeout
+```
+
+#### Q: 谁来启动这个循环过程，循环条件是什么？
+
+> 当 Node.js 启动后，会初始化事件循环，处理已提供的输入脚本，它可能会先调用一些异步的 API、调度定时器，或者 `process.nextTick()`，然后再开始处理事件循环。因此可以这样理解，Node.js 进程启动后，就发起了一个新的事件循环，也就是事件循环的起点。
+
+A: 
+总结来说，Node.js 事件循环的发起点有 4 个：
+- Node.js 启动后
+- `setTimeout` 回调函数
+- `setInterval` 回调函数
+- 也可能是一次 `I/O` 后的回调函数
+
+#### Q: Node.js 是单线程的还是多线程的？
+
+- **主线程是单线程执行的**
+- 但是 Node.js 存在多线程执行，多线程包括 **`setTimeout` 和异步 `I/O` 事件**，并且还存在其他线程，包括垃圾回收、内存优化等
+
+## Event Loop 对渲染的影响
+
+- 想必你之前在业务开发中也遇到过 `requestIdlecallback` 和 `requestAnimationFrame`，这两个函数在我们之前的内容中没有讲过，但是当你开始考虑它们在 `Event Loop` 的生命周期的哪一步触发，或者这两个方法的回调会在微任务队列还是宏任务队列执行的时候，才发现好像没有想象中那么简单。**这两个方法其实也并不属于 JS 的原生方法，而是浏览器宿主环境提供的方法**，因为它们牵扯到另一个问题：渲染。
+- 我们知道浏览器作为一个复杂的应用是多线程工作的，除了运行 JS 的线程外，还有渲染线程、定时器触发线程、HTTP 请求线程，等等。JS 线程可以读取并且修改 DOM，而渲染线程也需要读取 DOM，这是一个典型的多线程竞争临界资源的问题。所以浏览器就把这两个线程设计成互斥的，即同时只能有一个线程在执行
+- 渲染原本就不应该出现在 `Event Loop` 相关的知识体系里，但是因为 `Event Loop` 显然是在讨论 JS 如何运行的问题，而渲染则是浏览器另外一个线程的工作。但是 `requestAnimationFrame` 的出现却把这两件事情给关联起来
+- 通过调用 `requestAnimationFrame` 我们可以在下次渲染之前执行回调函数。那下次渲染具体是哪个时间点呢？渲染和 `Event Loop` 有什么关系呢？
+  - 简单来说，就是在每一次 `Event Loop` 的末尾，判断当前页面是否处于渲染时机，就是重新渲染
+- 有屏幕的硬件限制，比如 60Hz 刷新率，简而言之就是 1 秒刷新了 60 次，**16.6ms 刷新一次**。这个时候浏览器的渲染间隔时间就没必要小于 16.6ms，因为就算渲染了屏幕上也看不到。当然浏览器也不能保证一定会每 16.6ms 会渲染一次，因为还会受到处理器的性能、JavaScript 执行效率等其他因素影响。
+- 回到 `requestAnimationFrame`，这个 API 保证在下次浏览器渲染之前一定会被调用，实际上我们完全可以把它看成是一个高级版的 `setInterval`。它们都是在一段时间后执行回调，但是前者的间隔时间是由浏览器自己不断调整的，而后者只能由用户指定。这样的特性也决定了 `requestAnimationFrame` 更适合用来做针对每一帧来修改的动画效果
+- 当然 `requestAnimationFrame` 不是 `Event Loop` 里的宏任务，或者说它并不在 `Event Loop` 的生命周期里，只是浏览器又开放的一个在渲染之前发生的新的 hook。另外需要注意的是微任务的认知概念也需要更新，在执行 animation callback 时也有可能产生微任务（比如 promise 的 callback），会放到 animation queue 处理完后再执行。所以微任务并不是像之前说的那样在每一轮 Eventloop 后处理，而是在 JS 的函数调用栈清空后处理
+
+但是 `requestIdlecallback` 却是一个更好理解的概念。当宏任务队列中没有任务可以处理时，浏览器可能存在“空闲状态”。这段空闲时间可以被 `requestIdlecallback` 利用起来执行一些优先级不高、不必立即执行的任务，如下图所示：
+
+![浏览器 UI 线程](image_8.png)
