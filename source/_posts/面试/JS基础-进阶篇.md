@@ -949,3 +949,280 @@ A:
 - 由于JS的单线程机制，**垃圾回收的过程会阻碍主线程同步任务的执行**，待执行完垃圾回收后才会再次恢复执行主任务的逻辑，这种行为被称为 `全停顿(stop-the-world)`。在标记阶段同样会阻碍主线程的执行，一般来说，老生代会保存大量存活的对象，如果在标记阶段将整个堆内存遍历一遍，那么势必会造成严重的卡顿。
 - 因此，为了减少垃圾回收带来的停顿时间，V8引擎又引入了 `Incremental Marking(增量标记)` 的概念，即将原本需要一次性遍历堆内存的操作改为增量标记的方式，先标记堆内存中的一部分对象，然后暂停，将执行权重新交给JS主线程，待主线程任务执行完毕后再从原来暂停标记的地方继续标记，直到标记完整个堆内存。这个理念其实有点像 `React` 框架中的 `Fiber` 架构，只有在浏览器的空闲时间才会去遍历 `Fiber Tree` 执行对应的任务，否则延迟执行，尽可能少地影响主线程的任务，避免应用卡顿，提升应用性能。
 - 得益于增量标记的好处，V8 引擎后续继续引入了 `延迟清理(lazy sweeping)` 和 `增量式整理(incremental compaction)`，让清理和整理的过程也变成增量式的。同时为了 **充分利用多核CPU的性能**，也将引入 `并行标记` 和 `并行清理`，进一步地减少垃圾回收对主线程的影响，为应用提升更多的性能。
+
+# 深浅拷贝
+
+## 浅拷贝
+
+> 自己创建一个新的对象，来接受你要重新复制或引用的对象值。如果对象属性是基本的数据类型，复制的就是基本类型的值给新对象；但如果属性是引用数据类型，**复制的就是内存中的地址**，如果其中一个对象改变了这个内存中的地址，肯定会影响到另一个对象。
+
+#### 方法一：object.assign()
+
+> `object.assign` 是 ES6 中 `object` 的一个方法，该方法可以用于 JS 对象的合并等多个用途，`其中一个用途就是可以进行浅拷贝`。该方法的第一个参数是拷贝的目标对象，后面的参数是拷贝的来源对象（也可以是多个来源）。
+
+``` javascript
+object.assign 的语法为：Object.assign(target, ...sources)
+```
+
+示例代码如下：
+
+``` javascript
+let target = {}
+let source = {a: 1, b: {a: 2}}
+Object.assign(target, source)
+console.log(target) // {a: 1, b: {a: 2}}
+```
+
+> 但是使用 `Object.assgin 方法有几点需要注意：
+> 1. 它不会拷贝对象的继承属性；
+> 2. 它不会拷贝对象的不可枚举的属性；
+> 3. 可以拷贝 `Symbol` 类型的属性；
+
+``` javascript
+let obj1 = {
+    a: {b: 1},
+    d: Symbol(3)
+}
+
+Object.defineProperty(obj1, 'e', {
+    value: '不可配置数据',
+    enumerable: false,
+    configurable: true
+})
+
+let target = {}
+
+Object.assign(target, obj1)
+
+console.log({obj1});
+console.log({target});
+```
+
+![Object.assgin 浅拷贝](image_9.png)
+
+#### 方法二：扩展运算符方式
+
+> 扩展运算符展现的与 `Object.assgin` 一致。
+
+#### 方法三：concat 拷贝数组
+
+> 数组的 `concat` 方法其实也是浅拷贝，所以连接一个含有引用类型的数组时，需要注意修改原数组中的元素的属性，因为它会影响拷贝之后连接的数组。不过 `concat` 只能用于数组的浅拷贝，使用场景比较局限。代码如下所示。
+
+``` javascript
+let arr = [1, 2, 3]
+let newArr = arr.concat()
+newArr[1] = 100
+console.log({arr}) // [ 1, 2, 3 ]
+console.log({newArr}) // [ 1, 100, 3 ]
+```
+
+#### 方法四：slice 拷贝数组
+
+> `slice` 方法也比较有局限性，因为 `它仅仅针对数组类型`。`slice方法会返回一个新的数组对象`，这一对象由该方法的前两个参数来决定原数组截取的开始和结束时间，是不会影响和改变原始数组的。
+
+`slice 的语法为：arr.slice(begin, end);`
+
+``` javascript
+let arr = [1, 2, {val: 4}];
+let newArr = arr.slice();
+newArr[2].val = 1000;
+console.log(arr);  //[ 1, 2, { val: 1000 } ]
+```
+
+> 从上面的代码中可以看出，这就是`浅拷贝的限制所在了——它只能拷贝一层对象`。如果存在对象的嵌套，那么浅拷贝将无能为力。因此深拷贝就是为了解决这个问题而生的，它能解决多层对象嵌套问题，彻底实现拷贝
+
+#### 手工实现一个浅拷贝
+
+根据以上对浅拷贝的理解，如果让你自己实现一个浅拷贝，大致的思路分为两点：
+- 对基础类型做一个最基本的一个拷贝；
+- 对引用类型开辟一个新的存储，并且拷贝一层对象属性。
+
+``` javascript
+function shallowClone (target) {
+    if (typeof target === 'object' && target !== null) {
+        const cloneTarget = Array.isArray(target) ? [] : {}
+        for (let key in target) {
+            if (target.hasOwnProperty(key)) {
+                cloneTarget[key] = target[key];
+            }
+        }
+        return cloneTarget
+    }
+    return target;
+}
+```
+
+## 深拷贝
+
+`浅拷贝只是创建了一个新的对象，复制了原有对象的基本类型的值，而引用数据类型只拷贝了一层属性，再深层的还是无法进行拷贝`。深拷贝则不同，对于复杂引用数据类型，其在堆内存中完全开辟了一块内存地址，并将原有的对象完全复制过来存放。
+
+这两个对象是相互独立、不受影响的，彻底实现了内存上的分离。总的来说，`深拷贝的原理可以总结如下`：
+
+> 将一个对象从内存中完整地拷贝出来一份给目标对象，并从堆内存中开辟一个全新的空间存放新对象，且新对象的修改并不会改变原对象，二者实现真正的分离。
+
+#### 方法一：JSON.parse(JSON.stringify(target))
+
+> `JSON.stringify()` 是目前开发过程中最简单的深拷贝方法，其实就是把一个对象序列化成为 `JSON` 的字符串，并将对象里面的内容转换成字符串，最后再用 `JSON.parse()` 的方法将 `JSON` 字符串生成一个新的对象
+
+``` javascript
+let a = {
+    age: 1,
+    jobs: {
+        first: 'FE'
+    }
+}
+let b = JSON.parse(JSON.stringify(a))
+a.jobs.first = 'native'
+console.log(b.jobs.first) // FE
+```
+
+**但是该方法也是有局限性的：**
+- 会忽略 `undefined`，`Symbol`
+- 不能序列化函数
+- 无法拷贝不可枚举的对象
+- 无法拷贝对象的原型链
+- 拷贝 `RegExp` 引用类型会变成空对象
+- 拷贝 `Date` 引用类型会变成字符串
+- 对象中含有 `NaN`，`Infinity` 以及 `-Infinity`，会序列化成 `null`
+- 不能解决循环引用的对象，**JSON.stringify 方法会抛错**
+  - 反过来思考，遇到循环引用的对象可以用该方法来被包裹 `try catch` 修改
+
+``` javascript
+function Obj() { 
+  this.func = function () { alert(1) }; 
+  this.obj = {a:1};
+  this.arr = [1,2,3];
+  this.und = undefined; 
+  this.reg = /123/; 
+  this.date = new Date(0); 
+  this.NaN = NaN;
+  this.infinity = Infinity;
+  this.sym = Symbol(1);
+} 
+let obj1 = new Obj();
+Object.defineProperty(obj1,'innumerable',{ 
+  enumerable:false,
+  value:'innumerable'
+});
+console.log('obj1',obj1);
+let str = JSON.stringify(obj1);
+let obj2 = JSON.parse(str);
+console.log('obj2',obj2);
+```
+
+![JSON.parse(JSON.stringify())](image_10.png)
+
+#### 方法二：基础版（手写递归实现）
+
+``` javascript
+/**
+ * @param {Object} target;
+ * @returns {any}
+ */
+
+function deepClone (target) {
+    if (typeof target === 'object' && target !== null) {
+        let cloneTarget = null
+        if (target instanceof Array) {
+            cloneTarget = []
+        } else {
+            cloneTarget = {}
+        }
+        for (let prop in target) {
+            if (target.hasOwnProperty(prop)) {
+                cloneTarget[prop] = typeof target[prop] === 'object' ? deepClone(target[prop]) : target[prop];
+            }
+        }
+        return cloneTarget
+    } else {
+        return target;
+    }
+}
+// 测试
+// 下面是验证代码
+let obj = {
+    num: 0,
+    str: '',
+    boolean: true,
+    unf: undefined,
+    nul: null,
+    obj: { name: '我是一个对象', id: 1 },
+    arr: [0, 1, 2],
+    func: function () { console.log('我是一个函数') },
+    date: new Date(0),
+    reg: new RegExp('/我是一个正则/ig'),
+    [Symbol('1')]: 1,
+};
+Object.defineProperty(obj, 'innumerable', {
+    enumerable: false, value: '不可枚举属性' }
+);
+let obj1 = deepClone(obj)
+console.log({obj});
+console.log({obj1});
+```
+
+![基础版遍历](image_11.png)
+
+虽然利用递归能实现一个深拷贝，但是同上面的 `JSON.stringify` 一样，还是有一些问题没有完全解决，例如：
+- 这个深拷贝函数无法复制不可枚举的属性及 `Symbol` 类型
+- 这种方法不能够对 `Date、RegExp、Error` 这样的引用类型正确拷贝
+
+#### 方法三：改进版（改进后递归实现54）
+
+要清楚改进版得先清楚下面几个方法以及作用：
+- `Object.getPrototypeOf`：返回指定对象的原型（内部[[Prototype]]属性的值）。
+- `Reflect.ownKeys`（不支持 IE）：返回一个由目标对象自身的属性键组成的数组。
+- `Object.getOwnPropertyDescriptors`（不支持 IE）：获取一个对象的所有自身属性的描述符。
+- `WeakMap`（不支持 IE）：作为检测循环引用很有帮助，如果存在循环，则引用直接返回 `WeakMap` 存储的值
+
+``` javascript
+let isComplexDataType = obj => (typeof obj === 'object' || typeof obj === 'function') && (obj !== null)
+
+function deepClone (target, map = new WeakMap()) {
+    if (target instanceof Date) {
+        return new Date(target)
+    }
+    if (target instanceof RegExp) {
+        return new RegExp(target)
+    }
+    if (map.has(target)) {
+        return map.get(target)
+    }
+    // Object.getPrototypeOf: 返回指定对象的原型（内部[[Prototype]]属性的值）
+    // Object.getOwnPropertyDescriptors: 获取一个对象的所有自身属性的描述符。
+    let cloneTarget = Object.create(Object.getPrototypeOf(target), Object.getOwnPropertyDescriptors(target))
+    // 继承原型链
+    map.set(target, cloneTarget)
+    // Reflect.ownKeys 返回一个由目标对象自身的属性键组成的数组。
+    for (let prop of Reflect.ownKeys(target)) {
+        cloneTarget[prop] = (isComplexDataType(target[prop]) && typeof target[prop] !== 'function') ? deepClone(target[prop], map) : target[prop]
+    }
+    return cloneTarget
+}
+
+// 下面是验证代码
+let obj = {
+  num: 0,
+  str: '',
+  boolean: true,
+  unf: undefined,
+  nul: null,
+  obj: { name: '我是一个对象', id: 1 },
+  arr: [0, 1, 2],
+  func: function () { console.log('我是一个函数') },
+  date: new Date(0),
+  reg: new RegExp('/我是一个正则/ig'),
+  [Symbol('1')]: 1,
+};
+Object.defineProperty(obj, 'innumerable', {
+  enumerable: false, value: '不可枚举属性' }
+);
+obj = Object.create(obj, Object.getOwnPropertyDescriptors(obj))
+obj.loop = obj    // 设置loop成循环引用的属性
+let cloneObj = deepClone(obj)
+cloneObj.arr.push(4)
+console.log('obj', obj)
+console.log('cloneObj', cloneObj)
+```
+
+![改进版深拷贝](image_12.png)
