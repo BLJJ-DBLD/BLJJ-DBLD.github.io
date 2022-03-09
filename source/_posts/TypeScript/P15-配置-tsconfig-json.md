@@ -5,8 +5,8 @@ tags:
 categories:
   - TypeScript
 hidden: false
+abbrlink: 212067372
 date: 2022-02-25 20:54:57
-abbrlink:
 ---
 
 # 配置 tsconfig.json

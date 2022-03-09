@@ -25,22 +25,20 @@ how to add a hide_pages page:
         <div class="categories-card">
             <% site.hidden_posts.forEach((hide_pages_item, index = 0)=>{ %>
                 <%# console.log("hehe") %>
-                <% if(++index <= 5){ %>
-                    <article class="archive-item">
-                        <a class="archive-item-link"
-                            href="<%- url_for(hide_pages_item.path) %>">
-                            <%- hide_pages_item.title %>
-                        </a>
-                        <% if (hide_pages_item.categories.length) { %>
-                            <span class="archive-item-categories">
-                                cg: 
-                                <% hide_pages_item.categories.forEach(category_item=>{ %>
-                                    <span class="label"><%- category_item.name %></span>
-                                <% }) %>
-                            </span>
-                        <% } %>
-                    </article>
-                <% } %>
+                <article class="archive-item">
+                    <a class="archive-item-link"
+                        href="<%- url_for(hide_pages_item.path) %>">
+                        <%- hide_pages_item.title %>
+                    </a>
+                    <% if (hide_pages_item.categories.length) { %>
+                        <span class="archive-item-categories">
+                            cg: 
+                            <% hide_pages_item.categories.forEach(category_item=>{ %>
+                                <span class="label"><%- category_item.name %></span>
+                            <% }) %>
+                        </span>
+                    <% } %>
+                </article>
             <% }) %>
         </div>
 

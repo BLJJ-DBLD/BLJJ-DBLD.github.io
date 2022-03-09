@@ -1,6 +1,7 @@
 ---
 title: 'Q: 前端需要注意哪些 SEO'
-tags: []
+tags:
+  - 深入原理
 categories:
   - 面试题
 abbrlink: 1773257593

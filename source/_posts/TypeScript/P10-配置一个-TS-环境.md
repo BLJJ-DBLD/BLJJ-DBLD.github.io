@@ -5,8 +5,8 @@ tags:
 categories:
   - TypeScript
 hidden: false
+abbrlink: 3722639142
 date: 2022-02-25 20:11:19
-abbrlink:
 ---
 # 配置 TS 运行环境
 

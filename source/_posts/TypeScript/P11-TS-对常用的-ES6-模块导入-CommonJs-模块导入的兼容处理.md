@@ -5,8 +5,8 @@ tags:
 categories:
   - TypeScript
 hidden: false
+abbrlink: 2998623655
 date: 2022-02-25 20:23:13
-abbrlink:
 ---
 
 # TS 对 ES6 & CommonJs 的兼容处理
