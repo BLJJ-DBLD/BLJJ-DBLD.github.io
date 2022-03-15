@@ -242,7 +242,7 @@ function myNew(fn, ...args) {
 # 原型/原型链
 
 > 1. `__proto__` 和 `constructor` 是对象独有的，`prototype` 是函数独有的。
-> 2. 实例通过 `__proto__` 指向原型，通过 `constructor` 指向构造函数。
+> 2. 实例通过 `__proto__` 指向原型，原型通过 `constructor` 指向构造函数。
 
 ## 原型
 
