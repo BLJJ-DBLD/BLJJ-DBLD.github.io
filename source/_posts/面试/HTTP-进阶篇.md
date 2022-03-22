@@ -200,7 +200,7 @@ Access-Control-Max-Age: 86400
 
 对于附带身份凭证的请求，服务器不得设置 `Access-Control-Allow-Origin` 的值为“*”。
 
-这是因为请求的首部中携带了 `Cookie` 信息，如果 `Access-Control-Allow-Origin` 的值为“*”，请求将会失败。而将 `Access-Control-Allow-Origin` 的值设置为 http://foo.example（请求源），则请求将成功执行。
+这是因为请求的首部中携带了 `Cookie` 信息，如果 `Access-Control-Allow-Origin` 的值为“*”，请求将会失败。而将 `Access-Control-Allow-Origin` 的值设置为 http://foo.example（请求源） ，则请求将成功执行。
 
 ## GET 和 POST 的区别
 
@@ -355,7 +355,7 @@ HTTPS 缺点：
 
 如果没有数字签名的话，这样子可以就会有下面情况👇
 
-![缺少数字签名证书](image_4.png)
+![缺少数字签名证书](image_8.png)
 
 从上面我们知道，如果**只是对网站信息进行第三方机构私钥加密的话**，还是会受到欺骗。
 

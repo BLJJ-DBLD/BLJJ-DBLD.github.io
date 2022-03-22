@@ -473,8 +473,8 @@ vue 之所以引入 `Virtual DOM`，更重要的原因是为了解耦 `HTML` 依
 
 `nextTick` 主要使用了 宏任务 和 微任务。根据执行环境分别尝试采用。
 - `Promise`
-- `MutationObserver`
-- `setImmediate`
+- `MutationObserver`： 它会在指定的DOM发生变化时被调用
+- `setImmediate`：该方法用来把一些需要长时间运行的操作放在一个回调函数里，在浏览器完成后面的其他语句后，就立刻执行这个回调函数。
 - 如果以上都不行则采用 `setTimeout`
 
 > 定义了一个异步方法，多次调用 `nextTick` 会将方法存入队列中，通过这个异步方法清空当前队列
