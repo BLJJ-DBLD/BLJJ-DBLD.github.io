@@ -120,7 +120,7 @@ A: 当代码文件修改并保存之后，webpack 通过 watch 监听到文件�
 
 当某一个文件或者模块发生变化时，webpack 监听到文件变化对文件重新编译打包，编译生成唯一的 hash 值，这个 hash 值用来作为下一次热更新的标识
 
-根据变化的内容生成两个补丁文件：manifest(包含了 hash 和 chundId，用来说明变化的内容)和 chunk.js 模块
+根据变化的内容生成两个补丁文件：`manifest(包含了 hash 和 chundId，用来说明变化的内容)`和 chunk.js 模块
 
 由于 socket 服务器在 HMR Runtime 和 HMR Server 之间建立 websocket 链接，当文件发生改动的时候，服务端会向浏览器推送一条消息，消息包含文件改动后生成的 hash 值，如下图的 h 属性，作为下一次热更新的标识。
 
