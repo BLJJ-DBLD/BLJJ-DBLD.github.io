@@ -257,16 +257,16 @@ Sass 中可以继承另外一些样式的代码，在 Sass 中可以使用 `@ext
 转换为 CSS 后，对应的代码如下：
 
 ```
-.rounded-corners {
+.rounded-corners, .content {
   border-radius: 5px;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
 }
 
 .content {
-  @extend .rounded-corners;
   font-size: 20px;
 }
+
 ```
 
 可以看到 Less 中混合和继承使用相同的实现方式，而 Sass 中继承和混合采用不同关键字进行实现。
