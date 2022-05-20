@@ -78,9 +78,10 @@ methodsToPatch.forEach(function (method) {
 
 优点：
 - 可以检测对象中数据发生的修改
+
 缺点：
 - 对于复杂的对象，层级很深的话，需要去做深度监听（即递归到底）
-- 对于一个对象中，如果新增/删除属性，`Object.definedProperty` 是不能观测到的。但是可以通过 `vue.set()` 和 `vue.delete()` 来实现的。
+- 对于一个对象中，如果新增/删除属性，`Object.definedProperty` 是不能观测到的。但是可以通过 `vue.$set()` 和 `vue.$delete()` 来实现的。
 
 ``` javascript
 // 模拟 Vue 中 data 实现
@@ -1293,7 +1294,7 @@ export default defineComponent({
 
 调用 `compile` 函数，生成 `render 函数字符串`，编译过程如下：
 - `parse` 使用大量的正则表达式对 `template` 字符串进行解析，将标签、指令、属性等转化为抽象语法树 AST。`模板 -> AST （最消耗性能）`
-- `optimize` 遍历 AST，找到其中的一些静态节点并进行标记，方便在页面重渲染的时候进行 diff 比较时，直接跳过这一些静态节点，**优化 runtime 的性能**
+- `optimize` 遍历 AST，找到其中的一些动态节点并进行标记，方便在页面重渲染的时候进行 diff 比较时，直接跳过这一些静态节点，**优化 runtime 的性能**
 - `generate` 将最终的 AST 转化为 `render 函数字符串`
 
 调用 `new Watcher` 函数，监听数据的变化，当数据发生变化时，Render 函数执行生成 vnode 对象
