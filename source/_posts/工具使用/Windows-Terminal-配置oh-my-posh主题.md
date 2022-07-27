@@ -16,7 +16,7 @@ date: 2022-01-10 21:38:31
 
 这其中的终端配置，包含比如[颜色配置](https://docs.microsoft.com/zh-cn/windows/terminal/customize-settings/color-schemes)等。
 
-# 2. 安装 oh-my-posh
+# 2. 在线安装 oh-my-posh & posh-git
 
 在 Mac/Linux 下有 oh-my-zsh 主题，终于，Windows Terminal 的 PowerShell 也有 oh-my-posh 主题了。有了它，在 window 内咱就是那个最靓的那个仔。
 
@@ -51,6 +51,46 @@ Set-PoshPrompt -Theme <theme 名称> // 这个是新版本 v3 中的命令，在
 ```
 
 > 保存后关闭记事本。想获取目前所有的主题列表的命令是：`Get-PoshThemes`。
+
+# 3. 离线安装 oh-my-posh & posh-git
+
+## 1. 下载 nupkg 格式内容
+
+有时在内部环境中，也想使用 `oh-my-posh` 却苦于无法在线安装，这时，就需要我们自己手动去将安装包等内容手动引入内网内。
+
+这两个包需要从 `PowerShell Gallery` 中搜索下载，下载路径：[oh-my-posh](https://www.powershellgallery.com/packages/oh-my-posh) 和 [posh-git](powershellgallery.com/packages/posh-git)
+
+下载下来的是 `nupkg` 格式，按照官方文档进行离线安装，步骤如下：
+1. 解锁 NuGet 包文件，打开终端，执行类似如下的命令
+`Unblock-File -Path C:\Downloads\xxx.nupkg`
+2. 查找默认模块目录
+  - 打开 `PowerShell` 执行命令 `$env:PSModulePath` 查看模块所在目录。
+  - 按优先级由高到低排序的。
+  - 将下载下来的内容均放在高优先级的目录下
+3. 把 `nupkg` 文件后缀改为 `zip`，并解压
+4. 删除里面与 NuGet 规范相关的文件，包括
+  - `_rels`
+  - `package`
+  - `[Content_Types].xml`
+  - `<xxx>.nuspec`
+5. 重命名文件夹
+  - 文件夹解压后默认为`<xxx>.<version>` 的格式，我们把目录结构改为 `<xxx>/<version>`，并将所有文件移动到版本号文件夹下。
+
+## 2. 配置 PowerShell 与在线安装一致
+
+## 3. 在用户变量内配置 oh-my-posh 环境变量
+
+> 配置环境变量的前提是已经拥有 oh-my-posh 相关的压缩包
+
+1. 配置 `Path` 变量，在其中添加一行
+  `C:\Users\<username>\AppData\Local\Programs\oh-my-posh\bin`
+  
+  这个路径是在线安装的默认路径，我们可以也手动安装到该路径下。
+
+2. 新增新的变量 `POSH_THEMES_PATH`，与主题包路径有关的配置
+  `C:\Users\<username>\AppData\Local\Programs\oh-my-posh\themes`
+
+到此全部结束！
 
 参照文章 & GitHub:
 1. [Windows Terminal 配置oh-my-posh主题](https://www.misiyu.cn/article/134.html)

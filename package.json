@@ -6,6 +6,7 @@
     "create_page": "hexo new",
     "clean": "hexo clean",
     "publish": "hexo clean & hexo generate & hexo deploy",
+    "deploy": "hexo deploy",
     "server": "hexo server",
     "hidden_pages": "hexo hidden:list"
   },
