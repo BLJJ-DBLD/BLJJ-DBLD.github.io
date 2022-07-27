@@ -1,0 +1,454 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P15 React 的深入浅出 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P15 React 的深入浅出</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 8, 2021&nbsp;&nbsp;21:14:09</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Redux-与组件的藕断丝连"><a href="#Redux-与组件的藕断丝连" class="headerlink" title="Redux 与组件的藕断丝连"></a>Redux 与组件的藕断丝连</h1><h2 id="使-Redux-更加复用"><a href="#使-Redux-更加复用" class="headerlink" title="使 Redux 更加复用"></a>使 Redux 更加复用</h2><blockquote>
+<p>通过上一节<a href="https://bljj-dbld.github.io/posts/2578506661.html">P14</a>,我们基本的认识了 Redux 是如何编写与解耦，以及学习到 Redux 与 React 的基本结配合使用。</p>
+</blockquote>
+<p>通过在组件内引入 <code>./store</code> 文件夹，利用 <code>store.getState</code>, <code>store.dispath</code>, <code>store.subscribue</code> 等方法与组件配合在一起使用，但其中存在着一些高重复性的代码，例如：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// About.js</span></span><br><span class="line">...</span><br><span class="line"><span class="comment">// 通过 store.getState 方法获取 state 数据</span></span><br><span class="line">state = {</span><br><span class="line">	<span class="attr">count</span>: store.getState().count</span><br><span class="line">}</span><br><span class="line">...</span><br><span class="line">componentDidMount () {</span><br><span class="line">	<span class="comment">// 订阅方法会返回一个对象，且是一个取消订阅方法</span></span><br><span class="line">	<span class="built_in">this</span>.unsubscribe = store.subscribe(<span class="function">() =&gt;</span> {</span><br><span class="line">		<span class="built_in">this</span>.setState(store.getState())</span><br><span class="line">	})</span><br><span class="line">}</span><br><span class="line">componentWillUnmount () {</span><br><span class="line">	<span class="comment">// 通过执行这个方法去注销订阅</span></span><br><span class="line">	<span class="built_in">this</span>.unsubscribe()</span><br><span class="line">}</span><br><span class="line">...</span><br><span class="line">addCount () {</span><br><span class="line">	store.dispatch(addCount(<span class="number">10</span>))</span><br><span class="line">}</span><br><span class="line">subCount () {</span><br><span class="line">	store.dispatch(subCount(<span class="number">5</span>))</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>上面的代码，除了获取的数据可能不是 <code>count</code>；<code>dispatch</code> 的 <code>action</code> 函数不同以外，其余的都是具有重复性的。因此可以把不一样的东西抽离出来，公共的都放在一起去。</p>
+<p>根据这个思想，我们可以在顶级目录内创建 <code>./utils/connect.js</code>，用来保存一个 <code>connect</code> 函数，将组件与 <code>redux</code> 通过这个函数连接在一起。</p>
+<p><img src="/posts/1612587612/image_1.png" alt="connect 作用图"></p>
+<p>将重复性代码删除后，组件内部就变得非常的简洁（注释掉的即要删除的重复性代码）</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// About.js</span></span><br><span class="line"><span class="keyword">import</span> React, { PureComponent } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> store, {</span><br><span class="line">    addCount,</span><br><span class="line">    subCount</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">About</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    <span class="comment">/* state = store.getState() */</span></span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> {</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">                ABOUT</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>当前值：{this.props.count}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.addCount}</span>&gt;</span>+10<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {/* <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.subCount}</span>&gt;</span>-5<span class="tag">&lt;/<span class="name">button</span>&gt;</span> */}</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.props.subCount(5)}</span>&gt;</span>-5<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">    addCount () {</span><br><span class="line">		<span class="built_in">this</span>.props.addCount(<span class="number">10</span>)</span><br><span class="line">        <span class="comment">/* store.dispatch(addCount(10)) */</span></span><br><span class="line">    }</span><br><span class="line">    <span class="comment">/* subCount () {</span></span><br><span class="line"><span class="comment">        store.dispatch(subCount(5))</span></span><br><span class="line"><span class="comment">    } */</span></span><br><span class="line">    <span class="comment">/* componentDidMount () {</span></span><br><span class="line"><span class="comment">        // 订阅方法会返回一个对象，且是一个取消订阅方法</span></span><br><span class="line"><span class="comment">        this.unsubscribe = store.subscribe(() =&gt; {</span></span><br><span class="line"><span class="comment">            this.setState(store.getState())</span></span><br><span class="line"><span class="comment">        })</span></span><br><span class="line"><span class="comment">    }</span></span><br><span class="line"><span class="comment">    componentWillUnmount () {</span></span><br><span class="line"><span class="comment">        // 通过执行这个方法去注销订阅</span></span><br><span class="line"><span class="comment">        this.unsubscribe()</span></span><br><span class="line"><span class="comment">    } */</span></span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> About;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>最后再简化些就可以直接定义成 <strong>函数式组件</strong> 了</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// About.js</span></span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> <span class="title">About</span>(<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">            ABOUT</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>当前值：{props.count}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{props.addCount(10)}</span>&gt;</span>+10<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{props.subCount(5)}</span>&gt;</span>-5<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">} </span><br></pre></td></tr></tbody></table></figure>
+
+<p>但是此时我们还不能从 <code>props</code> 中获取到相应的值与方法，因此我们就要借助 <code>connect</code> 函数来牵线搭桥。此时在 <code>connect.js</code> 文件内编写内容</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// connect.js</span></span><br><span class="line"><span class="keyword">import</span> React, {PureComponent} <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">connect</span> (<span class="params">mapStateToProps, mapDispatchToProps</span>) </span>{</span><br><span class="line">    <span class="comment">// 返回一个 高阶组件（HOC），组件内部再返回一个类组件组件</span></span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> (<span class="params">ComponentWrapper</span>) </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">            render () {</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComponentWrapper</span>/&gt;</span></span></span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时在 <code>About.js</code> 文件内，将 <code>connect</code> 函数添加</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// About.js</span></span><br><span class="line">...</span><br><span class="line">+ <span class="keyword">import</span> {connect} <span class="keyword">from</span> <span class="string">'@/utils/connect'</span></span><br><span class="line">...</span><br><span class="line"><span class="comment">// 此时 mapStateToProps, mapDispatchToProps 这俩参数还未定义，目前只是占位</span></span><br><span class="line">+ connect(参数<span class="number">1</span>, 参数<span class="number">2</span>)(About) <span class="comment">// 这样子，就对 About 组件做了增强</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>当我们想对 <code>About</code> 组件进行自定义增强时，就通过 参数1，参数2 来传值</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// About.js</span></span><br><span class="line">+ <span class="keyword">import</span> {</span><br><span class="line">    addCount,</span><br><span class="line">    subCount</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"@/store/actionCreator"</span>;</span><br><span class="line">...</span><br><span class="line"><span class="comment">/* const mapStateToProps = {</span></span><br><span class="line"><span class="comment">    count: store.getState().count</span></span><br><span class="line"><span class="comment">};</span></span><br><span class="line"><span class="comment">const mapDispatchToProps = {</span></span><br><span class="line"><span class="comment">    addCount (num) {</span></span><br><span class="line"><span class="comment">        store.dispatch(addCount(num))</span></span><br><span class="line"><span class="comment">    }</span></span><br><span class="line"><span class="comment">    subCount (num) {</span></span><br><span class="line"><span class="comment">        store.dispatch(subCount(num))</span></span><br><span class="line"><span class="comment">    }</span></span><br><span class="line"><span class="comment">}; */</span></span><br><span class="line"><span class="comment">// 上面这般写是错误的，会导致还是需要依赖 store 对象</span></span><br><span class="line"><span class="comment">// 我们应该将这两个参数写成函数的形式，这么做的目的是，在 About 中由参数返回给我们 store.getState() / store.dispatch</span></span><br><span class="line"><span class="keyword">const</span> mapStateToProps = <span class="function"><span class="params">state</span> =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        <span class="attr">count</span>: state.count</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="keyword">const</span> mapDispatchToProps = <span class="function"><span class="params">dispatch</span> =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        addCount (num) {</span><br><span class="line">            dispatch(addCount(num))</span><br><span class="line">        }</span><br><span class="line">        subCount (num) {</span><br><span class="line">            dispatch(subCount(num))</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">...</span><br><span class="line">- connect(参数<span class="number">1</span>, 参数<span class="number">2</span>)(About)</span><br><span class="line">+ <span class="keyword">export</span> <span class="keyword">default</span> connect(mapStateToProps, mapDispatchToProps)(About)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时我们就将参数传给了 <code>connect</code> 方法，就能在 <code>WrapperComponent</code> 中使用</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// connect.js</span></span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">'@/store'</span></span><br><span class="line">...</span><br><span class="line">- <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComponentWrapper</span>/&gt;</span></span></span><br><span class="line">+ <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComponentWrapper</span> {</span></span></span><br><span class="line"><span class="tag"><span class="xml">            <span class="attr">...this.props</span>,</span></span></span><br><span class="line"><span class="tag"><span class="xml">            <span class="attr">...mapStateToProps</span>(<span class="attr">store.getState</span>()),</span></span></span><br><span class="line"><span class="tag"><span class="xml">            <span class="attr">...mapDispatchToProps</span>(<span class="attr">store.dispatch</span>)</span></span></span><br><span class="line"><span class="tag"><span class="xml">        }/&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>最后别忘记在返回的类组件内部对 <code>store.subscribe</code> 进行监听</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// connect.js</span></span><br><span class="line">...</span><br><span class="line"><span class="title">constructor</span> (<span class="params">props</span>) {</span><br><span class="line">    <span class="built_in">super</span>(props)</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">storeState</span>: mapStateToProps(store.getState())</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">componentDidMount () {</span><br><span class="line">    <span class="built_in">this</span>.unsubscribe = store.subscribe(<span class="function">() =&gt;</span> {</span><br><span class="line">        <span class="built_in">this</span>.setState({</span><br><span class="line">            <span class="attr">storeState</span>: mapStateToProps(store.getState())</span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">componentWillUnmount () {</span><br><span class="line">    <span class="built_in">this</span>.unsubscribe()</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>至此，就完成了 <code>About</code> 组件通过 <code>connet.js</code> 对 <code>Redux</code> 的使用</p>
+<hr>
+<p><code>connect.js</code> 的全部代码</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, {PureComponent} <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">'@/store'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">connect</span> (<span class="params">mapStateToProps, mapDispatchToProps</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">EnhanceHOC</span> (<span class="params">ComponentWrapper</span>) </span>{</span><br><span class="line">        <span class="keyword">return</span> <span class="class"><span class="keyword">class</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">            <span class="title">constructor</span> (<span class="params">props</span>) {</span><br><span class="line">                <span class="built_in">super</span>(props)</span><br><span class="line">                <span class="built_in">this</span>.state = {</span><br><span class="line">                    <span class="attr">storeState</span>: mapStateToProps(store.getState())</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">            render () {</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComponentWrapper</span> {</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">...this.props</span>,</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">...mapStateToProps</span>(<span class="attr">store.getState</span>()),</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">...mapDispatchToProps</span>(<span class="attr">store.dispatch</span>)</span></span></span><br><span class="line"><span class="tag"><span class="xml">                }&gt;</span></span></span><br><span class="line"><span class="xml">            }</span></span><br><span class="line"><span class="xml">            componentDidMount () {</span></span><br><span class="line"><span class="xml">                this.unsubscribe = store.subscribe(() =&gt; {</span></span><br><span class="line"><span class="xml">                    this.setState({</span></span><br><span class="line"><span class="xml">                        storeState: mapStateToProps(store.getState())</span></span><br><span class="line"><span class="xml">                    }</span></span><br><span class="line"><span class="xml">                })</span></span><br><span class="line"><span class="xml">            }</span></span><br><span class="line"><span class="xml">            componentWillUnmount () {</span></span><br><span class="line"><span class="xml">                this.unsubscribe()</span></span><br><span class="line"><span class="xml">            }</span></span><br><span class="line"><span class="xml">        }</span></span><br><span class="line"><span class="xml">    }</span></span><br><span class="line"><span class="xml">}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<hr>
+<p><code>About.js</code> 的全部优化后代码</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="keyword">import</span> {connect} <span class="keyword">from</span> <span class="string">'@/utils/connect'</span></span><br><span class="line"><span class="keyword">import</span> {</span><br><span class="line">    addCount,</span><br><span class="line">    subCount</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"@/store/actionCreator"</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">About</span> (<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">            ABOUT</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>当前值：{props.count}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{props.addCount(10)}</span>&gt;</span>+10<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{props.subCount(5)}</span>&gt;</span>-5<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> mapStateToProps = <span class="function"><span class="params">state</span> =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        <span class="attr">count</span>: state.count</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="keyword">const</span> mapDispatchToProps = <span class="function"><span class="params">dispatch</span> =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        addCount (num) {</span><br><span class="line">            dispatch(addCount(num))</span><br><span class="line">        }</span><br><span class="line">        subCount (num) {</span><br><span class="line">            dispatch(subCount(num))</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> connect(mapStateToProps, mapDispatchToProps)(About)</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="配合-context-js-实现通用性"><a href="#配合-context-js-实现通用性" class="headerlink" title="配合 context.js 实现通用性"></a>配合 context.js 实现通用性</h2><p>假如我们想将 <code>connect.js</code> 上传到，这种情况下，<code>connect.js</code> 并不完全独立，而还需要手动的在 <code>connect.js</code> 中引入 <code>store</code>（有依赖）</p>
+<p>因此，我们要想的是，<strong>我们依然要拿到 <code>store</code> 但不是通过导入的方式</strong></p>
+<p>我们在 <code>utils</code> 文件夹内再创建一个 <code>context.js</code></p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// context.js</span></span><br><span class="line"><span class="keyword">import</span> React <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> StoreContext = React.createContext()</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> {</span><br><span class="line">    StoreContext</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这样，我们就可以在 <code>connect.js</code> 中将 <code>store</code> 的引入去除</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// connect.js</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> React, {PureComponent} <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"><span class="keyword">import</span> {StoreContext} form <span class="string">'./context'</span></span><br><span class="line">- <span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">'@/store'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">connect</span> (<span class="params">mapStateToProps, mapDispatchToProps</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">function</span> <span class="title">EnhanceHOC</span> (<span class="params">ComponentWrapper</span>) </span>{</span><br><span class="line">        <span class="class"><span class="keyword">class</span> <span class="title">EnhanceComponent</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">            - <span class="title">constructor</span> (<span class="params">props</span>) {</span><br><span class="line">            + <span class="title">constructor</span> (<span class="params">props, context</span>) {</span><br><span class="line">                - <span class="built_in">super</span>(props)</span><br><span class="line">                + <span class="built_in">super</span>(props, context)</span><br><span class="line">                <span class="built_in">this</span>.state = {</span><br><span class="line">                    - storeState: mapStateToProps(store.getState())</span><br><span class="line">                    <span class="attr">storeState</span>: mapStateToProps(context.getState())</span><br><span class="line">                }</span><br><span class="line">            }</span><br><span class="line">            render () {</span><br><span class="line">                <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">ComponentWrapper</span> {</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">...this.props</span>,</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">-</span> <span class="attr">...mapStateToProps</span>(<span class="attr">store.getState</span>()),</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">-</span> <span class="attr">...mapDispatchToProps</span>(<span class="attr">store.dispatch</span>)</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    + <span class="attr">...mapStateToProps</span>(<span class="attr">context.getState</span>()),</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    + <span class="attr">...mapDispatchToProps</span>(<span class="attr">context.dispatch</span>)</span></span></span><br><span class="line"><span class="tag"><span class="xml">                }&gt;</span></span></span><br><span class="line"><span class="xml">            }</span></span><br><span class="line"><span class="xml">            componentDidMount () {</span></span><br><span class="line"><span class="xml">                - this.unsubscribe = store.subscribe(() =&gt; {</span></span><br><span class="line"><span class="xml">                + this.unsubscribe = context.subscribe(() =&gt; {</span></span><br><span class="line"><span class="xml">                    this.setState({</span></span><br><span class="line"><span class="xml">                        - storeState: mapStateToProps(store.getState())</span></span><br><span class="line"><span class="xml">                        + storeState: mapStateToProps(context.getState())</span></span><br><span class="line"><span class="xml">                    }</span></span><br><span class="line"><span class="xml">                })</span></span><br><span class="line"><span class="xml">            }</span></span><br><span class="line"><span class="xml">            componentWillUnmount () {</span></span><br><span class="line"><span class="xml">                this.unsubscribe()</span></span><br><span class="line"><span class="xml">            }</span></span><br><span class="line"><span class="xml">        }</span></span><br><span class="line"><span class="xml">        EnhanceComponent.contextType = StoreContext</span></span><br><span class="line"><span class="xml">        return EnhanceComponent</span></span><br><span class="line"><span class="xml">    }</span></span><br><span class="line"><span class="xml">}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>最后在入口文件 <code>App.js</code> 中将 <code>store</code> 引入</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// App.js</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">import</span> { StoreContext } <span class="keyword">from</span> <span class="string">"@/utils/context"</span>;</span><br><span class="line"><span class="keyword">import</span> store <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line"></span><br><span class="line">ReactDOM.render(</span><br><span class="line">  <span class="xml"><span class="tag">&lt;<span class="name">React.StrictMode</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">StoreContext.Provider</span> <span class="attr">value</span>=<span class="string">{store}</span>&gt;</span></span></span><br><span class="line"><span class="xml">      <span class="tag">&lt;<span class="name">App</span> /&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">StoreContext.Provider</span>&gt;</span></span></span><br><span class="line"><span class="xml">  <span class="tag">&lt;/<span class="name">React.StrictMode</span>&gt;</span></span>,</span><br><span class="line">  <span class="built_in">document</span>.getElementById(<span class="string">'root'</span>)</span><br><span class="line">);</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="了解-react-redux-的使用"><a href="#了解-react-redux-的使用" class="headerlink" title="了解 react-redux 的使用"></a>了解 react-redux 的使用</h2><blockquote>
+<p>其实，上面的实现， <code>React</code> 已经帮我们做好了封装，那就是 <code>react-redux</code>，专门为 <code>React</code> 设计使用的，在使用，与我们自己的 <code>connect</code> &amp; <code>context</code> 的使用是相似的。</p>
+</blockquote>
+<p>首先我们在项目内安装 <code>react-redux</code>：<code>npm intsall react-redux --save</code></p>
+<p>我们在原先的基础上，对项目再做一些改动，在入口文件 <code>index.js</code> 中</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line">...</span><br><span class="line">- <span class="keyword">import</span> { StoreContext } <span class="keyword">from</span> <span class="string">"./utils/context"</span>;</span><br><span class="line">+ <span class="keyword">import</span> { Provider } <span class="keyword">from</span> <span class="string">"react-redux"</span>;</span><br><span class="line">...</span><br><span class="line">- <span class="xml"><span class="tag">&lt;<span class="name">StoreContext.Provider</span> <span class="attr">value</span>=<span class="string">{store}</span>&gt;</span></span></span><br><span class="line"><span class="xml">+ <span class="tag">&lt;<span class="name">Provider</span> <span class="attr">store</span>=<span class="string">{store}</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">App</span> /&gt;</span></span></span><br><span class="line"><span class="xml">- <span class="tag">&lt;/<span class="name">StoreContext.Provider</span>&gt;</span></span></span><br><span class="line"><span class="xml">+ <span class="tag">&lt;/<span class="name">Provider</span>&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>之后我们在 <code>About</code> 组件也做一些改进</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// About.js</span></span><br><span class="line">...</span><br><span class="line">- <span class="keyword">import</span> connect <span class="keyword">from</span> <span class="string">"../utils/connect"</span>;</span><br><span class="line">+ <span class="keyword">import</span> { connect } <span class="keyword">from</span> <span class="string">"react-redux"</span>;</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="Redux-内的异步操作"><a href="#Redux-内的异步操作" class="headerlink" title="Redux 内的异步操作"></a>Redux 内的异步操作</h1><p>通过之前简单的案例，<code>redux</code> 中保存的 <code>count</code> 是一个本地定义的数据，但事实，真实开发中，<code>redux</code> 中保存的很多数据有可能来自服务器，我们需要进行异步的请求，再将数据保存到 <code>redux</code> 中。</p>
+<h2 id="简单的异步操作"><a href="#简单的异步操作" class="headerlink" title="简单的异步操作"></a>简单的异步操作</h2><h3 id="将请求放在-componentDidMount"><a href="#将请求放在-componentDidMount" class="headerlink" title="将请求放在 componentDidMount"></a>将请求放在 <code>componentDidMount</code></h3><blockquote>
+<p>一般我们的想法都是，先进行异步请求然后等请求结果响应后，在将数据保存在 <code>redux</code> 中。如下图：</p>
+</blockquote>
+<p><img src="/posts/1612587612/image_2.png" alt="一般网络请求图"></p>
+<p>下面只展示出异步请求数据的组件代码，其他的与之前的相类似：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GetDataByAxios.js</span></span><br><span class="line"><span class="keyword">import</span> React, {PureComponent} <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> { connect } <span class="keyword">from</span> <span class="string">"react-redux"</span>;</span><br><span class="line"><span class="keyword">import</span> {</span><br><span class="line">    getTableList,</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line"><span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">"@/axios"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">GetDataByAxios</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    componentDidMount () {</span><br><span class="line">        axios.get(</span><br><span class="line">            <span class="string">'/elementTable/list'</span> <span class="comment">// 自己定义的请求路径</span></span><br><span class="line">        ).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">            <span class="built_in">console</span>.log(res);</span><br><span class="line">            <span class="built_in">this</span>.props.getTableList(res.data.rows)</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">                GetDataByAxios1</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                    {</span></span><br><span class="line"><span class="xml">                        this.props.tableRows.map((item) =&gt; {</span></span><br><span class="line"><span class="xml">                            return <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">{item.date}</span>&gt;</span>{item.date}<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                        })</span></span><br><span class="line"><span class="xml">                    }</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> mapStateToPorps = <span class="function"><span class="params">state</span> =&gt;</span> ({</span><br><span class="line">    <span class="attr">tableRows</span>: state.tableRows</span><br><span class="line">})</span><br><span class="line"><span class="keyword">const</span> mapDispatchToProps = <span class="function"><span class="params">dispatch</span> =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        <span class="attr">getTableList</span>: <span class="function">(<span class="params">rows</span>) =&gt;</span> {</span><br><span class="line">            dispatch(getTableList(rows))</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> connect(mapStateToPorps, mapDispatchToProps)(GetDataByAxios);</span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>请求路径是从 <a target="_blank" rel="noopener" href="http://rap2.taobao.org/">http://rap2.taobao.org/</a> 这边做的✔</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>是否要将所有数据都放在 <code>redux</code> 中 ? 官方这边做了详细的解读 <a target="_blank" rel="noopener" href="https://redux.js.org/faq/organizing-state#organizing-state">点这里</a></p>
+</blockquote>
+<ul>
+<li>应用程序的其他部分是否关心这些数据？</li>
+<li>您是否需要能够基于这些原始数据创建进一步的派生数据？</li>
+<li>是否使用相同的数据来驱动多个组件？</li>
+<li>能够将这种状态恢复到给定的时间点（即时间旅行调试）对您来说是否有价值？</li>
+<li>您是否要缓存数据（即，如果它已经存在，则使用它的状态而不是重新请求它）？</li>
+<li>您是否希望在热重载 UI 组件（交换时可能会丢失其内部状态）时保持此数据一致？</li>
+</ul>
+<hr>
+<h3 id="将请求放在-Redux-中管理"><a href="#将请求放在-Redux-中管理" class="headerlink" title="将请求放在 Redux 中管理"></a>将请求放在 <code>Redux</code> 中管理</h3><blockquote>
+<p>首先得认清楚一件事，在 <code>Redux</code> 中，默认是无法进行异步请求的。</p>
+</blockquote>
+<p>在 <code>Redux</code> 中如何进行异步的操作呢？</p>
+<p>答案是使用<strong>中间件（Middleware）</strong></p>
+<p>如下图：</p>
+<p><img src="/posts/1612587612/image_3.png" alt="利用中间件"></p>
+<h4 id="redux-thunk-的使用"><a href="#redux-thunk-的使用" class="headerlink" title="redux-thunk 的使用"></a><code>redux-thunk</code> 的使用</h4><p>默认情况下的 <code>dispatch(action)</code>，<code>action</code> 是一个 javascript 对象。<code>redux-thunk</code> 可以是 <code>dispatch(action函数)</code>，action <strong>可以是一个函数</strong>。</p>
+<p><code>action</code> 函数会被调用，并且会传给这个函数一个 <code>dispatch</code> 函数和 <code>getState</code> 函数</p>
+<ul>
+<li><code>dispatch</code> 函数用于我们之后再次派发 <code>action</code> 对象</li>
+<li><code>getState</code> 函数考虑让我们可以便携获取之前的一些状态</li>
+</ul>
+<p>在 ‘./store’ 入口文件 <code>index.js</code> 内，对 <code>store</code> 对象进行增强</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line">...</span><br><span class="line">- <span class="keyword">const</span> store = redux.createStore(reducer)</span><br><span class="line">+ <span class="keyword">const</span> store = redux.createStore(reducer, storeEnhancer)</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>而这个 <code>storeEnhancer</code> 从哪里来呢？</p>
+<p>在 <code>redux</code> 中有个 <code>applyMiddleware</code> 的函数，用来应用一些中间件</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line">- <span class="keyword">import</span> {createStore} <span class="keyword">from</span> <span class="string">'redux'</span></span><br><span class="line">+ <span class="keyword">import</span> {createStore, applyMiddleware} <span class="keyword">from</span> <span class="string">'redux'</span></span><br><span class="line"><span class="comment">// 应用一些中间件</span></span><br><span class="line"><span class="keyword">const</span> storeEnhancer = applyMiddleware(中间件<span class="number">1</span>, 中间件<span class="number">2</span>, 中间件<span class="number">3</span>)</span><br><span class="line">...</span><br><span class="line"><span class="keyword">const</span> store = redux.createStore(reducer, storeEnhancer)</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>当我们想引入 <code>redux-thunk</code> 时</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line">...</span><br><span class="line">+ <span class="keyword">import</span> thunkMiddleware <span class="keyword">from</span> <span class="string">'redux-thunk'</span></span><br><span class="line"></span><br><span class="line">- applyMiddleware(中间件<span class="number">1</span>, 中间件<span class="number">2</span>, 中间件<span class="number">3</span>)</span><br><span class="line">+ <span class="keyword">const</span> storeEnhancer = applyMiddleware(thunkMiddleware)</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<hr>
+<p>完整的 <code>index.js</code> 更改后代码是：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">import</span> {createStore, applyMiddleware} <span class="keyword">from</span> <span class="string">'redux'</span></span><br><span class="line"><span class="keyword">import</span> reducer <span class="keyword">from</span> <span class="string">'./reducer.js'</span></span><br><span class="line"><span class="keyword">import</span> thunkMiddleware <span class="keyword">from</span> <span class="string">'redux-thunk'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> storeEnhancer = applyMiddleware(thunkMiddleware)</span><br><span class="line"><span class="keyword">const</span> store = createStore(reducer, storeEnhancer)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> store</span><br></pre></td></tr></tbody></table></figure>
+<hr>
+<p>这样子，我们就完成了对 <code>store</code> 应用 <code>thunk</code> 中间件了。之后我们就可以在 <code>actionCretors.js</code> 中定义 <code>action</code> 函数。</p>
+<p>代码如下：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// actionCretors.js</span></span><br><span class="line">...</span><br><span class="line">+ <span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">'axios'</span></span><br><span class="line">...</span><br><span class="line">+ <span class="keyword">export</span> <span class="keyword">const</span> getAsyncData = <span class="function">(<span class="params">dispatch, getState</span>) =&gt;</span> {</span><br><span class="line">    <span class="comment">// 做一些异步操作，之后通过 dispatch 继续做常规操作</span></span><br><span class="line">    axios.get(</span><br><span class="line">        <span class="string">'/elementTable/list'</span> <span class="comment">// 自己定义的请求路径</span></span><br><span class="line">    ).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">        dispatch(getTableList(res.data.rows))</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在 <code>actionCretors.js</code> 中创建好 <code>action</code> 函数后，就可以在组件中，正常使用该 <code>action</code> 函数。</p>
+<p>代码如下：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// GetDataByAxios.js</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">import</span> {</span><br><span class="line">    - getTableList,</span><br><span class="line">    + getAsyncData</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"@/store"</span>;</span><br><span class="line">- <span class="keyword">import</span> axios <span class="keyword">from</span> <span class="string">'axios'</span></span><br><span class="line">...</span><br><span class="line">componentDidMount () {</span><br><span class="line">    - axios.get(</span><br><span class="line">        <span class="string">'/elementTable/list'</span> <span class="comment">// 自己定义的请求路径</span></span><br><span class="line">    ).then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">        <span class="built_in">console</span>.log(res);</span><br><span class="line">        <span class="built_in">this</span>.props.getTableList(res.data.rows)</span><br><span class="line">    })</span><br><span class="line">    + <span class="built_in">this</span>.props.getAsyncData()</span><br><span class="line">}</span><br><span class="line">...</span><br><span class="line"><span class="keyword">const</span> mapDispatchToProps = <span class="function"><span class="params">dispatch</span> =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        <span class="attr">getAsyncData</span>: <span class="function">(<span class="params">rows</span>) =&gt;</span> {</span><br><span class="line">            - dispatch(getTableList())</span><br><span class="line">            + dispatch(getAsyncData) <span class="comment">// 注意！这里不再直接调用函数</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h5 id="redux-devtools-插件"><a href="#redux-devtools-插件" class="headerlink" title="redux-devtools 插件"></a>redux-devtools 插件</h5><blockquote>
+<p>It can be used as a browser extension (for Chrome, Edge and Firefox), as a standalone app or as a React component integrated in the client app.</p>
+</blockquote>
+<p>chrome 版安装地址【<a target="_blank" rel="noopener" href="https://chrome.google.com/webstore/detail/redux-devtools/lmhkpmbekcpmknklioeibfkpmmfibljd">点这里</a>】</p>
+<p>其他版本请查阅 (GitHub 地址)[<a target="_blank" rel="noopener" href="https://github.com/reduxjs/redux-devtools]">https://github.com/reduxjs/redux-devtools]</a></p>
+<p>安装完毕后，还需要对代码进行增强才能够使用，具体的操作可查阅 (GitHub 地址)[<a target="_blank" rel="noopener" href="https://github.com/zalmoxisus/redux-devtools-extension]">https://github.com/zalmoxisus/redux-devtools-extension]</a></p>
+<h4 id="react-saga-的使用"><a href="#react-saga-的使用" class="headerlink" title="react-saga 的使用"></a><code>react-saga</code> 的使用</h4><p>在学习 <code>react-saga</code> 前，需要先复习一下 <code>Generator</code> 生成器函数。</p>
+<p>先做特点总结：</p>
+<ol>
+<li><code>function</code> 函数关键字与函数名之间有一个星号</li>
+<li>函数体内部使用 <code>yield</code> 表达式</li>
+<li>返回一个遍历器对象，即内部指针对象</li>
+<li><code>next</code>方法的作用是分阶段执行迭代器。<code>next</code> 方法返回一个对象，<code>value</code> 属性就是当前<code>yield</code> 表达式的值，<code>done</code> 属性的 <code>false</code> 值，表示遍历还没有结束。</li>
+<li>通过向 <code>next</code> 方法内传值能向下传递。</li>
+</ol>
+<hr>
+<p>直接上代码</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 普通函数的定义</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">f0</span> (<span class="params"></span>) </span>{}</span><br><span class="line"><span class="keyword">const</span> result0 = f0()</span><br><span class="line"><span class="built_in">console</span>.log(result0)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 生成器函数的定义</span></span><br><span class="line"><span class="comment">// 生成器函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">f1</span> (<span class="params"></span>) </span>{}</span><br><span class="line"><span class="keyword">const</span> result1 = f1()</span><br><span class="line"><span class="built_in">console</span>.log(result1)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>上面的代码中，<code>result0</code> 和 <code>result1</code> 有区别吗？单从函数声明上看区别只是在生成器函数上加了个 “*” 符号（放置位置可选：<code>function* f1</code> 或者 <code>function *f1</code>）。但是结果却不同而语：</p>
+<p>普通函数返回：<code>undefined</code>;</p>
+<p>生成器函数返回： <strong>iterator 迭代器</strong>;</p>
+<p>使用时也与平常的函数差别甚大。具体迭代器如何使用，如何返回数据，继续下文代码展示：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接上文代码</span></span><br><span class="line"><span class="comment">// 2. 生成器函数的定义</span></span><br><span class="line"><span class="comment">// 生成器函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">f1</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">"Hello"</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">"World"</span>;</span><br><span class="line">    <span class="keyword">yield</span> <span class="string">"BLJJ-DBLD"</span></span><br><span class="line">}</span><br><span class="line"><span class="comment">// iterator：迭代器</span></span><br><span class="line"><span class="keyword">const</span> result1 = f1()</span><br><span class="line"><span class="comment">// 3. 使用迭代器</span></span><br><span class="line"><span class="keyword">const</span> res1 = result1.next()</span><br><span class="line"><span class="built_in">console</span>.log(res1)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>上文代码末尾的 <code>console</code> 输出什么呢？ 答案是输出一个对象：<code>{value: "Hello", done: false}</code>。</p>
+<p>其中 <code>value</code> 代表的含义就是输出的结果。而 <code>done</code> 的布尔值代表什么含义呢？通过代码的继续执行，我们就可以揭晓了~</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 3. 使用迭代器</span></span><br><span class="line"><span class="comment">// 通过调用 next，就会消耗一次迭代器</span></span><br><span class="line"><span class="keyword">const</span> res1 = result1.next() <span class="comment">// {value: "Hello", done: false}</span></span><br><span class="line"><span class="keyword">const</span> res2 = result1.next() <span class="comment">// {value: "World", done: false}</span></span><br><span class="line"><span class="keyword">const</span> res3 = result1.next() <span class="comment">// {value: "BLJJ-DBLD", done: false}</span></span><br><span class="line"><span class="keyword">const</span> res4 = result1.next() <span class="comment">// {value: "", done: true}</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>从执行上可以看出，当迭代器消耗完毕后，再执行一次时， <code>done</code> 的结果就等于 <code>true</code>，因此我们可以得出结论， <code>done</code> 是用来<strong>判断该迭代器是否结束</strong>。</p>
+<p>有趣的事情发生了，加入我们使用 <code>Generator + Promise</code>，配合 <code>setTimeout</code> 设计假的请求时又该如何的样子呢？</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">bar</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">1</span>)</span><br><span class="line">    <span class="keyword">const</span> result = <span class="keyword">yield</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> {</span><br><span class="line">        <span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">            resolve(<span class="string">'Hello Generator'</span>)</span><br><span class="line">        }, <span class="number">3000</span>)</span><br><span class="line">    })</span><br><span class="line">    <span class="built_in">console</span>.log(result)</span><br><span class="line">}</span><br><span class="line"><span class="keyword">const</span> it = bar()</span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时，我们如何让 <code>result</code> 获取到 <code>resolve</code> 的值呢？</p>
+<p>第一步，我们得清楚知道，迭代器消耗一次时，生成器函数内部都是如何在执行的：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 接上文代码</span></span><br><span class="line"><span class="comment">// 执行 it 迭代器,会发生什么呢？</span></span><br><span class="line">it.next()</span><br><span class="line"><span class="comment">// 此时会输出：</span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// Promise 对象</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>从上面代码可知，当消耗一次迭代器时，执行了 <code>log(1)</code>，返回了 Promise 对象。后续的 <code>result</code> 赋值和打印 <code>result</code> 的值并未执行。此时，我们如此写时：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">it.next().value.then(<span class="function">(<span class="params">res</span>) =&gt;</span> {</span><br><span class="line">    it.next(res)</span><br><span class="line">})</span><br><span class="line"><span class="comment">// 此时总体来会输出：</span></span><br><span class="line"><span class="comment">// 1</span></span><br><span class="line"><span class="comment">// 延缓 3000ms 后...</span></span><br><span class="line"><span class="comment">// Hello Generator</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>通过上面代码的执行， <code>Generator</code> 生成器函数内部执行的过程，我们大致就清楚了：</p>
+<ol>
+<li>当消耗一次迭代器时，只会执行当前 <code>yield</code> 之前及当前的语句， <code>result = </code> 也当属于此次 <code>yield</code> 后的执行内容。</li>
+<li>当再次执行 <code>it.next()</code> 方法时，向其内传输数据，将会赋值给 <code>result</code>。</li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1612587612.html">https://bljj-dbld.github.io/posts/1612587612.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/3044239623.html">Vue CLI4.x 多个子项目合并探路</a>
+            
+            
+            <a class="next" rel="next" href="/posts/2578506661.html">P14 Redux 的学习</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

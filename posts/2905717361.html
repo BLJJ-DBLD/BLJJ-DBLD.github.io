@@ -1,0 +1,506 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>亲身面经 | BLJJ-DBLD Blog</title><meta name="robots" content="noindex">
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">亲身面经</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 17, 2022&nbsp;&nbsp;13:42:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E9%9D%A2%E7%BB%8F/">面经</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="自我介绍"><a href="#自我介绍" class="headerlink" title="自我介绍"></a>自我介绍</h2><ul>
+<li>我叫邱佛，今年26岁，毕业于东华理工大学长江学院，专业是网络工程，在学校里自学的前端。</li>
+<li>毕业前作为前端实习生在迈坦信息科技有限公司工作，毕业后即转正入职该公司。<ul>
+<li>公司是一家致力于为企业提供技术升级，专家推荐等各种服务。</li>
+<li>我主要负责的有<ul>
+<li>PC端官网重构，迈科技专家库的开发<ul>
+<li>官网由之前的技术对接平台，升级为技术以及需求综合大平台，极大的增加了公司影响力。</li>
+<li>专家库支持大数据渲染，便捷通过关键技术词汇查找指定专家，并引流到公众号进行一对一服务</li>
+</ul>
+</li>
+<li>移动端创新管家，接入在公司微信公众号内，支持便捷式需求查找与在线聊天。</li>
+<li>使用的技术栈是 Nust.js，vue。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>现在在联合见智科技有限公司担任前端开发，<ul>
+<li>这家公司主要从事的是SaaS化服务产品，可定制化的本地部署平台，以及数据输出产品。</li>
+<li>我在该公司主要负责的项目有<ul>
+<li>掌上见智APP-H5端，现已上线各个平台</li>
+<li>掌上见智小程序-内测版、</li>
+<li>以及多家银行债务评级系统的开发。</li>
+<li>使用的技术栈也是 vue，小程序开发使用的 uni-app</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="自身有哪些优点与缺点"><a href="#自身有哪些优点与缺点" class="headerlink" title="自身有哪些优点与缺点"></a>自身有哪些优点与缺点</h2><ul>
+<li><p>优点：对于前沿技术希望能多了解一些，并且擅长合理地安排时间。</p>
+<ul>
+<li>前沿技术多了解：每天早晨会花一点时间去逛技术论坛，掘金，segmentfault。</li>
+<li>合理地安排时间：因为我经常有多个项目同时缠身，所以我特别注意时间管理，分清楚任务的优先级，这样才能高效地工作，而不至于搞得焦头烂额。比方说，我会把产品需求，测试结果，会议安排，按优先级记录在我电脑的便签里面，当完成一个就会在后面做上标记，这样我就可以将这一天，这一周，甚至是因为一些大的需求将任务安排在一个月。尽量都安排得井井有条，就不会遗漏重要的事情。</li>
+</ul>
+</li>
+<li><p>缺点：</p>
+<ul>
+<li>我觉得我有时候会过分在意别人的感受，比方说，不敢直接表达不同意见，因为害怕自己的回答不够成熟，其实这样做很不利于快速有效地开展工作。我希望自己能够逐渐学会更加爽快，对人对事更加直接。将自己即使是不成熟的想法也尽量说出来，这样既能有更深的思考也能够学到更多。</li>
+<li>我这个人面对不熟络的人容易紧张。因为老担心给别人添麻烦，但是熟悉我的人，都知道我这个人又特别话痨，我应该克服这种心理障碍，主动多跟其他人交流。</li>
+</ul>
+</li>
+</ul>
+<h2 id="将最近自己做过的几个比较重要的事情梳理下，讲清楚整体架构和思考改进"><a href="#将最近自己做过的几个比较重要的事情梳理下，讲清楚整体架构和思考改进" class="headerlink" title="将最近自己做过的几个比较重要的事情梳理下，讲清楚整体架构和思考改进"></a>将最近自己做过的几个比较重要的事情梳理下，讲清楚整体架构和思考改进</h2><p>混合 APP - H5 端开发。</p>
+<ol>
+<li><p>JSBridge 使用</p>
+</li>
+<li><p>版本迭代而需要添加新的桥方法，强制要求 APP 更新</p>
+</li>
+</ol>
+<ul>
+<li>采用渐进增强、优雅降级</li>
+<li>这边采用渐进增强，先实现基本的不与原生有交互的版本，之后，根据版本增强功能。</li>
+<li>并且为了用户的基本体验，与原生交互功能内部缓存一个最低版本，<ul>
+<li>当用户的 APP 版本低于这个最低版本时就弹窗想用最新功能那就必须升级版本，否则就只能这么使用。</li>
+<li>并且使用 <code>try-catch</code> 捕获错误并提示用户必须升级版本才能使用新功能。</li>
+</ul>
+</li>
+</ul>
+<h2 id="准备一个重要的问题，问面试官"><a href="#准备一个重要的问题，问面试官" class="headerlink" title="准备一个重要的问题，问面试官"></a>准备一个重要的问题，问面试官</h2><h3 id="假如有一面"><a href="#假如有一面" class="headerlink" title="假如有一面"></a>假如有一面</h3><ol>
+<li>目前前端团队这边使用到的技术栈有哪些？</li>
+<li>请问公司对候选人有哪些要求？</li>
+</ol>
+<h3 id="假如有二面"><a href="#假如有二面" class="headerlink" title="假如有二面"></a>假如有二面</h3><ol>
+<li>请问公司是否有技术分享交流活动？有的话，多久一次呢？</li>
+<li>Code Review 如何实施？</li>
+<li>整个面试流程走下来，您认为我还有哪些方面需要加强？</li>
+</ol>
+<h3 id="假如有三面"><a href="#假如有三面" class="headerlink" title="假如有三面"></a>假如有三面</h3><ol>
+<li>我在这个岗位上应该如何发展？会有哪些机会？</li>
+<li>入职之后在哪个项目组，项目是新成立还是已有的？并且最终会招多少人进来呢？</li>
+</ol>
+<h3 id="假如有-HR-面"><a href="#假如有-HR-面" class="headerlink" title="假如有 HR 面"></a>假如有 HR 面</h3><p>HR：你还有其他公司的Offer吗?<br>你：<br>    自己已经有两个offer和一个在确认的(没有offer也要吹,但是不要透露具体公司)<br>    但是第一意向还是本公司，如果薪资差距不大，会优先考虑本公司</p>
+<p>HR：您期望的薪资是多少？<br>你：就我的面试表现，贵公司最高可以给多少薪水？</p>
+<h2 id="为何从上家公司离职"><a href="#为何从上家公司离职" class="headerlink" title="为何从上家公司离职"></a>为何从上家公司离职</h2><p>是这样子，我入职时期望的方向是做公司内部，能够提升公司影响力的 APP 项目，但因为业务的转型，公司要求我驻场银行，我服从公司安排且从年前的十月份开始，到现在也一直在驻场开发，让我感到难受的不是更远的路程，不是驻场，而是一直在做重复的内容。我自己还是更期待一些有挑战性的任务，不喜欢做一尘不变的事情。</p>
+<h2 id="如何快速让一个数组乱序"><a href="#如何快速让一个数组乱序" class="headerlink" title="如何快速让一个数组乱序"></a>如何快速让一个数组乱序</h2><ol>
+<li>利用 Array.prototype.sort 以及 Math.random </li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arr.sort(<span class="function">() =&gt;</span> <span class="built_in">Math</span>.random() &gt; <span class="number">0.5</span> ? -<span class="number">1</span> : <span class="number">1</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="2">
+<li>经典洗牌算法实现</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">shuffle</span>(<span class="params">array</span>) </span>{ </span><br><span class="line">	<span class="keyword">let</span> arrayLength = array.length,   </span><br><span class="line">		randomIndex, <span class="comment">//随机数   </span></span><br><span class="line">		tempItem; <span class="comment">//临时存储元素  </span></span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">let</span> i = arrayLength - <span class="number">1</span>; i &gt;= <span class="number">0</span>; i--) {    </span><br><span class="line">		randomIndex = <span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * (i + <span class="number">1</span>));    </span><br><span class="line">		tempItem = array[randomIndex];</span><br><span class="line">		array[randomIndex] = array[i];</span><br><span class="line">		array[i] = tempItem;</span><br><span class="line">	}</span><br><span class="line">	<span class="keyword">return</span> array;</span><br><span class="line">}</span><br><span class="line"><span class="built_in">console</span>.log(shuffle(arr));</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="JSBridge-原理"><a href="#JSBridge-原理" class="headerlink" title="JSBridge 原理"></a>JSBridge 原理</h2><p><img src="/posts/2905717361/image_01.png" alt="JSBridge 的作用"></p>
+<p>JavaScript 是运行在一个单独的 JS Context 中（例如，WebView 的 Webkit 引擎、JSCore）。<br>JSBridge 实现的主要逻辑是：<strong>通信调用（Native 与 JS 通信） 和 句柄解析调用</strong>。（<strong>这个流程类似于 JSONP</strong>）</p>
+<h3 id="JS-调用-Native"><a href="#JS-调用-Native" class="headerlink" title="JS 调用 Native"></a>JS 调用 Native</h3><p>方法有两种：</p>
+<ol>
+<li>Native 拦截 URL Scheme</li>
+</ol>
+<p>Android 和 iOS 都可以通过拦截 URL Scheme 并解析 scheme 来决定是否进行对应的 Native 代码逻辑处理。</p>
+<p>Web 发送 URL 请求的方法有这么几种：</p>
+<ul>
+<li><code>a</code> 标签</li>
+<li><code>location.href</code></li>
+<li>使用 <code>iframe.src</code></li>
+<li>发送 <code>ajax</code> 请求</li>
+</ul>
+<p>这些方法，<code>a</code> 标签需要用户操作，<code>location.href</code> 可能会引起页面的跳转丢失调用，发送 <code>ajax</code> 请求<code>Android</code> 没有相应的拦截方法，所以使用 <code>iframe.src</code> 是经常会使用的方案。</p>
+<p>优点：不存在漏洞问题、使用灵活，可以实现 H5 和 Native 页面的无缝切换。</p>
+<ul>
+<li>例如在某一页面需要快速上线的情况下，先开发出 H5 页面。某一链接填写的是 H5 链接，在对应的 Native 页面开发完成前先跳转至 H5 页面，待 Native 页面开发完后再进行拦截，跳转至 Native 页面，此时 H5 的链接无需进行修改。<br>缺点：使用 <code>iframe.src</code> 来发送 URL Scheme 需要对 URL 的长度作控制，使用复杂，速度较慢。</li>
+</ul>
+<ol start="2">
+<li>Native 向 Context 注入 API</li>
+</ol>
+<p>基于 Webview 提供的能力，可以向 Window 上注入对象或方法。JS 通过这个对象或方法进行调用时，执行对应的逻辑操作，可以直接调用 Native 的方法。使用该方式时，JS 需要等到 Native 执行完对应的逻辑后才能进行回调里面的操作。</p>
+<h3 id="Native-调用-JS"><a href="#Native-调用-JS" class="headerlink" title="Native 调用 JS"></a>Native 调用 JS</h3><p>H5 将 JS 方法暴露在 Window 上给 Native 调用即可。</p>
+<h2 id="CSS-样式权重"><a href="#CSS-样式权重" class="headerlink" title="CSS 样式权重"></a>CSS 样式权重</h2><p>权重记忆口诀：从0开始，一个行内样式+1000；一个id选择器+100；一个属性选择器、class或者伪类+10；一个元素选择器，或者伪元素+1；通配符+0。</p>
+<p><img src="/posts/2905717361/image_02.png" alt="CSS 权重图"></p>
+<h2 id="为什么使用-Vuex"><a href="#为什么使用-Vuex" class="headerlink" title="为什么使用 Vuex"></a>为什么使用 Vuex</h2><blockquote>
+<p>Vuex 是一个专为 Vue.js 应用程序开发的 <strong>状态管理模式</strong>。它采用 <strong>集中式存储管理应用的所有组件的状态</strong>，并以相应的规则保证 <strong>状态以一种可预测的方式发生变化</strong>。Vuex 也集成到了 Vue 的官方调试工具内，提供了诸如零配置的 time-travel 调试、状态快照导入导出等高级调试功能。</p>
+</blockquote>
+<h4 id="Q-Vuex-和-本地缓存有什么区别"><a href="#Q-Vuex-和-本地缓存有什么区别" class="headerlink" title="Q: Vuex 和 本地缓存有什么区别"></a>Q: Vuex 和 本地缓存有什么区别</h4><blockquote>
+<p><strong>vuex 不是用来管理数据，而是用来管理数据的流动</strong>。vuex 与 localstorage 解决的完全不是一个问题。</p>
+</blockquote>
+<p>A: </p>
+<p>Vuex 的优势是：</p>
+<ol>
+<li>Vuex 的状态存储是响应式的，当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会得到更新。</li>
+<li>不能直接更改 store 中的状态，组件改变状态的方式是通过显示提交 mutation，这样使得我们可以方便跟踪每一个状态的变化</li>
+</ol>
+<p>Vuex 和单纯的全局对象有以下两点不同：</p>
+<ol>
+<li>Vuex 用于做状态管理，主要应用于 Vue 中管理数据状态的一个库，把项目中公用数据放到一个公用存储空间去存储，某一个组件改变这个公用数据，其他组件就能感知到</li>
+<li>Vuex 由统一的方法修改数据，全局变量可以任意修改</li>
+<li>全局变量多了会造成命名污染，Vuex 不会，同时解决了父子孙组件以及兄弟组件间通信的问题。</li>
+</ol>
+<h2 id="Vue-cli-的使用"><a href="#Vue-cli-的使用" class="headerlink" title="Vue cli 的使用"></a>Vue cli 的使用</h2><p>Vue 借助 Webpack 用于快速构建标准的 Vue 项目，其作用是用配置好的模板迅速搭建起一个项目工程，省去自己手动配置 Webpack 配置文件的内容，快速上手工程级别的项目开发，降低入门门槛。</p>
+<p>Vue 是一套用于构建用户界面的 <code>渐进式MVVM框架</code>。那怎么理解渐进式呢？渐进式含义：强制主张最少。</p>
+<p>Vue.js包含了声明式渲染、组件化系统、客户端路由、大规模状态管理、构建工具、数据持久化、跨平台支持等，但在实际开发中，并没有强制要求开发者之后某一特定功能，而是根据需求逐渐扩展。</p>
+<p>Vue.js的核心库只关心视图渲染，且由于渐进式的特性，Vue.js便于与第三方库或既有项目整合。</p>
+<ol>
+<li>双向绑定</li>
+<li>虚拟 DOM 渲染</li>
+</ol>
+<h3 id="Vue-的高效-Diff-过程"><a href="#Vue-的高效-Diff-过程" class="headerlink" title="Vue 的高效 Diff 过程"></a>Vue 的高效 Diff 过程</h3><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/6844904020864139278#heading-22">Diff 过程解析优秀</a></p>
+<h3 id="Slot-总结"><a href="#Slot-总结" class="headerlink" title="Slot 总结"></a>Slot 总结</h3><p><a target="_blank" rel="noopener" href="https://ustbhuangyi.github.io/vue-analysis/v2/extend/slot.html#%E6%80%BB%E7%BB%93">slot 总结性回答</a></p>
+<blockquote>
+<p>简单地说，两种插槽的目的都是让子组件 <code>slot</code> 占位符生成的内容由父组件来决定，但数据的作用域会根据它们 <code>vnodes</code> 渲染时机不同而不同。</p>
+</blockquote>
+<p>插槽分为普通插槽和作用域插槽。它们有一个很大的差别是数据作用域。</p>
+<ul>
+<li>普通插槽是在父组件编译和渲染阶段生成 <code>vnodes</code>，所以数据的作用域是父组件实例，子组件渲染的时候直接拿到这个渲染好的 <code>vnodes</code>。</li>
+<li>对于作用域插槽，父组件在编译和渲染阶段不会直接生成 <code>vnodes</code>，而是在父节点 <code>vnode</code> 的 <code>data</code> 中保留一个 <code>scopedSlots</code> 对象，存储着不同名称的插槽以及它们对应的渲染函数，只有在编译和渲染子组件阶段才会执行这个渲染函数生成 <code>vnodes</code>，由于是在子组件环境执行，所以对应的数据作用域是子组件实例。</li>
+</ul>
+<h3 id="有哪些指令"><a href="#有哪些指令" class="headerlink" title="有哪些指令"></a>有哪些指令</h3><ul>
+<li>v-model 双向绑定数据</li>
+<li>v-for 列表渲染</li>
+<li>v-bind 动态绑定属性</li>
+<li>v-on 绑定事件</li>
+<li>v-if / v-else-if / v-else</li>
+<li>v-show / v-hide</li>
+<li>v-html 解析html标签</li>
+<li>v-once 进入页面时 只渲染一次 不再进行渲染</li>
+<li>v-cloak 防止闪烁</li>
+<li>v-pre 把标签内部的元素原位输出</li>
+<li>v-text 解析文本</li>
+</ul>
+<h3 id="v-if-与-v-show-的区别"><a href="#v-if-与-v-show-的区别" class="headerlink" title="v-if 与 v-show 的区别"></a>v-if 与 v-show 的区别</h3><ul>
+<li>相同点：都能控制元素的隐藏显示</li>
+<li>不同点：<ul>
+<li>v-if 是条件渲染，满足条件时，节点元素都会被渲染出来，包括事件绑定等，如果不满足条件，节点就不会被渲染出来，包括事件等。但 v-show 是借助 display:none 隐藏节点的显示，它的内容还有事件等始终都存在。</li>
+<li>v-if 来回切换时，浏览器需要不停地渲染，损耗性能，所以成本很高。但是 v-show 只是隐藏显示，所以成本较低。</li>
+<li>v-show 在页面初始化的时候，需要全部渲染，相对 v-if 成本要高。</li>
+<li>因此 v-if 适合用于加快初始化的渲染速度。而 v-show 适合用于频繁切换的场景。</li>
+</ul>
+</li>
+</ul>
+<h2 id="在项目中，对项目做的一些优化"><a href="#在项目中，对项目做的一些优化" class="headerlink" title="在项目中，对项目做的一些优化"></a>在项目中，对项目做的一些优化</h2><p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zimeng303/article/details/113853928">性能优化操作</a></p>
+<h2 id="require-和-import-的区别"><a href="#require-和-import-的区别" class="headerlink" title="require 和 import 的区别"></a>require 和 import 的区别</h2><ul>
+<li><p><code>require</code> 是 CommoneJS 的语法，主要是 Node.js 使用，通过 <code>require</code> 同步加载模块，<code>module.exports / exports</code> 导出内容。在规范下，每一个 JS 文件都是独立的模块，每个模块都有独立的作用域，模块内的变量都是私有变量。</p>
+</li>
+<li><p><code>import</code> 是 ESM 的语法，现代浏览器原生支持，通过 <code>import</code> 加载模块，<code>export</code> 导出内容。ESM 在支持的浏览器环境下可以直接使用，在不支持的端需要编译/打包后使用。</p>
+<ul>
+<li>ESM 加载模块的方式取决于所处的环境，Node.js 同步加载，浏览器端异步加载。</li>
+</ul>
+</li>
+</ul>
+<h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><blockquote>
+<p>静态分析是指在不运行程序的条件下，进行程序分析的方法</p>
+</blockquote>
+<p>简而言之，前文里提到的静态分析就是指在运行代码之前就可判断出代码内有哪些代码使用到了，哪些没有使用到。</p>
+<h3 id="Tree-Shaking"><a href="#Tree-Shaking" class="headerlink" title="Tree Shaking"></a>Tree Shaking</h3><blockquote>
+<p>Tree Shaking 是一个通常用于描述移除 JavaScript 上下文中的未引用代码（dead-code）行为的术语。它依赖于 ES2015 中的 import 和 export 语句，用来检测代码模块是否被导出、导入，且被 JavaScript 文件使用。</p>
+</blockquote>
+<p>简单来说，Tree Shaking 是一种依赖 ESM 模块静态分析实现的功能，它可以在编译时安全的移除代码中未使用的部分（webpack5 对 CommonJS 也进行了支持，在此不详细展开）。</p>
+<h4 id="Q-为什么-ESM-默认支持"><a href="#Q-为什么-ESM-默认支持" class="headerlink" title="Q: 为什么 ESM 默认支持"></a>Q: 为什么 ESM 默认支持</h4><p>A: <strong>ES6 模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析</strong>，这就是 tree-shaking 的基础。</p>
+<h4 id="webpack5-对-CommonJS-如何支持"><a href="#webpack5-对-CommonJS-如何支持" class="headerlink" title="webpack5 对 CommonJS 如何支持"></a>webpack5 对 CommonJS 如何支持</h4><p><a target="_blank" rel="noopener" href="https://learn.lianglianglee.com/%E4%B8%93%E6%A0%8F/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96%E7%B2%BE%E8%AE%B2-%E5%AE%8C/00%20%E5%BC%80%E7%AF%87%E8%AF%8D%20%20%E5%BB%BA%E7%AB%8B%E4%B8%8A%E5%B8%9D%E8%A7%86%E8%A7%92%EF%BC%8C%E5%85%A8%E9%9D%A2%E7%B3%BB%E7%BB%9F%E6%8E%8C%E6%8F%A1%E5%89%8D%E7%AB%AF%E6%95%88%E7%8E%87%E5%B7%A5%E7%A8%8B%E5%8C%96.md">系统学习前端效率工具</a></p>
+<h2 id="伪类和伪元素的区别"><a href="#伪类和伪元素的区别" class="headerlink" title="伪类和伪元素的区别"></a>伪类和伪元素的区别</h2><h3 id="伪类"><a href="#伪类" class="headerlink" title="伪类"></a>伪类</h3><p>伪类是选择器的一种，它用于选择处于特定状态的元素，比如当鼠标指针悬浮在元素上面的时候。</p>
+<p>伪类就是开头为冒号的关键字：<code>:pseudo-class-name</code></p>
+<h3 id="伪元素"><a href="#伪元素" class="headerlink" title="伪元素"></a>伪元素</h3><p>不过表现得是像你往标记文本中加入全新的 HTML 元素一样，而不是向现有的元素上应用类。伪元素开头为双冒号 <code>::</code>。</p>
+<h2 id="addEventListener-第三个参数"><a href="#addEventListener-第三个参数" class="headerlink" title="addEventListener 第三个参数"></a>addEventListener 第三个参数</h2><p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/EventTarget/addEventListener">MDN AddEventListener</a></p>
+<p>options:<br>    - <code>capture(Boolean)</code>: 表示 <code>listener</code> 会在该类型的事件捕获阶段传播到该 <code>EventTarget</code> 时触发。<br>    - <code>once(Boolean)</code>: 表示 <code>listener 在添加之后最多只调用一次</code>。<strong>如果是 true， listener 会在其被调用之后自动移除。</strong><br>    - <code>passive(Boolean)</code>: 设置为 true 时，表示 <code>listener</code> 永远不会调用 <code>preventDefault()</code>。如果 <code>listener</code> 仍然调用了这个函数，客户端将会忽略它并抛出一个控制台警告。</p>
+<h3 id="使用-passive-改善的滚屏性能"><a href="#使用-passive-改善的滚屏性能" class="headerlink" title="使用 passive 改善的滚屏性能"></a>使用 passive 改善的滚屏性能</h3><p>根据规范，<code>passive</code> 选项的默认值始终为 false。但是，当处理某些触摸事件（以及其他）的事件监听器在尝试处理滚动时会有阻止浏览器的主线程的可能性，从而导致滚动处理期间性能可能大大降低。</p>
+<p>为防止出现此问题，某些浏览器（特别是Chrome和Firefox）已将文档级节点 <code>Window</code>，<code>Document</code> 和<code>Document.body</code> 的 <code>touchstart (en-US)</code> 和 <code>touchmove (en-US)</code> 事件的 <code>passive</code> 选项的默认值更改为 true。这可以防止调用事件监听器，因此在用户滚动时无法阻止页面呈现。</p>
+<p>添加 <code>passive</code> 参数后，<code>touchmove</code> 事件不会阻塞页面的滚动（同样适用于鼠标的滚轮事件）。</p>
+<blockquote>
+<p>注意：那些不支持参数 options 的浏览器，会把第三个参数默认为 useCapture，即设置 useCapture 为 true</p>
+</blockquote>
+<p>通过将 <code>passive</code> 的值显式设置为 false 来覆盖此行为</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Feature detection */</span></span><br><span class="line"><span class="comment">/* 特征检测：读取 test 中的第三个参数，来判断是否存在 options.passive。 */</span></span><br><span class="line"><span class="keyword">var</span> passiveIfSupported = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span> {</span><br><span class="line">  <span class="built_in">window</span>.addEventListener(</span><br><span class="line">		<span class="string">"test"</span>,</span><br><span class="line">		<span class="literal">null</span>,</span><br><span class="line">		<span class="built_in">Object</span>.defineProperty(</span><br><span class="line">			{},</span><br><span class="line">			<span class="string">"passive"</span>,</span><br><span class="line">			{ <span class="attr">get</span>: <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{ passiveIfSupported = { <span class="attr">passive</span>: <span class="literal">true</span> }; }</span><br><span class="line">		})</span><br><span class="line">	);</span><br><span class="line">} <span class="keyword">catch</span>(err) {}</span><br><span class="line"></span><br><span class="line"><span class="built_in">window</span>.addEventListener(<span class="string">'scroll'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">event</span>) </span>{</span><br><span class="line">  <span class="comment">/* do something */</span></span><br><span class="line">  <span class="comment">// can't use event.preventDefault();</span></span><br><span class="line">  <span class="comment">// 不能使用 event.preventDefault()</span></span><br><span class="line">}, passiveIfSupported );</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="前端组件设计"><a href="#前端组件设计" class="headerlink" title="前端组件设计"></a>前端组件设计</h2><ol>
+<li>单一职责：保证组件是最细的粒度，且有利于复用。</li>
+<li>通用性：只提供最基础的 DOM、交互逻辑，将 DOM 的结构转移给开发者。</li>
+<li>封装：良好的组件封装应该<strong>隐藏内部细节和实现意义</strong>，并通过 props 来控制行为和输出。</li>
+<li>扁平化的 state 和 props：不要用嵌套的对象或数组。</li>
+</ol>
+<h2 id="vite-与-webpack-的区别，vite-凭什么比-webpack-启动速度快那么多？"><a href="#vite-与-webpack-的区别，vite-凭什么比-webpack-启动速度快那么多？" class="headerlink" title="vite 与 webpack 的区别，vite 凭什么比 webpack 启动速度快那么多？"></a>vite 与 webpack 的区别，vite 凭什么比 webpack 启动速度快那么多？</h2><p>开发阶段 Vite 较 Webpack 速度快的原因是：<strong>Webpack 是先打包再启动开发服务器，Vite 是直接启动开发服务器，然后按需编译依赖文件</strong></p>
+<p>具体的区别：</p>
+<ul>
+<li>webpack 先打包，再启动开发服务器，请求服务器时直接给予打包后的结果；</li>
+<li>vite 直接启动开发服务器，请求哪个模块再对哪个模块进行实时编译；</li>
+<li>由于现代浏览器本身就支持 ES Modules，会主动发请求去获取所需文件。vite 充分利用这点，将开发环境下的模块文件，就作为浏览器要执行的文件，而不像 webpack 先打包，交给浏览器执行的文件是打包后的；</li>
+<li>由于 vite 启动的时候不需要打包，也就无需分析模块依赖、编译，所以启动速度非常快。当浏览器请求需要的模块时，再对模块进行编译，这种按需动态编译的模式，极大的缩短了编译时间，当项目越来越大，文件越来越多时，vite 的开发时优势越明显；</li>
+<li>在 HRM 方面，当某个模块内容改变时，让浏览器去重新请求该模块即可，而不像 webpack 重新将该模块的所有依赖重新编译；</li>
+<li>当需要打包到生产环境时，vite 使用传统 rollup 进行打包。所以，vite 的优势是体现在开发阶段，另外，由于 vite 使用的是 ES Modules，所以代码中不能使用 CommonJs；</li>
+</ul>
+<!-- flag of hidden posts -->
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/2905717361.html">https://bljj-dbld.github.io/posts/2905717361.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

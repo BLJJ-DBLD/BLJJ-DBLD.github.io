@@ -1,0 +1,370 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P14 编写声明类库 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P14 编写声明类库</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 25, 2022&nbsp;&nbsp;20:44:55</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/TypeScript/">TypeScript</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="编写声明类库"><a href="#编写声明类库" class="headerlink" title="编写声明类库"></a>编写声明类库</h1><p>声明类库分为三种：</p>
+<ol>
+<li>全局类库</li>
+<li>模块类库</li>
+<li><code>umd</code> 类库</li>
+</ol>
+<h2 id="引入-jquery-库"><a href="#引入-jquery-库" class="headerlink" title="引入 jquery 库"></a>引入 <code>jquery</code> 库</h2><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> $ <span class="keyword">from</span> <span class="string">'jquery'</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>jquery</code> 库是 <code>Umd</code> 库，能够模块 / 全局引用，在这里是模块引入，但是在 <code>ts</code> 中是无法直接使用 <code>jquery</code> 库的，会报错，报错信息会提示需要引入一个包 <code>@types/jquery</code> ，或者自己去编写。</p>
+<p>这之后，就可以正常的使用了：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">$(<span class="string">'#app'</span>).css(<span class="string">'color'</span>, <span class="string">'red'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="全局类库的编写与使用"><a href="#全局类库的编写与使用" class="headerlink" title="全局类库的编写与使用"></a>全局类库的编写与使用</h2><p>在项目目录下给 <code>global-lib.js</code> 文件编写：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">globalLib</span> (<span class="params">options</span>) </span>{</span><br><span class="line">    <span class="built_in">console</span>.log(options)</span><br><span class="line">}</span><br><span class="line">globalLib.version = <span class="string">'1.0.0'</span></span><br><span class="line">globalLib.doSomething = <span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'globalLib do something'</span>)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>使用该全局类库的话，需要在入口 <code>index.html</code> 文件中通过 <code>&lt;script&gt;&lt;/script&gt;</code> 标签引入进来：<code>&lt;script src="./global-lib.js"&gt;&lt;/script&gt;</code> 。之后在 <code>index.ts</code> 中编写：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">globalLib({<span class="attr">x</span>: <span class="number">1</span>}) <span class="comment">// 此时会报错：找不到名称“globalLib”。</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>报错的原因是：在 <code>.ts</code> 中无法直接引用 <code>.js</code>，需要将 <code>global-lib.js</code> -&gt; <code>global-lib.ts</code>。一般类库的声明文件必须是 <code>xxx.d.ts</code>。具体的代码在 <code>global-lib.d.ts</code> 中：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">globalLib</span> (<span class="params">options: globalLib.Options</span>): <span class="title">void</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">namespace</span> <span class="title">globalLib</span> </span>{</span><br><span class="line">    <span class="keyword">const</span> version: <span class="built_in">string</span>;</span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">doSometing</span>(<span class="params"></span>): <span class="title">void</span></span></span><br><span class="line"><span class="function">    <span class="title">interface</span> <span class="title">Options</span> </span>{</span><br><span class="line">        [key: <span class="built_in">string</span>]: <span class="built_in">any</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在这里我们使用到了 <code>declare</code> 关键字，它可以为外部变量提供类型声明。</p>
+<p>需要注意的点有：</p>
+<ol>
+<li>在源码 <code>global-lib.js</code> 中有一个全局的函数 <code>globalLib</code> ，所以在 <code>global-lib.d.ts</code> 中也会暴露出一个全局的函数，并且通过 <code>declare</code> 关键字将该函数。</li>
+</ol>
+<h2 id="模块类库的编写与使用"><a href="#模块类库的编写与使用" class="headerlink" title="模块类库的编写与使用"></a>模块类库的编写与使用</h2><p>在项目目录下创建 <code>module-lib.js</code> 文件并编写：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> version = <span class="string">'1.0.0'</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doSomething</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'moduleLib do something'</span>);</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">moduleLib</span> (<span class="params">options</span>) </span>{</span><br><span class="line">    <span class="built_in">console</span>.log(options);</span><br><span class="line">}</span><br><span class="line">moduleLib.version = version</span><br><span class="line">moduleLib.doSomething = doSomething</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> moduleLib <span class="comment">// module.exports = moduleLib</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>之后在 <code>index.ts</code> 中引入该模块文件，</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="keyword">import</span> moduleLib <span class="keyword">from</span> <span class="string">'./module-lib'</span> <span class="comment">// 此时会报错：无法找到模块“./module-lib”的声明文件。</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时在目录下创建 <code>module-lib.d.ts</code> 文件并编写内容：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="function"><span class="keyword">function</span> <span class="title">moduleLib</span> (<span class="params">options: Options</span>): <span class="title">void</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">interface</span> <span class="title">Options</span> </span>{</span><br><span class="line">    [key: <span class="built_in">number</span>]: <span class="built_in">any</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> moduleLib {</span><br><span class="line">    <span class="keyword">const</span> version: <span class="built_in">string</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">doSomething</span> (<span class="params"></span>):<span class="title">void</span></span></span><br><span class="line"><span class="function">}</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">export</span> = <span class="title">moduleLib</span> // 这里是与全局类库的最大区别，需要将 <span class="title">moduleLib</span> 导出。而且采用 <span class="title">export</span> 导出是为了兼容 <span class="title">commonjs</span> &amp;&amp; <span class="title">ES6</span></span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时， <code>index.ts</code> 文件中的 <code>moduleLib</code> 导入就不会再报错了。</p>
+<h2 id="Umd-类库的编写与使用"><a href="#Umd-类库的编写与使用" class="headerlink" title="Umd 类库的编写与使用"></a><code>Umd</code> 类库的编写与使用</h2><p>在项目中创建 <code>umd-lib.js</code> 文件，在该文件下编写：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">root, factory</span>) </span>{</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> define === <span class="string">'function'</span> &amp;&amp; define.amd) {</span><br><span class="line">        define(factory)</span><br><span class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">module</span> === <span class="string">'function'</span> &amp;&amp; <span class="built_in">module</span>.exports) {</span><br><span class="line">        <span class="built_in">module</span>.exports = factory()</span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">        root.umdLib = factory()</span><br><span class="line">    }</span><br><span class="line">}(<span class="built_in">this</span>, <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> {</span><br><span class="line">        <span class="attr">version</span>: <span class="string">'1.0.0'</span>,</span><br><span class="line">        doSomething () {</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'umdLib do something'</span>);</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}))</span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后再在 <code>index.ts</code> 中引入该文件：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="keyword">import</span> umdLib <span class="keyword">from</span> <span class="string">'./umd-lib'</span> <span class="comment">//此时也会报错：无法找到模块“./umd-lib”的声明文件。</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这时，我们就要创建一个声明文件 <code>umd-lib.d.ts</code>：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="keyword">namespace</span> umdLib {</span><br><span class="line">    <span class="keyword">const</span> version: <span class="built_in">string</span></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">doSomething</span> (<span class="params"></span>):<span class="title">void</span></span></span><br><span class="line"><span class="function">}</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">export</span> <span class="title">as</span> <span class="title">namespace</span> <span class="title">umdLib</span> // 专门为 <span class="title">umd</span> 库设置的语句。这条语句是不可缺少的</span></span><br><span class="line"><span class="function"><span class="title">export</span> = <span class="title">umdLib</span></span></span><br></pre></td></tr></tbody></table></figure>
+<p>此时， <code>index.ts</code> 文件中的 <code>umdLib</code> 导入就不会再报错了。这种就是模块化导入，我们也可以对 <code>umd</code> 类库进行全局导入，也是与 全局类库 导入一致，在 <code>index.html</code> 中通过 <code>&lt;script&gt;&lt;/script&gt;</code> 标签导入：<br><code>&lt;script src="./umd-lib.js"&gt;&lt;/script&gt;</code></p>
+<p>当将 <code>umd</code> 类库以全局引入时，<code>ts</code> 会提示报错：<code>umdLib</code> 指 UMD 全局，但当前文件是模块。请考虑改为添加导入。</p>
+<p>此时我们就可以通过修改 <code>tsconfig.json</code> 的配置项来忽略该报错：<code>"compilerOptions.allowUmdGlobalAccess": true</code>。</p>
+<h2 id="给一些类编写自定义的方法"><a href="#给一些类编写自定义的方法" class="headerlink" title="给一些类编写自定义的方法"></a>给一些类编写自定义的方法</h2><h3 id="以-moment-为例，给模块类库添加自定义方法："><a href="#以-moment-为例，给模块类库添加自定义方法：" class="headerlink" title="以 moment 为例，给模块类库添加自定义方法："></a>以 <code>moment</code> 为例，给模块类库添加自定义方法：</h3><ol>
+<li>先安装 <code>moment</code> 库： <code>npm i moment -S</code></li>
+<li>想在 <code>monemt</code> 中自定义一些方法：</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> m <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"></span><br><span class="line">m.myFunction = <span class="function">() =&gt;</span> {} <span class="comment">// 会报错：类型“typeof moment”上不存在属性“myFunction”。</span></span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="3">
+<li>通过 <code>declare</code> 处理这个问题，关键是： <code>declare module xx {}</code></li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> m <span class="keyword">from</span> <span class="string">'moment'</span></span><br><span class="line"><span class="keyword">declare</span> <span class="built_in">module</span> <span class="string">'moment'</span> {</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span>  <span class="title">myFunction</span> (<span class="params"></span>): <span class="title">void</span></span></span><br><span class="line"><span class="function">}</span></span><br><span class="line"><span class="function"><span class="title">m</span>.<span class="title">myFunction</span> = (<span class="params"></span>) =&gt; </span>{}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="给全局类库添加自定义方法"><a href="#给全局类库添加自定义方法" class="headerlink" title="给全局类库添加自定义方法"></a>给全局类库添加自定义方法</h3><p>也是通过 <code>declare</code> 来处理，但是语句为：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="built_in">global</span> {</span><br><span class="line">    <span class="keyword">namespace</span> xxx {</span><br><span class="line">        ...</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>具体以 <code>globalLib</code> 为例：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">declare</span> <span class="built_in">global</span> {</span><br><span class="line">    <span class="keyword">namespace</span> globalLib {</span><br><span class="line">        <span class="function"><span class="keyword">function</span> <span class="title">doAnything</span> (<span class="params"></span>): <span class="title">void</span></span></span><br><span class="line"><span class="function">    }</span></span><br><span class="line"><span class="function">}</span></span><br><span class="line"><span class="function"><span class="title">globalLib</span>.<span class="title">doAnything</span> = (<span class="params"></span>) =&gt; </span>{</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'globalLib do Anything'</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="声明文件间的依赖"><a href="#声明文件间的依赖" class="headerlink" title="声明文件间的依赖"></a>声明文件间的依赖</h3><p>以 <code>jquery</code> 为例：在 <code>node_module/@types/jquery</code> 文件夹中</p>
+<ol>
+<li>先查看 <code>package.json</code> 文件下的 <code>types</code> 字段，该字段就是整个 <code>jquery</code> 的声明文件入口: <code>"types": "index.d.ts", </code></li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// &lt;reference types="sizzle" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference path="JQueryStatic.d.ts" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference path="JQuery.d.ts" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference path="misc.d.ts" /&gt;</span></span><br><span class="line"><span class="comment">/// &lt;reference path="legacy.d.ts" /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> = jQuery;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在这个文件下前缀都是贡献者，只有最后是一些 <code>reference</code> 引用，最后导出 <code>jQuery</code>。而这些依赖又能分为两种（模块依赖 &amp; ）：</p>
+<ol>
+<li>模块依赖：是使用的 <code>types</code> 属性。</li>
+</ol>
+<p><code>/// &lt;reference types="sizzle" /&gt;</code> 这句话的含义就是，<code>ts</code> 会在这个 <code>@types</code> 目录下寻找这个 <code>sizzle</code> 模块</p>
+<ol start="2">
+<li>路径依赖： 使用 <code>path</code> 属性，这是一个相对的路径。</li>
+</ol>
+<p><code>/// &lt;reference path="JQueryStatic.d.ts" /&gt;</code> 意思就是寻找与 <code>index.d.ts</code> 同级的文件。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/4115532424.html">https://bljj-dbld.github.io/posts/4115532424.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/212067372.html">P15 配置 tsconfig.json</a>
+            
+            
+            <a class="next" rel="next" href="/posts/3943423985.html">P13 理解声明合并</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

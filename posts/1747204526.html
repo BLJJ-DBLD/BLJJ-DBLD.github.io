@@ -1,0 +1,371 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>对 Vue2.x 和 Vue3.x 的监听实现与理解 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">对 Vue2.x 和 Vue3.x 的监听实现与理解</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 13, 2022&nbsp;&nbsp;13:51:28</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Vue/">Vue</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>在 <code>Vue2.x</code>，<code>Vue3.x</code> 中对数据的监听方式已经是老生常谈了，不外乎就是对 <code>Object.defineProperty</code> 以及 <code>Proxy</code> 的了解。虽然能够在 MDN 中能够看到相关的详细信息，但是总归感觉是行走在浮冰之上。还是得将自己的理解描述成文字记录下来靠谱👍。</p>
+<h2 id="使用-Object-defineProperty-实现监听（Vue2-x）"><a href="#使用-Object-defineProperty-实现监听（Vue2-x）" class="headerlink" title="使用 Object.defineProperty 实现监听（Vue2.x）"></a>使用 <code>Object.defineProperty</code> 实现监听（Vue2.x）</h2><p>先总结一下 <code>Object.defineProperty</code> 的监听缺点：无法监听属性的添加或者移除；无法监听数组索引直接赋值；无法监听修改数组的长度。</p>
+<ul>
+<li>监听对象属性的添加或者移除： <code>vue</code> 提供了 <code>set</code>、<code>delete</code> 方法</li>
+<li>监听数组内容、长度的更改：修改数组的继承关系，重写方法，在重写方法内部进行拦截调用</li>
+</ul>
+<blockquote>
+<p>但是不要有一种 <code>Object.defineProperty</code> 无法监听数组变化的误区。<code>Object.defineProperty</code> 可以对数组做监听，只是这么做会对性能有很大影响：</p>
+<ol>
+<li>当给数组某一项赋值的时候，会依次读取数组的所有值</li>
+<li>数组长度不确定，无法提前打上 <code>setter/getter</code>。</li>
+</ol>
+</blockquote>
+<p>在文件夹内创建两个文件：</p>
+<figure class="highlight 1c"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">根目录</span><br><span class="line">  <span class="string">|- index.html</span></span><br><span class="line">  <span class="string">|- index.js</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>index.html 中对 index.js 做引入，并且创建标签 <code>&lt;h2/&gt;</code></p>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="tag">&lt;<span class="name">h2</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span><span class="tag">&lt;/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"./index.js"</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>接下来，就是 <code>Object.defineProperty</code> 的操作秀了。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="comment">// 模拟 Vue 实例中 data 属性</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">    <span class="attr">list</span>: []</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 Vue 实例中的 vm 对象</span></span><br><span class="line"><span class="keyword">let</span> vm = {}</span><br><span class="line"></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(vm, <span class="string">'msg'</span>, {</span><br><span class="line">    <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">    get () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'获取绑定数据'</span>, data.msg);</span><br><span class="line">        <span class="keyword">return</span> data.msg</span><br><span class="line">    },</span><br><span class="line">    set (newVal) {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'更新绑定数据'</span>, newVal);</span><br><span class="line">        <span class="keyword">if</span> (newVal === data.msg) {</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        }</span><br><span class="line">        data.msg = newVal</span><br><span class="line">        <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>).textContent = newVal</span><br><span class="line">    }</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这样子，在 index.html 中， F12 打开控制台，输入 <code>vm.msg = 'hello world'</code> 就能看到效果了。</p>
+<p><img src="/posts/1747204526/image_1.png" alt="绑定属性值是基本类型"></p>
+<p>此时，我们就对 <code>Object.defineProperty</code> 有了一个基本的使用了。当 <code>data</code> 中有多个属性时，我们可以对 <code>data</code> 的属性做遍历添加监听器。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 实例中 data 属性</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'布利啾啾 DBLD'</span>,</span><br><span class="line">    <span class="attr">list</span>: [],</span><br><span class="line">    <span class="attr">obj</span>: {</span><br><span class="line">        <span class="attr">msg</span>: <span class="string">'hello'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 Vue 实例中的 vm 对象</span></span><br><span class="line"><span class="keyword">let</span> vm = {}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 遍历监听 data 中的自身属性，为每个属性添加监听器</span></span><br><span class="line"><span class="built_in">Object</span>.keys(data).forEach(<span class="function"><span class="params">key</span> =&gt;</span> {</span><br><span class="line">    <span class="built_in">Object</span>.defineProperty(vm, key, {</span><br><span class="line">        <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">        get () {</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'获取绑定数据'</span>, data[key]);</span><br><span class="line">            <span class="keyword">return</span> data[key]</span><br><span class="line">        },</span><br><span class="line">        set (newVal) {</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'更新绑定数据'</span>, newVal);</span><br><span class="line">            <span class="keyword">if</span> (newVal === data[key]) {</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            }</span><br><span class="line">            data[key] = newVal</span><br><span class="line">            <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>).textContent = newVal</span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p>我在控制台输入 <code>vm.obj.msg = '你好'</code> 时，并不能监听到属性的变化。这是因为我们只监听了 <code>obj</code> 属性，却未对其内部属性做监听器。这里就得递归遍历这类属性，进行深度监听了，所以需要将添加监听器的过程封装到函数中。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 实例中 data 属性</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'布利啾啾 DBLD'</span>,</span><br><span class="line">    <span class="attr">list</span>: [],</span><br><span class="line">    <span class="attr">obj</span>: {</span><br><span class="line">        <span class="attr">msg</span>: <span class="string">'hello'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 Vue 实例中的 vm 对象</span></span><br><span class="line"><span class="keyword">let</span> vm = {}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">defineProperty</span> (<span class="params">target, data</span>) </span>{</span><br><span class="line">    <span class="built_in">Object</span>.keys(data).forEach(<span class="function"><span class="params">key</span> =&gt;</span> {</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> data[key] === <span class="string">'object'</span>) {</span><br><span class="line">            <span class="comment">// [object xxx]</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">Object</span>.prototype.toString.call(data[key]).slice(<span class="number">8</span>, -<span class="number">1</span>) === <span class="string">'Object'</span>) {</span><br><span class="line">                target[key] = {}</span><br><span class="line">                defineProperty(target[key], data[key])</span><br><span class="line">            }</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            <span class="built_in">Object</span>.defineProperty(target, key, {</span><br><span class="line">                <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">                <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">                get () {</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="string">'获取绑定数据'</span>, data[key]);</span><br><span class="line">                    <span class="keyword">return</span> data[key]</span><br><span class="line">                },</span><br><span class="line">                set (newVal) {</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="string">'更新绑定数据'</span>, newVal);</span><br><span class="line">                    <span class="keyword">if</span> (newVal === data[key]) {</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    }</span><br><span class="line">                    data[key] = newVal</span><br><span class="line">                    <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>).textContent = newVal</span><br><span class="line">                }</span><br><span class="line">            })</span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">defineProperty(vm, data)</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>这样，当我们更改更深层次对象的数据时，也能够监听到</p>
+<p><img src="/posts/1747204526/image_2.png" alt="监听更深层次的数据"></p>
+<p>仔细看过 <code>data</code> 变量中的属性，就会发现我们一直未对 <code>list</code> 属性做操作，并不是忘记了。具体缘由，前头已经说明白了，对于数组的监听，采用的并不是 <code>Object.defineProperty</code> 方法，而是对数组的一些方法做变异改造并监听。<br>因此，当判断到属性的值是数组时，就需要将该属性的原型对象指向这个变异对象，以实现对该属性变化的监听。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">defineProperty</span> (<span class="params">target, data</span>) </span>{</span><br><span class="line">    <span class="built_in">Object</span>.keys(data).forEach(<span class="function"><span class="params">key</span> =&gt;</span> {</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> data[key] === <span class="string">'object'</span>) {</span><br><span class="line">            <span class="comment">// [object xxx]</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">Object</span>.prototype.toString.call(data[key]).slice(<span class="number">8</span>, -<span class="number">1</span>) === <span class="string">'Object'</span>) {</span><br><span class="line">                target[key] = {}</span><br><span class="line">                defineProperty(target[key], data[key])</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">Object</span>.prototype.toString.call(data[key]).slice(<span class="number">8</span>, -<span class="number">1</span>) === <span class="string">'Array'</span>) {</span><br><span class="line">                target[key] = []</span><br><span class="line">                <span class="comment">// 手动将数组的原型链指向新的原型对象</span></span><br><span class="line">                addArrayLisen(target[key])</span><br><span class="line">            }</span><br><span class="line">        } <span class="keyword">else</span> {</span><br><span class="line">            <span class="built_in">Object</span>.defineProperty(target, key, {</span><br><span class="line">                <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">                <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">                get () {</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="string">'获取绑定数据'</span>, data[key]);</span><br><span class="line">                    <span class="keyword">return</span> data[key]</span><br><span class="line">                },</span><br><span class="line">                set (newVal) {</span><br><span class="line">                    <span class="built_in">console</span>.log(<span class="string">'更新绑定数据'</span>, newVal);</span><br><span class="line">                    <span class="keyword">if</span> (newVal === data[key]) {</span><br><span class="line">                        <span class="keyword">return</span>;</span><br><span class="line">                    }</span><br><span class="line">                    data[key] = newVal</span><br><span class="line">                    <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>).textContent = newVal</span><br><span class="line">                }</span><br><span class="line">            })</span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addArrayLisen</span> (<span class="params">target</span>) </span>{</span><br><span class="line">    <span class="keyword">const</span> oldArrayMethods = <span class="built_in">Array</span>.prototype</span><br><span class="line">    <span class="keyword">const</span> methods = [</span><br><span class="line">        <span class="string">'push'</span>,</span><br><span class="line">        <span class="string">'pop'</span>,</span><br><span class="line">        <span class="string">'unshift'</span>,</span><br><span class="line">        <span class="string">'shift'</span>,</span><br><span class="line">        <span class="string">'splice'</span>,</span><br><span class="line">        <span class="string">'sort'</span>,</span><br><span class="line">        <span class="string">'reverse'</span></span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">const</span> arrayMethods = <span class="built_in">Object</span>.create({}, oldArrayMethods)</span><br><span class="line">    methods.forEach(<span class="function">(<span class="params">methodKey</span>) =&gt;</span> {</span><br><span class="line">        arrayMethods[methodKey] = <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>{</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">`监听 <span class="subst">${methodKey}</span>`</span>)</span><br><span class="line">            <span class="keyword">const</span> result = oldArrayMethods[methodKey].apply(<span class="built_in">this</span>, args)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">    target.__proto__ = arrayMethods</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时，当对数组属性操作时，就能简单的监听到它的变化了</p>
+<p><img src="/posts/1747204526/image_3.png" alt="监听数组属性变化"></p>
+<p>数组属性内部不但可以添加基本类型数据也能够添加 <code>object</code> 类型数据，因此，当通过 <code>push</code>、<code>unshift</code>、<code>splice</code> 添加内容时，还需要再对加入的数据也做深度监听。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addArrayLisen</span> (<span class="params">target</span>) </span>{</span><br><span class="line">    <span class="keyword">const</span> oldArrayMethods = <span class="built_in">Array</span>.prototype</span><br><span class="line">    <span class="keyword">const</span> methods = [</span><br><span class="line">        <span class="string">'push'</span>,</span><br><span class="line">        <span class="string">'pop'</span>,</span><br><span class="line">        <span class="string">'unshift'</span>,</span><br><span class="line">        <span class="string">'shift'</span>,</span><br><span class="line">        <span class="string">'splice'</span>,</span><br><span class="line">        <span class="string">'sort'</span>,</span><br><span class="line">        <span class="string">'reverse'</span></span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">const</span> arrayMethods = <span class="built_in">Object</span>.create({}, oldArrayMethods)</span><br><span class="line">    methods.forEach(<span class="function">(<span class="params">methodKey</span>) =&gt;</span> {</span><br><span class="line">        arrayMethods[methodKey] = <span class="function"><span class="keyword">function</span> (<span class="params">...args</span>) </span>{</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">`监听 <span class="subst">${methodKey}</span>`</span>)</span><br><span class="line">            <span class="keyword">const</span> result = oldArrayMethods[methodKey].apply(<span class="built_in">this</span>, args)</span><br><span class="line">            <span class="keyword">switch</span> (methodKey) {</span><br><span class="line">                <span class="keyword">case</span> <span class="string">'push'</span>:</span><br><span class="line">                <span class="keyword">case</span> <span class="string">'unshift'</span>:</span><br><span class="line">                    inserted = args;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                <span class="keyword">case</span> <span class="string">'splice'</span>: <span class="comment">// 3个  新增的属性 splice 有删除 新增的的功能 arr.splice(0,1,{name:1})</span></span><br><span class="line">                    inserted = args.slice(<span class="number">2</span>)</span><br><span class="line">                <span class="attr">default</span>:</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">            }</span><br><span class="line">            <span class="keyword">if</span> (inserted) defineProperty(target, inserted); <span class="comment">// 将新增属性继续观测</span></span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">    target.__proto__ = arrayMethods</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这样子，当内部加入的是 <code>object</code> 类型时，也能够对其做到监听啦。<br>至此，就对 Vue2.x 中使用 <code>Object.defineProperty</code> 有了一个简单的理解了。</p>
+<h2 id="Vue3-x-使用的-Proxy"><a href="#Vue3-x-使用的-Proxy" class="headerlink" title="Vue3.x 使用的 Proxy"></a>Vue3.x 使用的 <code>Proxy</code></h2><p>在学习使用前，先看一下 <code>Proxy</code> 的兼容性，点 <a target="_blank" rel="noopener" href="https://caniuse.com/?search=Proxy">这里</a>，可以知道， <code>Proxy</code> 有严重的兼容性问题，并且不支持 <code>polyfill</code>。</p>
+<blockquote>
+<p>不支持 <code>polyfill</code> 的原因是 <code>Babel</code> 的 <code>transpiled</code> 和 <code>polyfilled</code> 都没办法支持 <code>Proxy</code> 的功能特性。<br>即: 由于 ES5 的限制，Proxy 功能特性无法用 ES5的语法写出来</p>
+</blockquote>
+<p><code>Proxy</code> 翻译成中文过来是 <em>代理</em> 的意思，那啥叫代理呢？可以理解为在对象之前设置一个“拦截”，当该对象被访问的时候，都必须经过这层拦截。意味着你可以在这层拦截中进行各种操作。比如你可以在这层拦截中对原对象进行处理，返回你想返回的数据结构。</p>
+<p>MDN上的解释为：Proxy 对象用于定义基本操作的自定义行为（如属性查找，赋值，枚举，函数调用，甚至另一个代理等）。</p>
+<p>我们还是一步一步的来实现监听吧，一口也吃不成一个胖子！</p>
+<p>在使用 <code>Proxy</code> 前，再多提一嘴 <code>Reflect</code>，一般他俩是配套使用的。</p>
+<blockquote>
+<p>那 <code>Reflect</code> 是啥呢？推荐点 <a target="_blank" rel="noopener" href="https://www.zhangxinxu.com/wordpress/2021/07/js-proxy-reflect/">这里</a> 看一下，我觉得讲 <code>Reflect</code> 挺有趣的~</p>
+</blockquote>
+<p>回归正题，让我们用 <code>Proxy</code> 来实现对对象的拦截吧</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 实例中 data 属性</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'布利啾啾 DBLD'</span>,</span><br><span class="line">    <span class="attr">list</span>: [],</span><br><span class="line">    <span class="attr">obj</span>: {</span><br><span class="line">        <span class="attr">msg</span>: <span class="string">'hello'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 vm 实例对象</span></span><br><span class="line"><span class="keyword">const</span> vm = <span class="keyword">new</span> <span class="built_in">Proxy</span>(data, {</span><br><span class="line">    set (target, propKey, value) {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`监听到 <span class="subst">${propKey}</span> 的变化，值是 <span class="subst">${value}</span>`</span>)</span><br><span class="line">        <span class="built_in">Reflect</span>.set(target, propKey, value)</span><br><span class="line">    },</span><br><span class="line">    get (target, propKey) {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">`监听到 <span class="subst">${propKey}</span> 的获取，值是 <span class="subst">${target[propKey]}</span>`</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Reflect</span>.get(target, propKey)</span><br><span class="line">    }</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/1747204526/image_4.png" alt="采用 Proxy 拦截对象"></p>
+<p>从上图，能够看到对基本类型的属性的监听是很简单的，但是像 <code>list</code>, <code>obj</code> 这类，无法做到监听内部的变化。所以依旧需要将进行封装。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 实例中 data 属性</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'布利啾啾 DBLD'</span>,</span><br><span class="line">    <span class="attr">list</span>: [],</span><br><span class="line">    <span class="attr">obj</span>: {</span><br><span class="line">        <span class="attr">msg</span>: <span class="string">'hello'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 Vue 实例中的 vm 对象</span></span><br><span class="line"><span class="keyword">let</span> vm = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reactive</span> (<span class="params">target = {}</span>) </span>{</span><br><span class="line">    <span class="comment">// 对基本数据类型做直接返回。</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> target !== <span class="string">'object'</span> || target == <span class="literal">null</span>) {</span><br><span class="line">        <span class="keyword">return</span> target</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> observer = <span class="keyword">new</span> <span class="built_in">Proxy</span>(target, {</span><br><span class="line">        set (target, propKey, value) {</span><br><span class="line">            <span class="comment">// 判断是否是新增属性</span></span><br><span class="line">            <span class="keyword">const</span> ownKeys = <span class="built_in">Reflect</span>.ownKeys(target)</span><br><span class="line">            <span class="keyword">if</span> (ownKeys.includes(propKey)) {</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'已有的 key:'</span>, propKey) <span class="comment">//监听</span></span><br><span class="line">            } <span class="keyword">else</span> {</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'新增的 key:'</span>, propKey)</span><br><span class="line">            }</span><br><span class="line">            <span class="comment">// 重复的数据不处理</span></span><br><span class="line">            <span class="keyword">const</span> oldVal = target[propKey]</span><br><span class="line">            <span class="keyword">if</span> (value === oldVal) {</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">            }</span><br><span class="line">            <span class="comment">// 注意！需要将 set 的值返回出去以做判断是否设置成功</span></span><br><span class="line">            <span class="keyword">const</span> result = <span class="built_in">Reflect</span>.set(target, propKey, value)</span><br><span class="line">            <span class="keyword">return</span> result</span><br><span class="line">        },</span><br><span class="line">        get (target, propKey) {</span><br><span class="line">            <span class="comment">// 只监听 处理本身（非原型）的属性 ,如 push()</span></span><br><span class="line">            <span class="keyword">const</span> ownKeys = <span class="built_in">Reflect</span>.ownKeys(target)</span><br><span class="line">            <span class="keyword">if</span> (ownKeys.includes(propKey)) {</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">'get:'</span>, propKey) <span class="comment">//监听</span></span><br><span class="line">            }</span><br><span class="line">            <span class="comment">// return Reflect.get(target, propKey)</span></span><br><span class="line">            <span class="keyword">const</span> result = <span class="built_in">Reflect</span>.get(target, propKey)</span><br><span class="line">            <span class="keyword">return</span> reactive(result) <span class="comment">//递归get处理 实现深度监听</span></span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">vm = reactive(data)</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/1747204526/image_5.png" alt="通过 Proxy 递归属性"></p>
+<p>在上图中，可以看到通过对 <code>get</code> 方法内对获取到的值做递归操作，不管是新增属性还是旧属性，都能够做监听。但不止是监听新增属性，还能够通过 <code>handler.deleteProperty</code> 方法监听对属性的删除操作。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 实例中 data 属性</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'布利啾啾 DBLD'</span>,</span><br><span class="line">    <span class="attr">list</span>: [],</span><br><span class="line">    <span class="attr">obj</span>: {</span><br><span class="line">        <span class="attr">msg</span>: <span class="string">'hello'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 模拟 Vue 实例中的 vm 对象</span></span><br><span class="line"><span class="keyword">let</span> vm = <span class="literal">null</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reactive</span> (<span class="params">target = {}</span>) </span>{</span><br><span class="line">    <span class="comment">// 对基本数据类型做直接返回。</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">typeof</span> target !== <span class="string">'object'</span> || target == <span class="literal">null</span>) {</span><br><span class="line">        <span class="keyword">return</span> target</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> observer = <span class="keyword">new</span> <span class="built_in">Proxy</span>(target, {</span><br><span class="line">        deleteProperty (target, propKey) {</span><br><span class="line">            <span class="keyword">const</span> result = <span class="built_in">Reflect</span>.deleteProperty(target, key)</span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'delete property'</span>, key) <span class="comment">//delete property name</span></span><br><span class="line">            <span class="built_in">console</span>.log(<span class="string">'result'</span>, result) <span class="comment">//result true</span></span><br><span class="line">            <span class="keyword">return</span> result <span class="comment">//是否删除成功</span></span><br><span class="line">        }</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">vm = reactive(data)</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/1747204526/image_6.png" alt="拦截删除操作"></p>
+<h2 id="总结比较"><a href="#总结比较" class="headerlink" title="总结比较"></a>总结比较</h2><p>vue3.x 基于 <code>Proxy</code> 实现响应式<br>vue2.x 基于 <code>Oject.defineProperty</code> 实现响应式</p>
+<p>相较于 <code>Oject.defineProperty</code>，<code>Proxy</code> 实现响应式：</p>
+<ul>
+<li>深度监听，性能更好</li>
+<li>可监听新增删除的属性</li>
+<li>可监听数组变化</li>
+<li>规避 <code>Object.defineProperty</code> 的问题</li>
+</ul>
+<p>但是有得必有失：</p>
+<ul>
+<li><code>Proxy</code> 无法兼容所有浏览器，无法 <code>polyfill</code></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1747204526.html">https://bljj-dbld.github.io/posts/1747204526.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E7%9B%91%E5%90%AC%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0%E4%B8%8E%E7%90%86%E8%A7%A3/"># 监听原理实现与理解</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/45186819.html">P4 接口（interface）</a>
+            
+            
+            <a class="next" rel="next" href="/posts/3829252120.html">HTTP + 加密 + 认证 + 完整性保护 = HTTPS</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

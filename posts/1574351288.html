@@ -1,0 +1,383 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P12 Antd 的使用与其他补充 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P12 Antd 的使用与其他补充</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;19:53:58</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="使用前需了解的内容"><a href="#使用前需了解的内容" class="headerlink" title="使用前需了解的内容"></a>使用前需了解的内容</h1><h2 id="兼容环境"><a href="#兼容环境" class="headerlink" title="兼容环境"></a>兼容环境</h2><ul>
+<li>现代浏览器 和 IE11(需要 polyfills)</li>
+<li>支持服务端渲染</li>
+<li>Electorn</li>
+</ul>
+<p><img src="/posts/1574351288/image_1.png" alt="支持的版本"></p>
+<p>对于 IE 系列浏览器，需要提供相应的 Polyfill 支持，建议使用 @babel/preset-env 来解决浏览器兼容问题。如果你在使用 umi，可以直接使用 targets 配置。</p>
+<blockquote>
+<p><code>antd@2.0</code> 之后不再支持 <code>IE8</code>。 <code>antd@4.0</code> 之后不再支持 <code>React 15</code> 和 <code>IE9/10</code>。</p>
+</blockquote>
+<h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>使用 npm 、 yarn 安装</p>
+<ul>
+<li>npm: <code>npm install antd --save</code></li>
+<li>yarn: <code>yarn add antd</code></li>
+</ul>
+<h2 id="Antd-的使用"><a href="#Antd-的使用" class="headerlink" title="Antd 的使用"></a>Antd 的使用</h2><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* App.js */</span></span><br><span class="line">...</span><br><span class="line"><span class="keyword">import</span> { Button } <span class="keyword">from</span> <span class="string">"antd"</span>;</span><br><span class="line">...</span><br><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">Button</span>&gt;</span> Antd button<span class="tag">&lt;/<span class="name">Button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/1574351288/image_2.png" alt="未加入 css 的 Antd 控件"></p>
+<p>此时能看出控件是出来了，但是样式却不对，这是因为样式是需要单独引入：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* index.js */</span></span><br><span class="line">+ <span class="keyword">import</span> <span class="string">'antd/dist/antd.css'</span>; <span class="comment">// or 'antd/dist/antd.less'</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/1574351288/image_3.png" alt="已加入 css 的 Antd 控件"></p>
+<h2 id="对-Antd-的高级配置"><a href="#对-Antd-的高级配置" class="headerlink" title="对 Antd 的高级配置"></a>对 Antd 的高级配置</h2><blockquote>
+<p>我们需要对 <code>create-react-app</code> 的默认配置进行自定义，这里我们使用 <a target="_blank" rel="noopener" href="https://github.com/gsoft-inc/craco">craco</a> （一个对 <code>create-react-app</code> 进行自定义配置的社区解决方案）。</p>
+</blockquote>
+<p>现在我们安装 craco 并修改 <code>package.json</code> 里面的 <code>script</code> 属性</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* package.json */</span></span><br><span class="line"><span class="string">"scripts"</span>: {</span><br><span class="line">-   <span class="string">"start"</span>: <span class="string">"react-scripts start"</span>,</span><br><span class="line">-   <span class="string">"build"</span>: <span class="string">"react-scripts build"</span>,</span><br><span class="line">-   <span class="string">"test"</span>: <span class="string">"react-scripts test"</span>,</span><br><span class="line">+   <span class="string">"start"</span>: <span class="string">"craco start"</span>,</span><br><span class="line">+   <span class="string">"build"</span>: <span class="string">"craco build"</span>,</span><br><span class="line">+   <span class="string">"test"</span>: <span class="string">"craco test"</span>,</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>之后在项目根目录创建一个 <code>craco.config.js</code> 用于修改默认配置。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* craco.config.js */</span></span><br><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="对-Antd-配置自定义主题"><a href="#对-Antd-配置自定义主题" class="headerlink" title="对 Antd 配置自定义主题"></a>对 Antd 配置自定义主题</h3><p>有了 <code>craco</code> 能够自定义默认配置后，自定义主题需要用到类似 <code>less-loader</code> 提供的 <code>less</code> 变量覆盖功能。我们可以引入 <code>craco-less</code> 来帮助加载 <code>less</code> 样式和修改变量。</p>
+<p>首先把 <code>src/index.js</code> 文件中对 <code>antd</code> css 的文件引入更改为 <code>less</code> 文件。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* index.js */</span></span><br><span class="line">-   <span class="keyword">import</span> <span class="string">'antd/dist/antd.css'</span>; </span><br><span class="line">+  <span class="keyword">import</span> <span class="string">'antd/dist/antd.less'</span>; </span><br></pre></td></tr></tbody></table></figure>
+
+<p>然后安装 <code>craco-less</code> 并修改 <code>craco.config.js</code> 文件如下。</p>
+<ol>
+<li>安装 <code>craco-less</code>：<code>yarn add craco-less</code></li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> CracoLessPlugin = <span class="built_in">require</span>(<span class="string">'craco-less'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        {</span><br><span class="line">            <span class="attr">plugin</span>: CracoLessPlugin,</span><br><span class="line">                <span class="attr">options</span>: {</span><br><span class="line">                <span class="attr">lessLoaderOptions</span>: {</span><br><span class="line">                    <span class="attr">lessOptions</span>: {</span><br><span class="line">                        <span class="attr">modifyVars</span>: { <span class="string">'@primary-color'</span>: <span class="string">'#ff322f'</span> },</span><br><span class="line">                        <span class="attr">javascriptEnabled</span>: <span class="literal">true</span>,</span><br><span class="line">                    },</span><br><span class="line">                },</span><br><span class="line">            },</span><br><span class="line">        },</span><br><span class="line">    ],</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里利用了 <code>less-loader</code> 的 <code>modifyVars</code> 来进行主题配置，变量和其他配置方式可以参考 配置主题 文档。修改后重启 <code>yarn start</code>，如果看到一个红色的按钮就说明配置成功了。</p>
+<p><img src="/posts/1574351288/image_4.png" alt="自定义主题色"></p>
+<blockquote>
+<p>也可以使用 <code>create-react-app</code> 提供的 <code>yarn run eject</code> 命令将所有内建的配置暴露出来。不过这种配置方式不太建议使用。</p>
+</blockquote>
+<h2 id="设置路径别名"><a href="#设置路径别名" class="headerlink" title="设置路径别名"></a>设置路径别名</h2><p>以前设置路径别名时，需要通过 <code>yarn eject</code> 把 <code>webpack</code> 的配置暴露出来，之后修改 <code>工程名/config/webpack.config.js</code> 文件</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">resolve: {</span><br><span class="line">      <span class="attr">alias</span>: {</span><br><span class="line">        <span class="string">'react-native'</span>: <span class="string">'react-native-web'</span>,</span><br><span class="line">        ...(isEnvProductionProfile &amp;&amp; {</span><br><span class="line">          <span class="string">'react-dom$'</span>: <span class="string">'react-dom/profiling'</span>,</span><br><span class="line">          <span class="string">'scheduler/tracing'</span>: <span class="string">'scheduler/tracing-profiling'</span>,</span><br><span class="line">        }),</span><br><span class="line">        ...(modules.webpackAliases || {}),</span><br><span class="line">        <span class="string">'@'</span>: path.resolve(__dirname, <span class="string">'./src'</span>),</span><br><span class="line">        <span class="string">'@components'</span>: path.resolve(__dirname, <span class="string">'./src/components'</span>),</span><br><span class="line">        <span class="string">'@pages'</span>: path.resolve(__dirname, <span class="string">'./src/pages'</span>)</span><br><span class="line">      },</span><br><span class="line">      <span class="attr">extensions</span>: [<span class="string">'.js'</span>, <span class="string">'.jsx'</span>, <span class="string">'.json'</span>]</span><br><span class="line">}	</span><br></pre></td></tr></tbody></table></figure>
+
+<p>但是现在我们能够使用 <code>craco</code> 来设置新的路径别名，在 <code>craco.config.js</code> 文件中新增：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+   <span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line">+   <span class="keyword">const</span> reslove = <span class="function">(<span class="params">dir</span>) =&gt;</span> path.resolve(__dirname, dir)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">    ...</span><br><span class="line">    +   webpack: {</span><br><span class="line">    +       alias: {</span><br><span class="line">    +           <span class="string">'@'</span>: reslove(<span class="string">'./src'</span>)</span><br><span class="line">    +       }</span><br><span class="line">    +   }</span><br><span class="line">    ...</span><br><span class="line">};</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意：与在 <code>webpack.config.js</code> 的 <code>resolve</code> 修改配置不同，而是在 <code>webpack</code> 中修改。</p>
+</blockquote>
+<h1 id="自定义-eslint-文件配置解决方案"><a href="#自定义-eslint-文件配置解决方案" class="headerlink" title="自定义 eslint 文件配置解决方案"></a>自定义 eslint 文件配置解决方案</h1><p>首先，自定义的 eslint 配置方案并不是针对 <code>Antd</code> 来使用的，而是针对 <code>create-react-app</code> 来使用的。方案有多种：</p>
+<ol>
+<li><code>yarn eject</code> 项目将 webpack 配置暴露出来，这种方案不建议，因此不做过多解释。</li>
+<li>在 <code>react-script 4.x</code> 版本以下时，我们可以在 <code>package.json</code> 中的 <code>scripts</code> 命令添加环境变量 <code>EXTEND_ESLINT=true</code> 开启自定义<ul>
+<li>原因是，在早期的 <code>react-script</code> 版本中，当环境变量 <code>EXTEND_ESLINT</code> 为 <code>true</code> 时，<code>react-script</code> 会认为我们自定义 eslint 配置，而不去启用 <code>eslint-config-react-app</code> 的配置。</li>
+<li>注意：开启这个变量我们只能在 <code>package.json</code> 中的 <code>eslintConfig</code> 字段进行配置自定义，无法通过根目录 <code>.eslintrc</code> 配置，所以不建议使用。</li>
+</ul>
+</li>
+<li>在 <code>react-script 4.x</code> 版本以下时，也可以使用 <code>react-app-rewired</code> 和 <code>customize-cra</code> 对 <code>react-scripts</code> 手脚架包装一次进行使用，可不对 <code>react eject</code> 就可以对项目自定义 <code>webpack</code>。</li>
+<li><code>react-script 4.x</code> 版本以上，<code>react17</code> 官方团队修改了脚手架允许直接在外部声明 <code>.eslintrc</code> 文件覆盖 <code>eslint</code> 配置。不需要对 <code>package.json</code> 和 <code>react-app-rewired</code> 和 <code>customize-cra</code> 就可用实现 <code>eslint</code> 配置。</li>
+</ol>
+<h2 id="方案三-react-app-rewired-和-customize-cra"><a href="#方案三-react-app-rewired-和-customize-cra" class="headerlink" title="方案三 react-app-rewired 和 customize-cra"></a>方案三 <code>react-app-rewired</code> 和 <code>customize-cra</code></h2><ol>
+<li>先安装依赖：<code>yarn add react-app-rewired customize-cra --save-dev</code></li>
+<li>在项目跟目录下创建 <code>config-overrides.js</code> 文件，内容如下：</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> { override, addWebpackAlias, useEslintRc } = <span class="built_in">require</span>(<span class="string">'customize-cra'</span>)</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">'path'</span>)</span><br><span class="line"> </span><br><span class="line"><span class="built_in">module</span>.exports = override(</span><br><span class="line">  <span class="comment">// 注意，一定要用 path.resolve 引入eslint的配置文件，否则不生效</span></span><br><span class="line">  useEslintRc(path.resolve(__dirname, <span class="string">'./.eslintrc.json'</span>)),</span><br><span class="line">  <span class="comment">// 补充一个在 4.x 以下时配置路径别名的方法</span></span><br><span class="line">  addWebpackAlias({</span><br><span class="line">    <span class="string">'@'</span>: path.resolve(__dirname, <span class="string">'./src'</span>),</span><br><span class="line">    <span class="string">'_c'</span>: path.resolve(__dirname, <span class="string">'./src/components'</span>)</span><br><span class="line">  })</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="3">
+<li>修改 <code>package.json</code> 中 <code>scripts</code> 的命令：<code>"start": "cross-env REACT_APP_API=development react-app-rewired start"</code></li>
+<li>然后在根目录创建 <code>.eslintrc.json</code> 进行自定义 <code>eslint</code> 配置即可。<ul>
+<li>语法：0 表示关闭，1 表示警告，2 表示严重错误</li>
+</ul>
+</li>
+</ol>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="attr">"env"</span>: {</span><br><span class="line">        <span class="attr">"node"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"mocha"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"jest"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"es6"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"browser"</span>: <span class="literal">true</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"extends"</span>: [</span><br><span class="line">        <span class="string">"eslint:recommended"</span>,</span><br><span class="line">        <span class="string">"plugin:react/recommended"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"parser"</span>: <span class="string">"babel-eslint"</span>,</span><br><span class="line">    <span class="attr">"parserOptions"</span>: {</span><br><span class="line">        <span class="attr">"ecmaFeatures"</span>: {</span><br><span class="line">            <span class="attr">"jsx"</span>: <span class="literal">true</span></span><br><span class="line">        },</span><br><span class="line">        <span class="attr">"ecmaVersion"</span>: <span class="number">6</span>,</span><br><span class="line">        <span class="attr">"sourceType"</span>: <span class="string">"module"</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"plugins"</span>: [</span><br><span class="line">        <span class="string">"react"</span>,</span><br><span class="line">        <span class="string">"jsx-a11y"</span>,</span><br><span class="line">        <span class="string">"react-hooks"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"settings"</span>: {</span><br><span class="line">        <span class="attr">"react"</span>: {</span><br><span class="line">            <span class="attr">"version"</span>: <span class="string">"detect"</span></span><br><span class="line">        }</span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"globals"</span>: {</span><br><span class="line">        <span class="attr">"JSX"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"React"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"NodeJS"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"Promise"</span>: <span class="literal">true</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"rules"</span>: {</span><br><span class="line">        <span class="attr">"no-console"</span>: [<span class="number">1</span>, { <span class="attr">"allow"</span>: [<span class="string">"warn"</span>] }], <span class="comment">// 禁用 console</span></span><br><span class="line">        <span class="attr">"consistent-return"</span>: <span class="number">2</span>, <span class="comment">// 要求 return 语句始终或从不指定值（一致返回）</span></span><br><span class="line">        <span class="attr">"curly"</span>: [<span class="number">2</span>, <span class="string">"multi-or-nest"</span>],</span><br><span class="line">        <span class="attr">"dot-location"</span>: <span class="number">0</span>, <span class="comment">// 在点之前和之后强制换行（点位置）</span></span><br><span class="line">        <span class="attr">"eqeqeq"</span>: <span class="number">2</span>, <span class="comment">// 要求 === 和 !==</span></span><br><span class="line">        <span class="attr">"no-alert"</span>: <span class="number">2</span>, <span class="comment">// 禁止使用 Alert</span></span><br><span class="line">        <span class="attr">"no-eq-null"</span>: <span class="number">2</span>, <span class="comment">// 禁止 == null 比较</span></span><br><span class="line">        <span class="attr">"no-lone-blocks"</span>: <span class="number">2</span>, <span class="comment">// 禁止不必要的嵌套块</span></span><br><span class="line">        <span class="attr">"no-return-await"</span>: <span class="number">2</span>, <span class="comment">// 禁止不必要的退出 await</span></span><br><span class="line">        <span class="attr">"no-unused-expressions"</span>: <span class="number">2</span>, <span class="comment">// 禁止使用未使用的表达式</span></span><br><span class="line">        <span class="attr">"array-bracket-spacing"</span>: <span class="number">2</span>, <span class="comment">// 禁止在方括号首尾加空格</span></span><br><span class="line">        <span class="attr">"object-curly-spacing"</span>: [<span class="number">2</span>, <span class="string">"never"</span>, { <span class="attr">"objectsInObjects"</span>: <span class="literal">true</span> }], <span class="comment">// 强制在花括号中使用一致的空格</span></span><br><span class="line">        <span class="attr">"block-spacing"</span>: [<span class="number">2</span>, <span class="string">"never"</span>], <span class="comment">// 禁止或强制在代码块中开括号前和闭括号后有空格</span></span><br><span class="line">        <span class="attr">"brace-style"</span>: <span class="number">0</span>, <span class="comment">// 大括号风格要求</span></span><br><span class="line">        <span class="attr">"comma-spacing"</span>: <span class="number">1</span>, <span class="comment">// 强制在逗号周围使用空格</span></span><br><span class="line">        <span class="attr">"consistent-this"</span>: <span class="number">1</span>, <span class="comment">// 要求一致的 This</span></span><br><span class="line">        <span class="attr">"eol-last"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止文件末尾保留一行空行</span></span><br><span class="line">        <span class="attr">"multiline-ternary"</span>: [<span class="number">1</span>, <span class="string">"always-multiline"</span>], <span class="comment">// 要求或禁止在三元操作数中间换行</span></span><br><span class="line">        <span class="attr">"new-cap"</span>: [<span class="number">2</span>, { <span class="attr">"capIsNew"</span>: <span class="literal">false</span> }], <span class="comment">// 要求构造函数首字母大写</span></span><br><span class="line">        <span class="attr">"no-trailing-spaces"</span>: <span class="number">2</span>, <span class="comment">// 禁用行尾空白</span></span><br><span class="line">        <span class="attr">"semi"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止使用分号代替 ASI</span></span><br><span class="line">        <span class="attr">"space-before-blocks"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止语句块之前的空格</span></span><br><span class="line">        <span class="attr">"space-in-parens"</span>: [<span class="number">2</span>, <span class="string">"never"</span>], <span class="comment">// 禁止或强制圆括号内的空格</span></span><br><span class="line">        <span class="attr">"spaced-comment"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止在注释前有空白 (space 或 tab)</span></span><br><span class="line">        <span class="attr">"switch-colon-spacing"</span>: [<span class="number">2</span>, { <span class="attr">"after"</span>: <span class="literal">true</span>, <span class="attr">"before"</span>: <span class="literal">false</span> }], <span class="comment">// 强制在 switch 的冒号左右有空格 </span></span><br><span class="line">        <span class="attr">"arrow-spacing"</span>: <span class="number">2</span>, <span class="comment">// 要求箭头函数的箭头之前或之后有空格</span></span><br><span class="line">        <span class="attr">"quotes"</span>: [<span class="number">0</span>, <span class="string">"single"</span>], <span class="comment">// 强制使用一致的反勾号、双引号或单引号</span></span><br><span class="line">        <span class="attr">"key-spacing"</span>: <span class="number">2</span>, <span class="comment">// 强制在对象字面量的键和值之间使用一致的空格</span></span><br><span class="line">        <span class="attr">"comma-dangle"</span>: [<span class="number">2</span>, <span class="string">"never"</span>], <span class="comment">// 禁止在对象和数组文字中使用逗号结尾</span></span><br><span class="line">        <span class="attr">"no-empty-function"</span>: <span class="number">1</span>, <span class="comment">// 禁止出现空函数</span></span><br><span class="line">        <span class="attr">"prefer-promise-reject-errors"</span>: <span class="number">0</span>, <span class="comment">// 要求使用 Error 对象作为 Promise 拒绝的原因</span></span><br><span class="line">        <span class="attr">"react-hooks/exhaustive-deps"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react-native/no-inline-styles"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/forbid-prop-types"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/prop-types"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/display-name"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/no-array-index-key"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/no-unused-state"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-indent-props"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-no-comment-textnodes"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"react/jsx-no-duplicate-props"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-no-target-blank"</span>: [<span class="number">1</span>, { <span class="attr">"enforceDynamicLinks"</span>: <span class="string">"always"</span> }],</span><br><span class="line">        <span class="attr">"react/jsx-no-undef"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-props-no-multi-spaces"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"react/jsx-tag-spacing"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"react/jsx-uses-vars"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-wrap-multilines"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react-hooks/rules-of-hooks"</span>: <span class="number">2</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="react-script-4-x-方案"><a href="#react-script-4-x-方案" class="headerlink" title="react-script 4.x 方案"></a><code>react-script 4.x</code> 方案</h2><blockquote>
+<p>react17 官方团队修改了脚手架允许直接在外部声明 <code>.eslintrc</code> 文件覆盖 <code>eslint</code> 配置。不需要对 <code>package.json</code> 和 <code>react-app-rewired</code> 和 <code>customize-cra</code> 就可用实现 <code>eslint</code> 配置。</p>
+</blockquote>
+<p>在根目录创建文件 <code>.eslintrc.json</code>，配置的 <code>extends</code> 字段需要改一下。</p>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="attr">"env"</span>: {</span><br><span class="line">        <span class="attr">"node"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"mocha"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"jest"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"es6"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"browser"</span>: <span class="literal">true</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"extends"</span>: [</span><br><span class="line">        <span class="string">"eslint:recommended"</span>,</span><br><span class="line">        <span class="string">"plugin:react/recommended"</span>,</span><br><span class="line">        <span class="string">"plugin:react-hooks/recommended"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"parser"</span>: <span class="string">"babel-eslint"</span>,</span><br><span class="line">    <span class="attr">"parserOptions"</span>: {</span><br><span class="line">        <span class="attr">"ecmaFeatures"</span>: {</span><br><span class="line">            <span class="attr">"jsx"</span>: <span class="literal">true</span></span><br><span class="line">        },</span><br><span class="line">        <span class="attr">"ecmaVersion"</span>: <span class="number">6</span>,</span><br><span class="line">        <span class="attr">"sourceType"</span>: <span class="string">"module"</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"plugins"</span>: [</span><br><span class="line">        <span class="string">"react"</span>,</span><br><span class="line">        <span class="string">"jsx-a11y"</span>,</span><br><span class="line">        <span class="string">"react-hooks"</span></span><br><span class="line">    ],</span><br><span class="line">    <span class="attr">"settings"</span>: {</span><br><span class="line">        <span class="attr">"react"</span>: {</span><br><span class="line">            <span class="attr">"version"</span>: <span class="string">"detect"</span></span><br><span class="line">        }</span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"globals"</span>: {</span><br><span class="line">        <span class="attr">"JSX"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"React"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"NodeJS"</span>: <span class="literal">true</span>,</span><br><span class="line">        <span class="attr">"Promise"</span>: <span class="literal">true</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">"rules"</span>: {</span><br><span class="line">        <span class="attr">"no-console"</span>: [<span class="number">1</span>, { <span class="attr">"allow"</span>: [<span class="string">"warn"</span>] }], <span class="comment">// 禁用 console</span></span><br><span class="line">        <span class="attr">"consistent-return"</span>: <span class="number">2</span>, <span class="comment">// 要求 return 语句始终或从不指定值（一致返回）</span></span><br><span class="line">        <span class="attr">"curly"</span>: [<span class="number">2</span>, <span class="string">"multi-or-nest"</span>],</span><br><span class="line">        <span class="attr">"dot-location"</span>: <span class="number">0</span>, <span class="comment">// 在点之前和之后强制换行（点位置）</span></span><br><span class="line">        <span class="attr">"eqeqeq"</span>: <span class="number">2</span>, <span class="comment">// 要求 === 和 !==</span></span><br><span class="line">        <span class="attr">"no-alert"</span>: <span class="number">2</span>, <span class="comment">// 禁止使用 Alert</span></span><br><span class="line">        <span class="attr">"no-eq-null"</span>: <span class="number">2</span>, <span class="comment">// 禁止 == null 比较</span></span><br><span class="line">        <span class="attr">"no-lone-blocks"</span>: <span class="number">2</span>, <span class="comment">// 禁止不必要的嵌套块</span></span><br><span class="line">        <span class="attr">"no-return-await"</span>: <span class="number">2</span>, <span class="comment">// 禁止不必要的退出 await</span></span><br><span class="line">        <span class="attr">"no-unused-expressions"</span>: <span class="number">2</span>, <span class="comment">// 禁止使用未使用的表达式</span></span><br><span class="line">        <span class="attr">"array-bracket-spacing"</span>: <span class="number">2</span>, <span class="comment">// 禁止在方括号首尾加空格</span></span><br><span class="line">        <span class="attr">"object-curly-spacing"</span>: [<span class="number">2</span>, <span class="string">"never"</span>, { <span class="attr">"objectsInObjects"</span>: <span class="literal">true</span> }], <span class="comment">// 强制在花括号中使用一致的空格</span></span><br><span class="line">        <span class="attr">"block-spacing"</span>: [<span class="number">2</span>, <span class="string">"never"</span>], <span class="comment">// 禁止或强制在代码块中开括号前和闭括号后有空格</span></span><br><span class="line">        <span class="attr">"brace-style"</span>: <span class="number">0</span>, <span class="comment">// 大括号风格要求</span></span><br><span class="line">        <span class="attr">"comma-spacing"</span>: <span class="number">1</span>, <span class="comment">// 强制在逗号周围使用空格</span></span><br><span class="line">        <span class="attr">"consistent-this"</span>: <span class="number">1</span>, <span class="comment">// 要求一致的 This</span></span><br><span class="line">        <span class="attr">"eol-last"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止文件末尾保留一行空行</span></span><br><span class="line">        <span class="attr">"multiline-ternary"</span>: [<span class="number">1</span>, <span class="string">"always-multiline"</span>], <span class="comment">// 要求或禁止在三元操作数中间换行</span></span><br><span class="line">        <span class="attr">"new-cap"</span>: [<span class="number">2</span>, { <span class="attr">"capIsNew"</span>: <span class="literal">false</span> }], <span class="comment">// 要求构造函数首字母大写</span></span><br><span class="line">        <span class="attr">"no-trailing-spaces"</span>: <span class="number">2</span>, <span class="comment">// 禁用行尾空白</span></span><br><span class="line">        <span class="attr">"semi"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止使用分号代替 ASI</span></span><br><span class="line">        <span class="attr">"space-before-blocks"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止语句块之前的空格</span></span><br><span class="line">        <span class="attr">"space-in-parens"</span>: [<span class="number">2</span>, <span class="string">"never"</span>], <span class="comment">// 禁止或强制圆括号内的空格</span></span><br><span class="line">        <span class="attr">"spaced-comment"</span>: <span class="number">2</span>, <span class="comment">// 要求或禁止在注释前有空白 (space 或 tab)</span></span><br><span class="line">        <span class="attr">"switch-colon-spacing"</span>: [<span class="number">2</span>, { <span class="attr">"after"</span>: <span class="literal">true</span>, <span class="attr">"before"</span>: <span class="literal">false</span> }], <span class="comment">// 强制在 switch 的冒号左右有空格 </span></span><br><span class="line">        <span class="attr">"arrow-spacing"</span>: <span class="number">2</span>, <span class="comment">// 要求箭头函数的箭头之前或之后有空格</span></span><br><span class="line">        <span class="attr">"quotes"</span>: [<span class="number">0</span>, <span class="string">"single"</span>], <span class="comment">// 强制使用一致的反勾号、双引号或单引号</span></span><br><span class="line">        <span class="attr">"key-spacing"</span>: <span class="number">2</span>, <span class="comment">// 强制在对象字面量的键和值之间使用一致的空格</span></span><br><span class="line">        <span class="attr">"comma-dangle"</span>: [<span class="number">2</span>, <span class="string">"never"</span>], <span class="comment">// 禁止在对象和数组文字中使用逗号结尾</span></span><br><span class="line">        <span class="attr">"no-empty-function"</span>: <span class="number">1</span>, <span class="comment">// 禁止出现空函数</span></span><br><span class="line">        <span class="attr">"prefer-promise-reject-errors"</span>: <span class="number">0</span>, <span class="comment">// 要求使用 Error 对象作为 Promise 拒绝的原因</span></span><br><span class="line">        <span class="attr">"react-hooks/exhaustive-deps"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react-native/no-inline-styles"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/forbid-prop-types"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/prop-types"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/display-name"</span>: <span class="number">0</span>,</span><br><span class="line">        <span class="attr">"react/no-array-index-key"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/no-unused-state"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-indent-props"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-no-comment-textnodes"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"react/jsx-no-duplicate-props"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-no-target-blank"</span>: [<span class="number">1</span>, { <span class="attr">"enforceDynamicLinks"</span>: <span class="string">"always"</span> }],</span><br><span class="line">        <span class="attr">"react/jsx-no-undef"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-props-no-multi-spaces"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"react/jsx-tag-spacing"</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="attr">"react/jsx-uses-vars"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react/jsx-wrap-multilines"</span>: <span class="number">2</span>,</span><br><span class="line">        <span class="attr">"react-hooks/rules-of-hooks"</span>: <span class="number">2</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<hr>
+<hr>
+<ol>
+<li><code>create-react-app</code> 的多种自定义 <code>eslint</code> 方案参考：<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_33490514/article/details/110672186">https://blog.csdn.net/qq_33490514/article/details/110672186</a></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1574351288.html">https://bljj-dbld.github.io/posts/1574351288.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/522225208.html">P13 react 过渡动画和纯函数使用</a>
+            
+            
+            <a class="next" rel="next" href="/posts/388776449.html">P11 React 中的样式</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

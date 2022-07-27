@@ -1,0 +1,369 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P13 react 过渡动画和纯函数使用 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P13 react 过渡动画和纯函数使用</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;19:57:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="react-transition-group-使用"><a href="#react-transition-group-使用" class="headerlink" title="react-transition-group 使用"></a>react-transition-group 使用</h1><blockquote>
+<p><a target="_blank" rel="noopener" href="https://reactcommunity.org/react-transition-group/">官网</a></p>
+</blockquote>
+<p>背景介绍：React 曾经为开发者提供过动画插件 <code>react-addons-css-transition-group</code>，后由社区维护，形成了现在的 <code>react-transition-group</code> </p>
+<ul>
+<li>这个库能够帮助我们方便的实现组件的 入场 和 离场 动画，使用时需要额外安装（Vue 可以直接使用）：<ul>
+<li>npm：<code>npm i react-transition-group --save</code></li>
+<li>yarn: <code>yarn add react-transition-group</code></li>
+</ul>
+</li>
+</ul>
+<p><code>react-transition-group</code> 主要提供了四个组件：</p>
+<ol>
+<li><code>&lt;Transition /&gt;</code><ul>
+<li>该组件是一个和平台无关的组件（不一定要结合 CSS）</li>
+<li>但一般在前端开发中，我们一般会结合 CSS 来完成样式，所以常用的是 <code>&lt;CSSTransition /&gt;</code>；</li>
+</ul>
+</li>
+<li><code>&lt;CSSTransition/&gt;</code><ul>
+<li>在前端开发中，通常用 <code>&lt;CSSTransition/&gt;</code> 来完成过渡动画效果</li>
+</ul>
+</li>
+<li><code>&lt;SwitchTransition/&gt;</code><ul>
+<li>两个组件显示和隐藏切换时，使用该组件</li>
+</ul>
+</li>
+<li><code>&lt;TransitionGroup/&gt;</code><ul>
+<li>将多个动画组件包裹在其中，一般用于列表中元素的动画</li>
+</ul>
+</li>
+</ol>
+<h1 id="CSSTransition-的使用"><a href="#CSSTransition-的使用" class="headerlink" title="CSSTransition 的使用"></a>CSSTransition 的使用</h1><ul>
+<li><code>&lt;CSSTransition /&gt;</code> 是基于 <code>&lt;Transition /&gt;</code> 构建的</li>
+<li><code>CSSTransition</code> 一共有三种状态：<code>appear(首次加载)</code>, <code>enter(进入)</code>, <code>exit(离开)</code></li>
+<li>它们的三种状态，需要定义对应的 CSS 样式：<ul>
+<li>第一类，开始状态：对应的类是 <code>-appear</code>, <code>-enter</code>, <code>-exit</code></li>
+<li>第二类，执行动画：对应的类是 <code>-appear-active</code>, <code>-enter-active</code>, <code>-exit-active</code></li>
+<li>第三类，执行结束：对应的类是 <code>-appear-done</code>, <code>-enter-done</code>, <code>-exit-done</code></li>
+</ul>
+</li>
+</ul>
+<p>例子如下：</p>
+<p><code>CSSTransitionDemo.js</code>：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { PureComponent } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> { Card, Avatar } <span class="keyword">from</span> <span class="string">'antd'</span>;</span><br><span class="line"><span class="keyword">import</span> { EditOutlined, EllipsisOutlined, SettingOutlined } <span class="keyword">from</span> <span class="string">'@ant-design/icons'</span>;</span><br><span class="line"><span class="keyword">import</span> {CSSTransition} <span class="keyword">from</span> <span class="string">"react-transition-group"</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">'./CSSTransitionDemo.css'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> { Meta } = Card;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CSSTransitionDemo</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>(props);</span><br><span class="line">        <span class="built_in">this</span>.state = {</span><br><span class="line">            <span class="attr">isShow</span>: <span class="literal">true</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">const</span> {isShow} = <span class="built_in">this</span>.state</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{_</span> =&gt;</span> this.setState({isShow: !isShow})}&gt;显示/隐藏<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">CSSTransition</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">in</span>=<span class="string">{isShow}</span> // 当前状态</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">timeout</span>=<span class="string">{1000}</span> // 过渡时间</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">unmountOnExit</span>=<span class="string">{true}</span> // 在退出时是否卸载 <span class="attr">DOM</span> 元素(默认 <span class="attr">false</span>)</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">appear</span> // 定义首次加载的动画，在 <span class="attr">CSS</span> 文件中有与之配对的类</span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">classNames</span>=<span class="string">"card"</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">onEnter</span>=<span class="string">{el</span> =&gt;</span> console.log('开始进入')} // 钩子函数</span></span><br><span class="line"><span class="xml">                    onEntering={el =&gt; console.log('进入状态')}</span></span><br><span class="line"><span class="xml">                    onEntered={el =&gt; console.log('进入完成')}</span></span><br><span class="line"><span class="xml">                    onExit={el =&gt; console.log('开始退出')}</span></span><br><span class="line"><span class="xml">                    onExiting={el =&gt; console.log('退出状态')}</span></span><br><span class="line"><span class="xml">                    onExited={el =&gt; console.log('退出完成')}&gt;</span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;<span class="name">Card</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                        <span class="attr">style</span>=<span class="string">{{</span> <span class="attr">width:</span> <span class="attr">300</span> }}</span></span></span><br><span class="line"><span class="tag"><span class="xml">                        <span class="attr">cover</span>=<span class="string">{</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                        &lt;<span class="attr">img</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                            <span class="attr">alt</span>=<span class="string">"example"</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                            <span class="attr">src</span>=<span class="string">"https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                        /&gt;</span></span></span><br><span class="line"><span class="xml">                        }</span></span><br><span class="line"><span class="xml">                        actions={[</span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;<span class="name">SettingOutlined</span> <span class="attr">key</span>=<span class="string">"setting"</span> /&gt;</span>,</span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;<span class="name">EditOutlined</span> <span class="attr">key</span>=<span class="string">"edit"</span> /&gt;</span>,</span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;<span class="name">EllipsisOutlined</span> <span class="attr">key</span>=<span class="string">"ellipsis"</span> /&gt;</span>,</span></span><br><span class="line"><span class="xml">                        ]}</span></span><br><span class="line"><span class="xml">                    &gt;</span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">Meta</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                            <span class="attr">avatar</span>=<span class="string">{</span>&lt;<span class="attr">Avatar</span> <span class="attr">src</span>=<span class="string">"https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"</span> /&gt;</span>}</span></span><br><span class="line"><span class="xml">                            title="Card title"</span></span><br><span class="line"><span class="xml">                            description="This is the description"</span></span><br><span class="line"><span class="xml">                        /&gt;</span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;/<span class="name">Card</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;/<span class="name">CSSTransition</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> CSSTransitionDemo;</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>CSSTransitionDemo.css</code>：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 进入 */</span></span><br><span class="line"><span class="selector-class">.card-enter</span>, <span class="selector-class">.card-appear</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0.8</span>);</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.card-enter-active</span>, <span class="selector-class">.card-appear-acitve</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">1</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">1</span>);</span><br><span class="line">    <span class="attribute">transition</span>: opacity <span class="number">1000ms</span>, transform <span class="number">1000ms</span>;</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.card-enter-done</span>, <span class="selector-class">.card-appear-done</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">1</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">1</span>);</span><br><span class="line">}</span><br><span class="line"><span class="comment">/* 离开 */</span></span><br><span class="line"><span class="selector-class">.card-exit</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">1</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">1</span>);</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.card-exit-active</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0.8</span>);</span><br><span class="line">    <span class="attribute">transition</span>: opacity <span class="number">1000ms</span>, transform <span class="number">1000ms</span>;</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.card-exit-done</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">scale</span>(<span class="number">0.8</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>常见对应的属性：</p>
+<ul>
+<li><code>in</code>：触发进入或退出状态<ul>
+<li>如果添加了 <code>unmountOnExit={true}</code>，那么该组件会在执行推出动画结束后被移除掉</li>
+<li>当 <code>in</code> 为 <code>true</code> 时，触发进入状态，会添加 <code>-enter</code>, <code>-enter-active</code> 的 class 开始执行动画，当动画执行结束后，会移除两个 class，并添加 <code>-enter-done</code> 的 class</li>
+<li>当 <code>in</code> 为 <code>false</code> 时，触发退出状态，会添加 <code>-exit</code>, <code>-exit-active</code> 的 class 开始执行动画，当动画执行结束后，会移除两个 class，并且添加 <code>-enter-done</code> 的 class</li>
+</ul>
+</li>
+<li><code>classNames</code>：动画 class 的名称</li>
+<li><code>timeout</code>：过渡动画的时间</li>
+<li><code>appear</code>：是否在初次进入添加动画（需要和 <code>in</code> 同时为 <code>true</code>）</li>
+<li><code>unmountOnExit</code>：退出后卸载</li>
+</ul>
+<h1 id="SwitchTransition"><a href="#SwitchTransition" class="headerlink" title="SwitchTransition"></a>SwitchTransition</h1><p><code>&lt;SwitchTransition /&gt;</code> 可以完成两个组件之间切换的炫酷动画。这个动画在 Vue 中被称为 <code>vue transition modes</code></p>
+<blockquote>
+<ol>
+<li><code>SwitchTransition</code> 组件里面要有 <code>CSSTransition</code> 或者 <code>Transition</code> 组件，不能直接包裹你想要切换的组件</li>
+<li><code>SwitchTransition</code> 里面的 <code>CSSTransition</code> 或 <code>Transition</code> 组件不再像以前那样通过 <code>in</code> 来判断元素是何种状态，取而代之的是** <code>key</code> 属性**</li>
+</ol>
+</blockquote>
+<p>案例如下：</p>
+<p><code>SwitchTransitionDemo.js</code>：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, { PureComponent } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> {SwitchTransition, CSSTransition} <span class="keyword">from</span> <span class="string">'react-transition-group'</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">'./SwitchTransitionDemo.css'</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SwitchTransitionDemo</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    state = {</span><br><span class="line">        <span class="attr">isOn</span>: <span class="literal">true</span></span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">const</span> {isOn} = <span class="built_in">this</span>.state</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"switch-transition-demo"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">SwitchTransition</span> <span class="attr">mode</span>=<span class="string">"out-in"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;<span class="name">CSSTransition</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                        <span class="attr">key</span>=<span class="string">{isOn</span> ? '<span class="attr">on</span>' <span class="attr">:</span> '<span class="attr">off</span>'}</span></span></span><br><span class="line"><span class="tag"><span class="xml">                        <span class="attr">timeout</span>=<span class="string">{1000}</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                        <span class="attr">classNames</span>=<span class="string">"btn"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                        <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> this.setState({isOn: !isOn})}&gt;{isOn ? 'on' : 'off'}<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;/<span class="name">CSSTransition</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;/<span class="name">SwitchTransition</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> SwitchTransitionDemo;</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>SwitchTransitionDemo.css</code>：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.switch-transition-demo</span> {</span><br><span class="line">    <span class="attribute">padding</span>: <span class="number">100px</span>;</span><br><span class="line">    <span class="attribute">text-align</span>: center;</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.btn-enter</span> {</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">translateX</span>(<span class="number">100%</span>);</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.btn-enter-active</span> {</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">translateX</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="attribute">transition</span>: transform <span class="number">1000ms</span>;</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.btn-enter-done</span> {</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">translateX</span>(<span class="number">0</span>);</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.btn-exit</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">1</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">translateX</span>(<span class="number">0</span>);</span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.btn-exit-active</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">translateX</span>(-<span class="number">100%</span>);</span><br><span class="line">    <span class="attribute">transition</span>: opacity <span class="number">1000ms</span>, transform <span class="number">1000ms</span>;</span><br><span class="line"></span><br><span class="line">}</span><br><span class="line"><span class="selector-class">.btn-exit-done</span> {</span><br><span class="line">    <span class="attribute">opacity</span>: <span class="number">0</span>;</span><br><span class="line">    <span class="attribute">transform</span>: <span class="built_in">translateX</span>(-<span class="number">100%</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="TransitionGroup"><a href="#TransitionGroup" class="headerlink" title="TransitionGroup"></a>TransitionGroup</h1><p>当有一系列的元素需要添加相同的动画时使用</p>
+<p>案例如下：</p>
+<p><code>TransitionGroupDemo.js</code>：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/522225208.html">https://bljj-dbld.github.io/posts/522225208.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/2578506661.html">P14 Redux 的学习</a>
+            
+            
+            <a class="next" rel="next" href="/posts/1574351288.html">P12 Antd 的使用与其他补充</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

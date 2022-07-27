@@ -1,0 +1,276 @@
+<mxfile host="65bd71144e">
+    <diagram id="1zRuC3fXq2wkSjK2xibu" name="第 1 页">
+        <mxGraphModel dx="2295" dy="844" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="1" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" style="" parent="0"/>
+                <mxCell id="76" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.25;exitDx=0;exitDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#DB5860;strokeColor=#8597A3;" parent="1" source="72" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="800" y="980" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="72" value="" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=default;fontFamily=微软雅黑;fontSize=13;fontColor=#DB5860;strokeColor=#34495E;strokeWidth=2;fillColor=none;arcSize=6;" parent="1" vertex="1">
+                    <mxGeometry x="328" y="870" width="390" height="320" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" value="" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;labelBackgroundColor=none;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#8597A3;strokeWidth=2;fillColor=none;dashed=1;" parent="1" vertex="1">
+                    <mxGeometry x="420" y="934" width="190" height="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=#8597a3;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="app = create(App)&lt;br&gt;app.mount('#app')" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#34495E;strokeColor=#34495E;arcSize=14;fontColor=#FFFFFF;fontFamily=FiraCode Nerd Font;" parent="1" vertex="1">
+                    <mxGeometry x="320" y="10" width="186" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" style="edgeStyle=none;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#8597A3;" parent="1" source="3" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Init&lt;br&gt;Event &amp;amp; Lifecycle" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#39b881;strokeColor=#39b881;fontColor=#FFFFFF;fontFamily=FiraCode Nerd Font;" parent="1" vertex="1">
+                    <mxGeometry x="328" y="110" width="170" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;font color=&quot;#34495e&quot; style=&quot;font-size: 13px;&quot;&gt;&lt;b style=&quot;font-size: 13px;&quot;&gt;实例化一个 Vue 实例对象&lt;/b&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;fontFamily=微软雅黑;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="20" width="170" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="&lt;p style=&quot;line-height: 1.5; font-size: 13px;&quot;&gt;&lt;font color=&quot;#30c7a1&quot; style=&quot;font-size: 13px;&quot;&gt;&lt;b style=&quot;font-size: 13px;&quot;&gt;初始化 事件 和 生命周期，生命周期函数会自动执行，其他的东西都未创建&lt;/b&gt;&lt;/font&gt;&lt;/p&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontColor=#000000;fontFamily=微软雅黑;fontSize=13;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="105" width="440" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#8597A3;" parent="1" source="8" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Init&lt;br&gt;injections &amp;amp; reactivity" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#39b881;strokeColor=#39b881;fontColor=#FFFFFF;fontFamily=FiraCode Nerd Font;" parent="1" vertex="1">
+                    <mxGeometry x="303" y="210" width="222" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="" style="endArrow=classic;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#d93f56;dashed=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="410" y="180" as="sourcePoint"/>
+                        <mxPoint x="210" y="180" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="12" value="beforeCreate" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;fillColor=default;arcSize=38;strokeWidth=2;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="160" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="18" style="edgeStyle=none;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#8597A3;" parent="1" source="15" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=12;fontColor=#D93F56;strokeColor=#8597A3;exitX=1;exitY=0.5;exitDx=0;exitDy=0;dashed=1;" parent="1" source="15" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="590" y="355"/>
+                            <mxPoint x="590" y="485"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="15" value="Has &quot;el&quot; options ?&amp;nbsp;" style="rhombus;whiteSpace=wrap;html=1;rounded=1;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#FFFFFF;strokeColor=#fdb839;strokeWidth=2;fillColor=#FDB839;arcSize=0;" parent="1" vertex="1">
+                    <mxGeometry x="328" y="320" width="172" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" style="edgeStyle=orthogonalEdgeStyle;html=1;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#8597A3;" parent="1" source="17" target="33" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" style="edgeStyle=orthogonalEdgeStyle;html=1;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#8597A3;" parent="1" source="17" target="34" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Has &quot;telement&quot; options?" style="rhombus;whiteSpace=wrap;html=1;rounded=1;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#FFFFFF;strokeColor=#fdb839;strokeWidth=2;fillColor=#FDB839;arcSize=0;" parent="1" vertex="1">
+                    <mxGeometry x="330" y="450" width="166" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Yes" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontFamily=FiraCode Nerd Font;fontColor=#8597A3;" parent="1" vertex="1">
+                    <mxGeometry x="355" y="405" width="50" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="endArrow=classic;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#d93f56;dashed=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="410" y="270" as="sourcePoint"/>
+                        <mxPoint x="210" y="270" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="created" style="rounded=1;whiteSpace=wrap;html=1;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="250" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="&lt;div style=&quot;text-align: right; font-size: 12px;&quot;&gt;&lt;font color=&quot;#d93f56&quot; style=&quot;font-size: 12px;&quot;&gt;&lt;b style=&quot;font-size: 12px;&quot;&gt;注意：&lt;/b&gt;&lt;b style=&quot;font-size: 12px; text-align: left;&quot;&gt;此时 Vue 实例还未创建，&lt;/b&gt;&lt;b style=&quot;font-size: 12px; text-align: left;&quot;&gt;data 和 methods 中的数据还没有被初始化&lt;/b&gt;&lt;/font&gt;&lt;/div&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontFamily=微软雅黑;fontColor=#30c7a1;" parent="1" vertex="1">
+                    <mxGeometry x="-140" y="115" width="420" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="&lt;b style=&quot;font-size: 13px;&quot;&gt;初始化 data，methods 和 props 及所有的选项，并给数据对象添加劫持&lt;/b&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#30C7A1;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="220" width="440" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="" style="curved=1;endArrow=classic;html=1;fontFamily=微软雅黑;fontSize=14;fontColor=#30C7A1;strokeColor=#8597A3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.358;exitY=1.065;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="22" target="12" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-180" y="240" as="sourcePoint"/>
+                        <mxPoint x="-130" y="190" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint y="190"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="25" value="&lt;div style=&quot;font-size: 12px;&quot;&gt;&lt;span style=&quot;font-size: 12px;&quot;&gt;此时 data 和 methods 都初始化好了，&lt;/span&gt;&lt;/div&gt;想操作 methods 方法或者操作 data 中的数据，最早只能在 created 中操作" style="text;html=1;align=right;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=12;fontFamily=微软雅黑;fontColor=#D93F56;fontStyle=1;spacingTop=0;spacingBottom=0;" parent="1" vertex="1">
+                    <mxGeometry x="-350" y="210" width="430" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="" style="curved=1;endArrow=classic;html=1;fontFamily=微软雅黑;fontSize=12;fontColor=#D93F56;strokeColor=#8597A3;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.83;exitY=1.124;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="25" target="21" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="-120" y="370" as="sourcePoint"/>
+                        <mxPoint x="-70" y="320" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="20" y="280"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="No" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;fontFamily=FiraCode Nerd Font;fontColor=#8597A3;" parent="1" vertex="1">
+                    <mxGeometry x="525" y="330" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="&lt;b style=&quot;line-height: 1.3; font-size: 13px;&quot;&gt;When&lt;br style=&quot;font-size: 13px;&quot;&gt;vm.$mount(el)&lt;br style=&quot;font-size: 13px;&quot;&gt;is called&lt;/b&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#8597A3;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="535" y="385" width="110" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#8597A3;" parent="1" source="33" target="39" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="Compile template&lt;br&gt;into&lt;br&gt;render function *" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#FFFFFF;strokeColor=#39b881;strokeWidth=2;fillColor=#39b881;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="605" width="170" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#8597A3;" parent="1" source="34" target="39" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="Compile el's&lt;br&gt;outerHTML&lt;br&gt;as template *" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#FFFFFF;strokeColor=#39b881;strokeWidth=2;fillColor=#39b881;" parent="1" vertex="1">
+                    <mxGeometry x="450" y="605" width="170" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Yes" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#8597A3;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="570" width="40" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="No" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#8597A3;" parent="1" vertex="1">
+                    <mxGeometry x="550" y="570" width="30" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;html=1;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#8597A3;" parent="1" source="39" target="44" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="Create vm.$el&lt;br&gt;and replace&lt;br&gt;&quot;el&quot; with it" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#FFFFFF;strokeColor=#39b881;strokeWidth=2;fillColor=#39b881;" parent="1" vertex="1">
+                    <mxGeometry x="329" y="790" width="170" height="75" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" value="" style="endArrow=classic;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#d93f56;dashed=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="414" y="760" as="sourcePoint"/>
+                        <mxPoint x="220" y="760" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="43" value="beforeMounted" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="740" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="57" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#8597A3;startArrow=none;" parent="1" source="58" target="56" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" value="&lt;font color=&quot;#ffffff&quot;&gt;Mounted&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;labelBackgroundColor=none;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#DB5860;strokeWidth=2;fillColor=#db5860;" parent="1" vertex="1">
+                    <mxGeometry x="374" y="989" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="46" value="When&amp;nbsp; data&lt;br&gt;change" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#8597A3;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="919" width="90" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="48" value="" style="endArrow=classic;html=1;fontFamily=Helvetica;fontSize=12;fontColor=#FFFFFF;strokeColor=#d93f56;dashed=1;" parent="1" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="414" y="899" as="sourcePoint"/>
+                        <mxPoint x="220" y="899" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="49" value="mounted" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="100" y="879" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="78" style="edgeStyle=orthogonalEdgeStyle;html=1;fontFamily=微软雅黑;fontSize=13;fontColor=#DB5860;strokeColor=#8597A3;" parent="1" source="50" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="800" y="1070" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="740" y="1029"/>
+                            <mxPoint x="740" y="1070"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="50" value="Virtual DOM&lt;br&gt;re-render&lt;br&gt;and patch" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#30C7A1;strokeWidth=2;fillColor=#30C7A1;" parent="1" vertex="1">
+                    <mxGeometry x="560" y="999" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="52" value="" style="endArrow=classic;html=1;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#DB5860;exitX=1;exitY=0;exitDx=0;exitDy=0;dashed=1;" parent="1" source="45" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="630" y="899" as="sourcePoint"/>
+                        <mxPoint x="620" y="919" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="53" value="beforeUpdate" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="575" y="879" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="54" value="" style="endArrow=classic;html=1;dashed=1;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#DB5860;exitX=1;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="45" target="55" edge="1">
+                    <mxGeometry width="50" height="50" relative="1" as="geometry">
+                        <mxPoint x="600" y="1179" as="sourcePoint"/>
+                        <mxPoint x="630" y="1149" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="55" value="updated" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="575" y="1130" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="61" style="edgeStyle=orthogonalEdgeStyle;html=1;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#8597A3;" parent="1" source="56" target="60" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="56" value="Teardown Wather,&lt;br&gt;child components&lt;br&gt;and event listeners&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#30C7A1;strokeWidth=2;fillColor=#30C7A1;" parent="1" vertex="1">
+                    <mxGeometry x="318" y="1310" width="190" height="71" as="geometry"/>
+                </mxCell>
+                <mxCell id="58" value="When &lt;br&gt;app.unmount()&lt;br&gt;is called" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#8597A3;labelBackgroundColor=default;" parent="1" vertex="1">
+                    <mxGeometry x="359" y="1210" width="110" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="59" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#8597A3;endArrow=none;" parent="1" source="44" target="58" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="414" y="1069" as="sourcePoint"/>
+                        <mxPoint x="413" y="1198" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="63" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#DB5860;dashed=1;" parent="1" target="62" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="373" y="1460" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="60" value="&lt;font color=&quot;#ffffff&quot;&gt;Unmounted&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;rounded=1;labelBackgroundColor=none;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#DB5860;strokeWidth=2;fillColor=#db5860;" parent="1" vertex="1">
+                    <mxGeometry x="373" y="1420" width="80" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="62" value="Unmounted" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="140" y="1440" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="64" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#FFFFFF;strokeColor=#DB5860;dashed=1;" parent="1" target="65" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="414" y="1270" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="65" value="beforUnmount" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=none;fontFamily=FiraCode Nerd Font;fontSize=12;fontColor=#D93F56;strokeColor=#D93F56;strokeWidth=2;fillColor=default;arcSize=38;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="1250" width="120" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="66" value="" style="rounded=1;whiteSpace=wrap;html=1;labelBackgroundColor=default;fontFamily=微软雅黑;fontSize=13;fontColor=#8597A3;strokeColor=#30C7A1;strokeWidth=2;fillColor=none;arcSize=5;" parent="1" vertex="1">
+                    <mxGeometry x="109" y="300" width="610" height="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="67" value="&lt;p style=&quot;line-height: 1.7&quot;&gt;&lt;b&gt;这里表示 Vue 开始编译模板， 把 Vue 代码中的那些指令&lt;br&gt;进行执行，最终，在 &lt;font color=&quot;#db5860&quot;&gt;内存&lt;/font&gt; 中生成一个编译好的最终模板字符串。&lt;br&gt;然后，把这个模板字符串 渲染为 内存中的 DOM。&lt;br&gt;此时，只是在内存中，渲染好了模板，并没有把模板挂载到真正的页面中去&lt;/b&gt;&lt;/p&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#30C7A1;" parent="1" vertex="1">
+                    <mxGeometry x="740" y="405" width="440" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="68" value="&lt;b&gt;此函数触发时，说明模板在内存中已经编译好了，&lt;br&gt;但还未挂载到页面中，此时页面还是旧的&lt;/b&gt;" style="text;html=1;align=right;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#DB5860;" parent="1" vertex="1">
+                    <mxGeometry x="-220" y="740" width="300" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="69" value="将内存中编译好的模板，&lt;br&gt;真实的替换到浏览器页面中" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#30C7A1;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="525" y="807.5" width="170" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="70" value="&lt;div style=&quot;text-align: right&quot;&gt;&lt;b style=&quot;color: rgb(219 , 88 , 96)&quot;&gt;如果要对页面中的 DOM 操作最早要在 mounted 中进行。&lt;/b&gt;&lt;/div&gt;&lt;font color=&quot;#db5860&quot;&gt;&lt;div style=&quot;text-align: right&quot;&gt;&lt;b&gt;此时，已经脱离了创建阶段，到了运行阶段&lt;/b&gt;&lt;/div&gt;&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#30C7A1;" parent="1" vertex="1">
+                    <mxGeometry x="-280" y="879" width="360" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="74" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#DB5860;strokeColor=#8597A3;" parent="1" source="71" target="53" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="71" value="此时页面中显示的数据还是旧的，但是 data 数据是最新的，&lt;br&gt;只是页面还未与最新的数据同步" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#DB5860;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="770" y="879" width="360" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="77" value="这是组件运行阶段的生命周期函数&lt;br&gt;只有两个：&lt;font color=&quot;#db5860&quot;&gt;beforeUpdate&lt;/font&gt; 和 &lt;font color=&quot;#db5860&quot;&gt;updated&lt;/font&gt;&lt;br&gt;这两个事件，会根据 data 数据的改变，有选择性的触发 0 次 到多次" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#34495E;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="959" width="410" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="79" value="重新渲染 Virtual DOM，执行 compile 函数，并且打补丁，中间会运行 domdiff 函数&lt;br&gt;domdiff：更新数据改变的部分，其他结构不做更改" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#30C7A1;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="800" y="1050" width="520" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="81" style="edgeStyle=orthogonalEdgeStyle;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontFamily=微软雅黑;fontSize=13;fontColor=#DB5860;strokeColor=#8597A3;" parent="1" source="80" target="55" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="80" value="此时页面中展示最新的数据" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#DB5860;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="765" y="1140" width="170" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="82" value="触发&amp;nbsp;&lt;span style=&quot;color: rgb(217 , 63 , 86) ; font-family: &amp;#34;firacode nerd font&amp;#34; ; font-size: 12px ; text-align: center&quot;&gt;beforUnmount&lt;/span&gt;&amp;nbsp;钩子函数的时候，Vue 已经从运行阶段 进入到 销毁阶段。&lt;br&gt;此时 data，methods，指令... 等都还处于可用状态，还未真正的销毁" style="text;html=1;align=right;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#DB5860;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="-379" y="1250" width="480" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="83" value="此时，data，methods，指令...等都不可用了" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=13;fontFamily=微软雅黑;fontColor=#DB5860;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="-165.5" y="1450" width="280" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

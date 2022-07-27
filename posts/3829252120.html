@@ -1,0 +1,342 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>HTTP + 加密 + 认证 + 完整性保护 = HTTPS | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">HTTP + 加密 + 认证 + 完整性保护 = HTTPS</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 11, 2022&nbsp;&nbsp;21:42:14</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/HTTP/">HTTP</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="1-HTTP-加上加密处理和认证以及完整性保护后即是-HTTPS"><a href="#1-HTTP-加上加密处理和认证以及完整性保护后即是-HTTPS" class="headerlink" title="1. HTTP 加上加密处理和认证以及完整性保护后即是 HTTPS"></a>1. HTTP 加上加密处理和认证以及完整性保护后即是 HTTPS</h1><p>HTTP 缺点：</p>
+<ol>
+<li>通信采用明文传输，容易被窃听</li>
+<li>无论是客户端 、服务端，都无法知晓确认通信方</li>
+<li>考虑到接收到的报文在通信途中已经遭到篡改的可能性</li>
+</ol>
+<p>所以基于 HTTP 的局限性，出现了 HTTPS</p>
+<ul>
+<li>简单来说，HTTPS = HTTP + 加密 + 认证 + 完整性保护</li>
+</ul>
+<h1 id="2-HTTPS-是身披-SSL-外壳的-HTTP"><a href="#2-HTTPS-是身披-SSL-外壳的-HTTP" class="headerlink" title="2. HTTPS 是身披 SSL 外壳的 HTTP"></a>2. HTTPS 是身披 SSL 外壳的 HTTP</h1><p>HTTPS 并非是应用层的一种新协议。只是 HTTP 通信接口部分用 SSL（Secure Socket Layer）和 TSL（Transport Layer Security）协议代替而已。</p>
+<p><img src="/posts/3829252120/image_1.png" alt="HTTPS 和 HTTP 的区别"></p>
+<h1 id="3-相互交换密钥的公开加密技术-amp-共享密钥加密技术"><a href="#3-相互交换密钥的公开加密技术-amp-共享密钥加密技术" class="headerlink" title="3. 相互交换密钥的公开加密技术 &amp; 共享密钥加密技术"></a>3. 相互交换密钥的公开加密技术 &amp; 共享密钥加密技术</h1><h2 id="3-1-相互交换密钥的公开加密技术"><a href="#3-1-相互交换密钥的公开加密技术" class="headerlink" title="3.1 相互交换密钥的公开加密技术"></a>3.1 相互交换密钥的公开加密技术</h2><p>SSL 采用一种叫做公开密钥加密（Public-Key cryptography）的加密处理方式。加密方法中加密算法是公开的，而密钥却是保密的。通过这种方式得以保证加密方法的安全性。</p>
+<h2 id="3-2-共享密钥加密技术"><a href="#3-2-共享密钥加密技术" class="headerlink" title="3.2 共享密钥加密技术"></a>3.2 共享密钥加密技术</h2><p>加密和解密使用同一把密钥的方式称为共享密钥加密（Common key crypto system），也被叫做对称密钥加密。</p>
+<h2 id="3-3-HTTPS-采用混合加密机制"><a href="#3-3-HTTPS-采用混合加密机制" class="headerlink" title="3.3 HTTPS 采用混合加密机制"></a>3.3 HTTPS 采用混合加密机制</h2><p>HTTPS 采用共享密钥加密和公开密钥加密两者并用的混合加密机制。</p>
+<p>不单纯采用公开密钥加密方式的原因是，公开密钥加密与共享密钥加密相比，其处理速度要慢很多。</p>
+<p>所以，利用两者各自的优势，在交换密钥环节使用公开密钥加密方式，之后的建立通信交换报文阶段则使用共享密钥加密方式</p>
+<p><img src="/posts/3829252120/image_2.png" alt="混合密钥加密机制"></p>
+<blockquote>
+<p>混合加密主要是为了解决 <code>HTTP</code> 中内容可能被窃听的问题。但是它并不能保证数据的完整性，也就是说在传输的时候数据是有可能被第三方篡改的，比如完全替换掉，所以说它并不能校验数据的完整性。如果需要做到这一点就需要使用到<strong>数字签名</strong>。</p>
+</blockquote>
+<h1 id="4-证明公开密钥正确性的证书"><a href="#4-证明公开密钥正确性的证书" class="headerlink" title="4. 证明公开密钥正确性的证书"></a>4. 证明公开密钥正确性的证书</h1><p>公开密钥加密方式还是存在一些问题，那就是无法证明公开密钥本身就是货真价实的公开密钥。在进行公开密钥传输时，有可能真正的公开密钥已经被攻击者替换掉了。</p>
+<p>所以为了解决这个问题，就需要第三方数字证书机构和其相关机构颁发的公开密钥证书。</p>
+<p>公开密钥证书的获取步骤：</p>
+<ol>
+<li>向证书机构提出公开密钥的证书申请。在判明提出者的身份之后进行下一步操作</li>
+<li>将服务器的公开密钥登录至数字认证机构</li>
+<li>数字认证机构使用<strong>自己的私有密钥</strong>对<strong>服务器的公开密钥</strong>做数字签名证书并将证书与公开密钥绑定。</li>
+<li>服务器会将这份由数字证书认证机构颁布的公钥证书发送给客户端，以进行公开密钥加密方式通信。</li>
+<li>接到证书的客户端会使用数字认证机构的公开密钥，对那张证书上的数字签名进行验证，一旦验证通过，就能确认两件事：<ol>
+<li>数字签名是由真实有效的数字认证机构颁布的</li>
+<li>服务器的公开密钥是值得信赖的</li>
+</ol>
+</li>
+</ol>
+<blockquote>
+<p>为了能够安全的拿到数字证书机构的公开密钥。多数浏览器开发商发布版本时，会事先在<strong>内部植入常用认证机构的公开密钥</strong>。</p>
+</blockquote>
+<p>图解：</p>
+<p><img src="/posts/3829252120/image_3.png" alt="确保服务器的公开密钥是正确的"></p>
+<hr>
+<p>参考：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.amazon.cn/dp/B0153170B2">《图解 HTTP》</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3829252120.html">https://bljj-dbld.github.io/posts/3829252120.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/HTTPS/"># HTTPS</a>
+                    
+                        <a href="/tags/SSL%E6%8F%A1%E6%89%8B/"># SSL握手</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1747204526.html">对 Vue2.x 和 Vue3.x 的监听实现与理解</a>
+            
+            
+            <a class="next" rel="next" href="/posts/2246521759.html">NPM 包管理工具</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

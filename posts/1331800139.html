@@ -1,0 +1,419 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P7 Ref 的使用 &amp; 受控/非受控组件 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P7 Ref 的使用 &amp; 受控/非受控组件</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;6:50:28</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="如何使用-ref"><a href="#如何使用-ref" class="headerlink" title="如何使用 ref"></a>如何使用 ref</h1><blockquote>
+<p>在 React 的开发模式中，通常情况下不需要、也不建议直接操作 DOM 元素，但是在某些特殊情况下，确实需要获取到 DOM 进行某些操作，比如：</p>
+<ol>
+<li>管理焦点，文本选择或媒体播放</li>
+<li>触发强制动画</li>
+<li>集成 第三方 DOM 库</li>
+</ol>
+</blockquote>
+<p>如何创建 ref 来获取对应的 DOM？目前有三种方式：</p>
+<ol>
+<li>字符串（过时 API）</li>
+<li>对象（React 推荐的方式）</li>
+<li>函数</li>
+</ol>
+<h2 id="字符串：-ref-quot-xxx-quot"><a href="#字符串：-ref-quot-xxx-quot" class="headerlink" title="字符串： ref = &quot;xxx&quot;"></a>字符串：<code> ref = "xxx"</code></h2><ul>
+<li>（官方回答）我们不建议使用它，因为 string 类型的 refs 存在 <a target="_blank" rel="noopener" href="https://github.com/facebook/react/pull/8333">一些问题</a>。<strong>它已过时并可能会在未来的版本被移除。</strong><ul>
+<li>链接中的内容翻译过来：<ul>
+<li>它要求React跟踪当前渲染的组件（因为它无法猜测）。这使React变慢了一点。</li>
+<li>它不能像大多数望人期的那样使用“渲染回调”模式（例如 <code>&lt;DataGrid renderRow = {this.renderRow} /&gt;</code>），因为基于上述原因，引用将被放置在 <code>DataGrid</code> 上。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">{<span class="comment">/* 1. ref=字符串 */</span>}</span><br><span class="line">&lt;h2 ref=<span class="string">"titleRef"</span>&gt;hello world&lt;/h2&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> {</span></span><br><span class="line"><span class="xml">    this.refs.titleRef.innerText = 'hello React'</span></span><br><span class="line"><span class="xml">}}&gt;修改文案 By ref=字符串<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="对象：ref-this-xxx"><a href="#对象：ref-this-xxx" class="headerlink" title="对象：ref = {this.xxx}"></a>对象：<code>ref = {this.xxx}</code></h2><blockquote>
+<p>并不是任意的对象都能够被赋值 <code>ref</code> 的，必须是通过执行 <code>React.createRef</code> 方法创建出来的。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 先获取到 createRef 方法</span></span><br><span class="line"><span class="keyword">import</span> React, { Component, createRef } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="comment">// 2. 一般都是在构建方法中对 ref 对象进行创建的</span></span><br><span class="line"><span class="title">constructor</span> (<span class="params">props</span>) {</span><br><span class="line">    <span class="built_in">super</span>(props)</span><br><span class="line">    <span class="built_in">this</span>.titleRef = createRef()</span><br><span class="line">}</span><br><span class="line">...</span><br><span class="line"><span class="comment">// 3. 实现手法</span></span><br><span class="line">{<span class="comment">/* 2. ref=对象 */</span>}</span><br><span class="line">&lt;h2 ref={<span class="built_in">this</span>.titleRef}&gt;hello world&lt;/h2&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> {</span></span><br><span class="line"><span class="xml">    console.log(this.titleRef); // 获取到一个对象 {current: h2}</span></span><br><span class="line"><span class="xml">    this.titleRef.current.innerText = 'hello JavaScript'</span></span><br><span class="line"><span class="xml">}}&gt;修改文案 By ref=对象<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="回调函数：ref-el-gt-xxx"><a href="#回调函数：ref-el-gt-xxx" class="headerlink" title="回调函数：ref = {(el) => xxx}"></a>回调函数：<code>ref = {(el) =&gt; xxx}</code></h2><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">{<span class="comment">/* 3. ref=回调函数 */</span>}</span><br><span class="line">&lt;h2 ref={<span class="function">(<span class="params">arg</span>) =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log({arg}); <span class="comment">// 获取到合成 DOM</span></span><br><span class="line">    <span class="built_in">this</span>.titleEl = arg</span><br><span class="line">}}&gt;hello world&lt;/h2&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> {</span></span><br><span class="line"><span class="xml">    console.log(this.titleEl);</span></span><br><span class="line"><span class="xml">    this.titleEl.innerText = 'hello TypeScript'</span></span><br><span class="line"><span class="xml">}}&gt;修改文案 By ref=回调函数<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="ref-的类型"><a href="#ref-的类型" class="headerlink" title="ref 的类型"></a>ref 的类型</h1><p>ref 的值根据节点的类型而有所不同：</p>
+<ul>
+<li>当 ref 属性用于 html 元素时，构造函数中使用 <code>React.createRef</code> 方法创建的 ref 接收底层 DOM 元素作为其 current 属性；</li>
+<li>当 ref 属性用于自定义 class 组件时，ref 对象接收组件的挂挂载实例作为其 current 属性；</li>
+<li><strong>你不能在函数式组件上使用 ref 属性</strong>，原因是它们没有实例，只是个函数。</li>
+</ul>
+<p>ref 属性用于自定义 class 组件案例关键代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&lt;Counter ref={<span class="built_in">this</span>.counterRef}/&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> {</span></span><br><span class="line"><span class="xml">    console.log(this.counterRef); // {current: Counter}</span></span><br><span class="line"><span class="xml">    // 子组件中存在 changeText() 方法</span></span><br><span class="line"><span class="xml">    this.counterRef.current.changeText()</span></span><br><span class="line"><span class="xml">}}&gt;修改子组件 By ref=对象<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>函数式组件是没有实例的，所以无法通过 ref 获取它们的实例：</p>
+<ul>
+<li>但是某些时候，可能想要获取函数式组件内部的<strong>某一个 DOM 元素</strong>；</li>
+<li>这个时候我们可以通过 <code>React.forwardRef</code> 高阶函数（<code>HOC</code>）,后面也会学习 hooks 中如何使用 ref。</li>
+<li>如果你使用 16.2 或更低版本的 React，或者你需要比 ref 转发更高的灵活性，也可以使用替代方案将 ref 作为特殊名字的 prop 直接传递。</li>
+</ul>
+<p>利用 <code>React.forwardRef</code> 方法实现：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> CustomTextInput1 = forwardRef(<span class="function">(<span class="params">props, ref</span>) =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">input</span> <span class="attr">ref</span>=<span class="string">{ref}</span> /&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"><span class="comment">// constructor 方法中：</span></span><br><span class="line"><span class="built_in">this</span>.inputEl1 = createRef()</span><br><span class="line"><span class="comment">// render 的 return 中：</span></span><br><span class="line">{<span class="comment">/* 访问函数组件中内部 DOM 元素 - 使用 ref 转发 (forwardRef())  */</span>}</span><br><span class="line">&lt;CustomTextInput1 ref={<span class="built_in">this</span>.inputEl1} /&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> {</span></span><br><span class="line"><span class="xml">    console.log(this.inputEl1);</span></span><br><span class="line"><span class="xml">}}&gt;check CustomTextInput1-input <span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>替代方案实现：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">CustomTextInput2</span> (<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">input</span> <span class="attr">ref</span>=<span class="string">{props.inputRef}</span> /&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"><span class="comment">// constructor 方法中：</span></span><br><span class="line"><span class="built_in">this</span>.inputEl2 = <span class="literal">null</span></span><br><span class="line"><span class="comment">// render 的 return 中：</span></span><br><span class="line">{<span class="comment">/* 访问函数组件中内部 DOM 元素 - 将 ref 作为特殊名字的 prop 直接传递 */</span>}</span><br><span class="line">&lt;CustomTextInput2 inputRef={<span class="function"><span class="params">el</span> =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(el);</span><br><span class="line">    <span class="built_in">this</span>.inputEl2 = el</span><br><span class="line">}} /&gt;</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="受控组件"><a href="#受控组件" class="headerlink" title="受控组件"></a>受控组件</h1><p>在 HTML 中，表单元素（如 <code>&lt;input&gt;</code>、 <code>&lt;textarea&gt;</code> 和 <code>&lt;select&gt;</code>）通常自己维护 state，并根据用户输入进行更新。而在 React 中，可变状态（mutable state）通常保存在组件的 state 属性中，并且只能通过使用 <code>setState()</code> 来更新。</p>
+<p>比如下面的 HTML 表单元素：</p>
+<ul>
+<li>这个处理方式是 DOM 默认处理 HTML 表单行为，在用户点击提交时会提交到某个服务器中，并且刷新页面；</li>
+<li>在 React 中，并没有禁止这个行为，它依然是有效的；</li>
+<li>但是通常情况下会使用 JavaScript 函数来方便的处理表单提交，同时还可以访问用户填写的表单数据；</li>
+<li>实现这种效果的标准方式是使用 “受控组件”；</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">    <span class="built_in">super</span>(props);</span><br><span class="line">    <span class="built_in">this</span>.state = {<span class="attr">value</span>: <span class="string">''</span>}</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">form</span> <span class="attr">onSubmit</span>=<span class="string">{e</span> =&gt;</span> this.handleSubmit(e)}&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">label</span>&gt;</span></span></span><br><span class="line"><span class="xml">                名字：</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"text"</span> <span class="attr">value</span>=<span class="string">{this.state.value}</span> <span class="attr">onChange</span>=<span class="string">{e</span> =&gt;</span> this.handleChange(e)} /&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line">handleChange (e) {</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">value</span>: e.target.value</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">handleSubmit (e) {</span><br><span class="line">    alert(<span class="string">'提交的名字：'</span> + <span class="built_in">this</span>.state.value)</span><br><span class="line">    e.preventDefault()</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>引用官方的一句话：</p>
+<ol>
+<li>使 React 的 state 成为“唯一数据源”。</li>
+<li>渲染表单的 React 组件还控制着用户输入过程中表单发生的操作。</li>
+</ol>
+<p>结论：被 React 以这种方式控制取值的表单输入元素就叫做“受控组件”。</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Element</th>
+<th>Value property</th>
+<th>Change callback</th>
+<th>New value in the callback</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;input type="text" /&gt;</code></td>
+<td><code>value={string}</code></td>
+<td><code>onChange</code></td>
+<td><code>event.target.value</code></td>
+</tr>
+<tr>
+<td><code>&lt;input type="checkbox" /&gt;</code></td>
+<td><code>checked={boolean}</code></td>
+<td><code>onChange</code></td>
+<td><code>event.target.checked</code></td>
+</tr>
+<tr>
+<td><code>&lt;input type="radio" /&gt;</code></td>
+<td><code>checked={boolean}</code></td>
+<td><code>onChange</code></td>
+<td><code>event.target.checked</code></td>
+</tr>
+<tr>
+<td><code>&lt;textarea /&gt;</code></td>
+<td><code>value={string}</code></td>
+<td><code>onChange</code></td>
+<td><code>event.target.value</code></td>
+</tr>
+<tr>
+<td><code>&lt;select /&gt;</code></td>
+<td><code>value={option.value}</code></td>
+<td><code>onChange</code></td>
+<td><code>event.target.value</code></td>
+</tr>
+</tbody></table>
+<h1 id="非受控组件"><a href="#非受控组件" class="headerlink" title="非受控组件"></a>非受控组件</h1><blockquote>
+<p>在大多数情况下，我们推荐使用 <strong>受控组件</strong> 来处理表单数据。在一个受控组件中，表单数据是由 React 组件来管理的。另一种替代方案是使用 <strong>非受控组件</strong>，这时表单数据将交由 DOM 节点来处理。</p>
+<p>注意：</p>
+<ol>
+<li>在 React 渲染生命周期时，表单元素上的 <code>value</code> 将会覆盖 DOM 节点中的值。在非受控组件中，你经常希望 React 能赋予组件一个初始值，<strong>但是不去控制后续的更新</strong>。 在这种情况下, 你可以指定一个 <code>defaultValue</code> 属性，而不是 <code>value</code>。在一个组件已经挂载之后去更新 <code>defaultValue</code> 属性的值，不会造成 DOM 上值的任何更新。</li>
+<li>在 React 中，<code>&lt;input type="file" /&gt;</code> 始终是一个非受控组件，因为它的值只能由用户设置，而不能通过代码控制。</li>
+</ol>
+</blockquote>
+<ol>
+<li>一般的组件使用非受控组件时：</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">    <span class="built_in">super</span>(props);</span><br><span class="line">    <span class="built_in">this</span>.input = createRef() <span class="comment">// 记得在 react 模块包内解构获取到 createRef 方法</span></span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">form</span> <span class="attr">onSubmit</span>=<span class="string">{e</span> =&gt;</span> this.handleSubmit(e)}&gt;</span></span><br><span class="line"><span class="xml">            {/* 非受控组件 */}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">label</span>&gt;</span></span></span><br><span class="line"><span class="xml">                名字：</span></span><br><span class="line"><span class="xml">                {/* 需要设置默认值时，应该使用 defaultValue 属性 */}</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">input</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">type</span>=<span class="string">"text"</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">defaultValue</span>=<span class="string">"巴拉巴拉"</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">ref</span>=<span class="string">{this.input}</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                    <span class="attr">onChange</span>=<span class="string">{e</span> =&gt;</span> this.handleChange(e)}/&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">label</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line">handleChange (e) {</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">value</span>: <span class="built_in">this</span>.input.current.value</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">handleSubmit (e) {</span><br><span class="line">    alert(<span class="string">'提交的名字：'</span> + <span class="built_in">this</span>.input.current.value)</span><br><span class="line">    e.preventDefault()</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="2">
+<li>file 类型时（必须由用户自己来设置）：</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">    <span class="built_in">super</span>(props);</span><br><span class="line">    <span class="built_in">this</span>.fileInput = createRef()</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">form</span> <span class="attr">onSubmit</span>=<span class="string">{e</span> =&gt;</span> this.handleSubmit(e)}&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"file"</span> <span class="attr">multiple</span> <span class="attr">ref</span>=<span class="string">{this.fileInput}</span> <span class="attr">onChange</span>=<span class="string">{e</span> =&gt;</span> this.handleChange(e)} /&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"submit"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">form</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line">handleChange (e) {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.fileInput);</span><br><span class="line">}</span><br><span class="line">handleSubmit (e) {</span><br><span class="line">    e.preventDefault()</span><br><span class="line">    alert(</span><br><span class="line">        <span class="string">`Selected file - <span class="subst">${<span class="built_in">this</span>.fileInput.current.files[<span class="number">0</span>].name}</span>`</span></span><br><span class="line">    );</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1331800139.html">https://bljj-dbld.github.io/posts/1331800139.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/4158548198.html">P8 高阶组件 &amp; 组件的补充</a>
+            
+            
+            <a class="next" rel="next" href="/posts/1641527773.html">P6-前面的知识点补充</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

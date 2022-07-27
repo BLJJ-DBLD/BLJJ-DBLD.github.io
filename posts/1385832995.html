@@ -1,0 +1,552 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P4 React 组件化开发 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P4 React 组件化开发</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;6:01:55</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="类组件"><a href="#类组件" class="headerlink" title="类组件"></a>类组件</h1><p>类组件定义有如下要求：</p>
+<ol>
+<li>组件的名称必须以大写字母开头（无论是类组件还是函数组件）</li>
+<li>类组件需要继承自 <code>React.Component</code></li>
+<li>类组件中必须实现 <code>render</code> 方法</li>
+</ol>
+<p>在 ES6 之前，可以通过 <code>create-react-class</code> 模块来定义类组件，但是目前官网建议我们使用 ES6 的类定义。</p>
+<p>在使用 class 类定义时，需要注意：</p>
+<ol>
+<li><code>constructor</code> 是可选的，我们通常在 <code>constructor</code> 中初始化一些数据，并且在初始化数据前，<strong>一定要执行 <code>super()</code></strong></li>
+<li><code>this.state</code> 中维护的就是我们组件内部的数据</li>
+<li><code>render()</code> 方法是 class 组件中唯一必须实现的方法</li>
+</ol>
+<h1 id="组件化开发"><a href="#组件化开发" class="headerlink" title="组件化开发"></a>组件化开发</h1><blockquote>
+<p>通过 <code>create-react-app &lt;英文项目名&gt;</code> 生成项目</p>
+</blockquote>
+<h2 id="组件的定义方式"><a href="#组件的定义方式" class="headerlink" title="组件的定义方式"></a>组件的定义方式</h2><ol>
+<li>类组件</li>
+</ol>
+<p>一个简单的类组件：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { Component } <span class="keyword">from</span> <span class="string">"react"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">        <span class="built_in">super</span>()</span><br><span class="line">        <span class="built_in">this</span>.state = {</span><br><span class="line">            <span class="attr">message</span>: <span class="string">'你好啊 Jamediii'</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    render () {</span><br><span class="line">        <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>我是 APP 组件{this.state.message}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="2">
+<li>函数式组件</li>
+</ol>
+<p>一个简单的函数式组件：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">App</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>你好啊，Jamediii<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">span</span>&gt;</span>我是 function 组件：App 组件<span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>函数式组件的特点：</p>
+<ol>
+<li>没有 <code>this</code> 对象</li>
+<li>没有内部的状态<ul>
+<li>由于该组件是一个函数，当你在内部创建变量时，其实是不会像 <code>state</code> 中的数据一样被保存的。</li>
+<li>当 <code>Hooks</code> 出现后，实现了能让 函数式组件 维护自己的状态，通过一个叫 <code>useState</code> 的方法内部进行创建状态，并且状态是可维护的。</li>
+</ul>
+</li>
+<li>没有生命周期，也会被更新挂并挂载，但是没有生命周期函数</li>
+</ol>
+<h2 id="render-方法的返回值"><a href="#render-方法的返回值" class="headerlink" title="render 方法的返回值"></a>render 方法的返回值</h2><p>当 <code>render</code> 方法被调用时，它会检查 <code>this.props</code> 和 <code>this.state</code> 的变化并且返回以下类型之一：</p>
+<ol>
+<li><strong>React 元素</strong>：<ul>
+<li>通常是 JSX 创建；</li>
+<li>例如，<div> 会被 React 渲染为 DOM 节点，<mycomponent> 会被 React 渲染为自定义组件；</mycomponent></div></li>
+<li>无论是 <div> 还是 <mycomponent> 均为 React 元素。</mycomponent></div></li>
+</ul>
+</li>
+<li><strong>数组 或者 fragments</strong>：使得 <code>render</code> 方法可以返回多个元素</li>
+<li><strong>Protals</strong>：可以渲染子节点到不同的 DOM 树中</li>
+<li><strong>字符串 或 数值类型</strong>：它们在 DOM 中会被渲染成文本节点</li>
+<li><strong>布尔值类型 或 null</strong>：什么都不渲染</li>
+</ol>
+<h1 id="认识生命周期"><a href="#认识生命周期" class="headerlink" title="认识生命周期"></a>认识生命周期</h1><ul>
+<li>很多事物都有从创建到销毁的整个过程，这个过程称之为<strong>生命周期</strong></li>
+<li>React 组件也有自己的生命周期，了解组件的生命周期可以让我们在合适的地方完成我们想要的功能</li>
+<li>生命周期和生命周期函数的关系：<ol>
+<li>生命周期只是一个抽象的概念，在生命周期的整个过程，分成了很多个阶段：<ul>
+<li>比如装载阶段（Mount）：组件第一次在 DOM 树中被渲染的过程</li>
+<li>比如更新阶段（Update）：组件状态发生变化，重新更新渲染的过程</li>
+<li>比如卸载阶段（Unmount）：组件从 DOM 树被移除的过程</li>
+</ul>
+</li>
+<li>React 内部为了告诉我们当前处于哪些阶段，会对我们组件内部实现的某些函数进行回调，这些函数就是生命周期函数：<ul>
+<li>比如实现 componentDidMount 函数：组件已经被挂载到 DOM 上时，就会回调</li>
+<li>比如实现 componentDidUpdate 函数：组件已经发生了更新时，就会回调</li>
+<li>比如实现 componentWillUnmount 函数：组件即将被移除时，就会回调</li>
+<li>我们可以在这些回调函数中编写我们自己的逻辑代码，来完成自己的需求功能</li>
+</ul>
+</li>
+<li>我们谈 React 生命周期时，主要谈的类的生命周期，因为函数式组件是没有生命周期函数的；（后面可以通过 Hooks 来模拟一些生命周期的回调）</li>
+</ol>
+</li>
+</ul>
+<h2 id="生命周期解析"><a href="#生命周期解析" class="headerlink" title="生命周期解析"></a>生命周期解析</h2><p><a target="_blank" rel="noopener" href="https://projects.wojtekmaj.pl/react-lifecycle-methods-diagram/">完整的生命周期普</a></p>
+<figure class="highlight armasm"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">graph</span> TB</span><br><span class="line">    subgraph Unmounting 第三个阶段</span><br><span class="line">    Unmounting-.-&gt; b3[componentWillUnmount]</span><br><span class="line">    <span class="meta">end</span></span><br><span class="line">    subgraph Updating 第二个阶段</span><br><span class="line">    <span class="built_in">a2</span>[New props]-.-&gt;<span class="built_in">d2</span>[render]</span><br><span class="line">    b2[setState 方法]-.-&gt;<span class="built_in">d2</span>[render]</span><br><span class="line">    <span class="built_in">c2</span>[forceUpdate 方法]-.-&gt;<span class="built_in">d2</span>[render]</span><br><span class="line">    <span class="built_in">d2</span>[render]-.-&gt;e2[React updates DOM <span class="keyword">and</span> refs]</span><br><span class="line">    e2[React updates DOM <span class="keyword">and</span> refs]--&gt;<span class="built_in">f2</span>[componentDidUpdate]</span><br><span class="line">    <span class="meta">end</span></span><br><span class="line">    subgraph Mounting 第一个阶段</span><br><span class="line">    <span class="built_in">a1</span>[constructor]-.-&gt;b1[render]</span><br><span class="line">    b1[render]-.-&gt;<span class="built_in">c1</span>[React updates DOM <span class="keyword">and</span> refs]</span><br><span class="line">    <span class="built_in">c1</span>[React updates DOM <span class="keyword">and</span> refs]--&gt;<span class="built_in">d1</span>[componentDidMount]</span><br><span class="line">    <span class="meta">end</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>方法 &amp; 函数的区别：</p>
+<ol>
+<li>方法一般与某个实例联系在一起，没有的话，我们将其称为函数</li>
+<li>要看这个函数内部是否有默认的 this 绑定，和某个实例联系在一起。</li>
+</ol>
+</blockquote>
+<h3 id="演练生命周期"><a href="#演练生命周期" class="headerlink" title="演练生命周期"></a>演练生命周期</h3><p>在单一组件内的生命周期与上面的过程无异，但是父子组件嵌套时：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 子组件 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Cpt</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>(props);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 Cpt：constructor'</span>);</span><br><span class="line">        <span class="built_in">this</span>.state = {</span><br><span class="line">            <span class="attr">count</span>: <span class="number">0</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    render () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 Cpt：render'</span>);</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>Cpt 子组件<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>{this.state.count}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> this.addCount()}&gt;+1<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        )</span><br><span class="line">    }</span><br><span class="line">    addCount () {</span><br><span class="line">        <span class="built_in">this</span>.setState({</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">    componentDidMount () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 Cpt：componentDidMount'</span>);</span><br><span class="line">    }</span><br><span class="line">    componentDidUpdate () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 Cpt：componentDidUpdate'</span>);</span><br><span class="line">    }</span><br><span class="line">    componentWillUnmount () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 Cpt：componentWillUnmount'</span>);</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="comment">/* 父组件 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>(props);</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 App：constructor'</span>);</span><br><span class="line">        <span class="built_in">this</span>.state = {</span><br><span class="line">            <span class="attr">message</span>: <span class="string">'Hello React'</span>,</span><br><span class="line">            <span class="attr">count</span>: <span class="number">0</span>,</span><br><span class="line">            <span class="attr">isShow</span>: <span class="literal">true</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 App：render'</span>);</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>{this.state.message}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>{this.state.count}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> this.addCount()}&gt;+1<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> this.changeCpt()}&gt;切换<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {this.state.isShow &amp;&amp; <span class="tag">&lt;<span class="name">Cpt</span> /&gt;</span>}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">    addCount () {</span><br><span class="line">        <span class="built_in">this</span>.setState({</span><br><span class="line">            <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">    changeCpt () {</span><br><span class="line">        <span class="built_in">this</span>.setState({</span><br><span class="line">            <span class="attr">isShow</span>: !<span class="built_in">this</span>.state.isShow</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">    componentDidMount () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 App：componentDidMount'</span>);</span><br><span class="line">    }</span><br><span class="line">    componentDidUpdate () {</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'触发 App：componentDidUpdate'</span>);</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li><p>挂载过程：</p>
+<figure class="highlight delphi"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    a[触发 App: <span class="function"><span class="keyword">constructor</span>]-.-&gt;<span class="title">b</span>[触发 <span class="title">App</span>:</span> render]</span><br><span class="line">    b[触发 App: render]-.-&gt;c[触发 Cpt: <span class="function"><span class="keyword">constructor</span>]</span></span><br><span class="line"><span class="function">    <span class="title">c</span>[触发 <span class="title">Cpt</span>:</span> <span class="function"><span class="keyword">constructor</span>]-.-&gt;<span class="title">d</span>[触发 <span class="title">Cpt</span>:</span> render]</span><br><span class="line">    d[触发 Cpt: render]-.-&gt;e[触发 Cpt: componentDidMount]</span><br><span class="line">    e[触发 Cpt: componentDidMount]-.-&gt;f[触发 App: componentDidMount]</span><br><span class="line">    style a fill:#db5246</span><br><span class="line">    style b fill:#db5246</span><br><span class="line">    style f fill:#db5246</span><br></pre></td></tr></tbody></table></figure></li>
+<li><p>更新阶段：</p>
+<ol>
+<li>当点击父组件 +1 按钮时：<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    <span class="selector-tag">a</span><span class="selector-attr">[触发 App: render]</span>-<span class="selector-class">.-</span>&gt;<span class="selector-tag">b</span><span class="selector-attr">[触发 Cpt: render]</span></span><br><span class="line">    <span class="selector-tag">b</span><span class="selector-attr">[触发 Cpt: render]</span>-<span class="selector-class">.-</span>&gt;c<span class="selector-attr">[触发 Cpt: componentDidUpdate]</span></span><br><span class="line">    c<span class="selector-attr">[触发 Cpt: componentDidUpdate]</span>-<span class="selector-class">.-</span>&gt;d<span class="selector-attr">[触发 App: componentDidUpdate]</span></span><br><span class="line">    style <span class="selector-tag">a</span> fill:<span class="number">#db5246</span></span><br><span class="line">    style d fill:<span class="number">#db5246</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>当点击子组件 +1 按钮时：<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    <span class="selector-tag">a</span><span class="selector-attr">[触发 Cpt: render]</span>-<span class="selector-class">.-</span>&gt;<span class="selector-tag">b</span><span class="selector-attr">[触发 Cpt: componentDidUpdate]</span></span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+<li><p>销毁阶段：</p>
+<ol>
+<li>当点击父组件的 切换 按钮使子组件销毁时：<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    <span class="selector-tag">a</span><span class="selector-attr">[触发 App: render]</span>-<span class="selector-class">.-</span>&gt;<span class="selector-tag">b</span><span class="selector-attr">[触发 Cpt: componentWillUnmount]</span></span><br><span class="line">    <span class="selector-tag">b</span><span class="selector-attr">[触发 Cpt: componentWillUnmount]</span>-<span class="selector-class">.-</span>&gt;c<span class="selector-attr">[触发 App: componentDidUpdate]</span></span><br><span class="line">    style <span class="selector-tag">a</span> fill:<span class="number">#db5246</span></span><br><span class="line">    style c fill:<span class="number">#db5246</span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>当再点击父组件的 切换 按钮使子组件创建时：<figure class="highlight delphi"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">graph TB</span><br><span class="line">    a[触发 App: render]-.-&gt;b[触发 Cpt: <span class="function"><span class="keyword">constructor</span>]</span></span><br><span class="line"><span class="function">    <span class="title">b</span>[触发 <span class="title">Cpt</span>:</span> <span class="function"><span class="keyword">constructor</span>]-.-&gt;<span class="title">c</span>[触发 <span class="title">Cpt</span>:</span> render]</span><br><span class="line">    c[触发 Cpt: render]-.-&gt;d[触发 Cpt: componentDidMount]</span><br><span class="line">    d[触发 Cpt: componentDidMount]-.-&gt;e[触发 App: componentDidUpdate]</span><br><span class="line">    style a fill:#db5246</span><br><span class="line">    style e fill:#db5246</span><br></pre></td></tr></tbody></table></figure></li>
+</ol>
+</li>
+</ol>
+<h3 id="生命周期方法"><a href="#生命周期方法" class="headerlink" title="生命周期方法"></a>生命周期方法</h3><p>常用的生命周期：</p>
+<ol>
+<li>constructor<ul>
+<li>如果不初始化 <code>state</code> 或不进行方法绑定，则不需要为 React 组件实现构造函数</li>
+<li>constructor 通常只做两件事：<ol>
+<li>通过给 <code>this.state</code> 赋值对象来初始化内部的 <code>state</code></li>
+<li>为事件方法手动绑定 <code>this</code> 实例</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>componentDidMount<ul>
+<li>componentDidMount 会在组件挂载后（插入 DOM 树中）立即调用</li>
+<li>在 componentDidMount 中通常进行哪些操作呢？<ol>
+<li>依赖 DOM 的操作可以在这里进行</li>
+<li>在此处发送网络请求（官方建议）</li>
+<li>可以在此处添加一些订阅（记得要在 componentDidUnmount 中取消订阅）</li>
+</ol>
+</li>
+</ul>
+</li>
+<li>componentDidUpdate<ul>
+<li>componentDidUpdate 会在更新后被立即调用，首次渲染不会执行此方法</li>
+<li>当组件更新后，可以在此处对 DOM 进行操作</li>
+<li>如果你对更新前后的 props 进行了比较，也可以选择在此处进行网络请求了；（例如，当 props 未发生改变时，则不会执行网络请求）</li>
+</ul>
+</li>
+<li>componentDidUnmount<ul>
+<li>componentDidUnmount 会在组件卸载及销毁之前调用</li>
+<li>在此方法中执行必要的清理操作，例如：清除 time，取消网络请求或清除在 componentDidMount 中创建的订阅</li>
+</ul>
+</li>
+</ol>
+<p>不常用的生命周期：</p>
+<ol>
+<li>getDerivedStateFromProps: state 的值在任何时候都依赖于 props 使用，该方法返回一个对象来更新 state</li>
+<li>getSnapshotBeforeUpdate: 在 React 更新 DOM 前回调的一个函数，可以获取到 DOM 更新前的一些信息（比如 滚动位置），之后将数据在 componentDidUpdate 的第三个参数中有显示。</li>
+<li>shouldComponenUpdate：该生命周期函数很常用，但是此方法仅作为性能优化的方式而存在！通过返回 true / false 来判断是否会进行重新渲染</li>
+</ol>
+<h1 id="认识组件的嵌套"><a href="#认识组件的嵌套" class="headerlink" title="认识组件的嵌套"></a>认识组件的嵌套</h1><p>组件间存在嵌套关系：</p>
+<ul>
+<li>如果我们的一个应用程序将所有的逻辑放在一个组件中，那么这个组件将变得非常的臃肿和难以维护</li>
+<li>所以组件化的核心思想应该是对组件进行拆分，拆分成一个个小的组件</li>
+<li>再将这些组件组合嵌套在一起</li>
+</ul>
+<h2 id="组件间的通信"><a href="#组件间的通信" class="headerlink" title="组件间的通信"></a>组件间的通信</h2><p>父组件在展示子组件，可能会传递一些数据给子组件：</p>
+<ul>
+<li>父组件通过 <strong>属性=值</strong> 的形式来传递给子组件数据</li>
+<li>子组件通过 <code>props</code> 参数获取父组件传递过来的数据</li>
+</ul>
+<ol>
+<li>父组件传递子组件 - 类组件和函数组件</li>
+</ol>
+<p>简单的父传子，子显示父数据：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, { Component } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 子组件 - 类组件 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Children</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>();</span><br><span class="line">        <span class="built_in">this</span>.props = props</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">return</span> ( <span class="xml"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>子组件展示数据：{`${this.props.name} is ${this.props.age} &amp; ${this.props.height}`}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span> );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 父组件 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>(props);</span><br><span class="line">        <span class="built_in">this</span>.state = {}</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">return</span>(</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">Children</span> <span class="attr">name</span>=<span class="string">"jam"</span> <span class="attr">age</span>=<span class="string">"18"</span> <span class="attr">height</span>=<span class="string">"171"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">Children</span> <span class="attr">name</span>=<span class="string">"kobi"</span> <span class="attr">age</span>=<span class="string">"40"</span> <span class="attr">height</span>=<span class="string">"198"</span>/&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> App;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在上面代码中，每次想从 父组件 中获取数据在子组件中显示时，都需要手动的去声明 <code>this.props = props</code> ，但其实每次都是从 <code>React.Component</code> 中继承出一个 组件类，可以通过 <code>super(props)</code> 实现在父类中对 <code>props</code> 的声明，之后子类通过从父类中继承过来，就可以直接使用。</p>
+<p>而为什么子类的 <code>this.props</code>  中的 <code>this</code> 指的是子类中的 <code>this</code>，这就跟 extends 继承关键字有关了，在转成 es5 时，通过构造器.call(this, xx) 将子类的 <code>this</code> 传给父类中，然后在子类中得到父类实例数据，且此时绑定的 <code>this</code> 是子类的。</p>
+<p>所以在子类中，可以简化成：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 子组件 - 类组件 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Children</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="comment">/* 默认会实现以下语句 */</span></span><br><span class="line">    <span class="comment">/* constructor(props) {</span></span><br><span class="line"><span class="comment">        super(props);</span></span><br><span class="line"><span class="comment">    } */</span></span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">return</span> ( <span class="xml"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>子组件展示数据：{`${this.props.name} is ${this.props.age} &amp; ${this.props.height}`}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span> );</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>函数式组件则更为简单：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Children</span> (<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> ( <span class="xml"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>子组件展示数据：{`${this.props.name} is ${this.props.age} &amp; ${this.props.height}`}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span> ); </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意：函数式组件的性能会比类组件性能更高，所以尽量使用函数式组件</p>
+<p>原因是：因为类组件使用的时候要<strong>实例化</strong>，而函数组件直接执行函数取返回结果即可。</p>
+</blockquote>
+<ol start="2">
+<li>子组件传递父组件</li>
+</ol>
+<p>在某些情况，我们也需要子组件向父组件传递消息：</p>
+<ul>
+<li>在 Vue 中是通过自定义事件来完成的；</li>
+<li>在 React 中同样是通过 props 传递消息，只是让父组件给子组件传递一个<strong>回调函数</strong>，在子组件中调用这个函数即可。</li>
+</ul>
+<ol start="3">
+<li>跨组件间通信</li>
+</ol>
+<p>方案一：利用 <code>prop</code> 一层一层往下传</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">ProfileHead</span> (<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            {props.name}:</span></span><br><span class="line"><span class="xml">            {props.age}</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Profile</span> (<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ProfileHead</span> <span class="attr">name</span>=<span class="string">{props.name}</span> <span class="attr">age</span>=<span class="string">{props.age}/</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">li</span>&gt;</span>数据1<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">li</span>&gt;</span>数据2<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">li</span>&gt;</span>数据3<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">li</span>&gt;</span>数据4<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">li</span>&gt;</span>数据5<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>(props);</span><br><span class="line">        <span class="built_in">this</span>.state = {</span><br><span class="line">            <span class="attr">name</span>: <span class="string">'kobe'</span>,</span><br><span class="line">            <span class="attr">age</span>: <span class="number">44</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">const</span> {name, age} = <span class="built_in">this</span>.state</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">Profile</span> <span class="attr">name</span>=<span class="string">{name}</span> <span class="attr">age</span>=<span class="string">{age}/</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>可以利用一个技巧：属性展开（<code>...xxx</code>）,这里的 <code>...</code> 并不是 ES6 中的扩展运算符，而是 jsx 中的展开语法。具体内容在官网的<a target="_blank" rel="noopener" href="https://zh-hans.reactjs.org/docs/jsx-in-depth.html">这里，全局搜索属性展开</a></p>
+</blockquote>
+<p>这样子，就可以不用一个一个的输入 props 中的属性键值对了：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&lt;Profile {...this.state}/&gt;</span><br><span class="line">...</span><br><span class="line">&lt;ProfileHead {...props}/&gt;</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>方案二：React 提供的 API：Context</p>
+<ul>
+<li>Context 提供了一中在组件之间共享此类值的方式，而不必显式的通过组件树的逐层传递 props；</li>
+<li>Context 的设计目的是为了共享那些对于一个组件树而言是“全局”的数据，例如当前认证的用户、主题或首选语言</li>
+<li>Context 相关 API：<ul>
+<li>React.createContext<ul>
+<li>创建一个需要共享的 Context 对象</li>
+<li>如果一个组件订阅了 Context，那么这个组件会从离自身最近的那个匹配的 Provider 中读取到当前的 context 值</li>
+<li>defaultValue 是组件在顶层查找过程中没有找到对应的 Provider，那么就会使用默认值<br><code>const MyContext = React.createContext(defaultValue)</code></li>
+</ul>
+</li>
+<li>Context.Provider<ul>
+<li>每个 Context 对象都会返回一个 Provider React 组件，它会允许消费组件订阅 context 的变化</li>
+<li>Provider 接收一个 value 属性，传递给消费组件</li>
+<li>一个 Provider 可以和多个消费组件有对应关系</li>
+<li>多个 Provider 也可以嵌套使用，里层的会覆盖外层的数据</li>
+<li>当 Provider 的 value 发生变化时，它内部的所有消费组件都会重新渲染<br><code>&lt;MyContext.Provider value={/* 某个值 */} /&gt;</code></li>
+</ul>
+</li>
+<li>Class.contextType<ul>
+<li>挂载在 class 上的 contextType 属性会被重新赋值为一个由 React.createContext() 创建的 Context 对象</li>
+<li>这能让你使用 this.context 来消费最近的 Context 上的那个值</li>
+<li>你可以使用任何生命周期中访问它，包括 render 函数中<br><code>MyClass.contextType = MyContext</code></li>
+</ul>
+</li>
+<li>Context.consumer<ul>
+<li>这里，React 组件也可以订阅 context 变更，这能让你在 函数式组件 中完成订阅 context</li>
+<li>这里需要 函数作为子元素（function as child）这种做法</li>
+<li>这个函数接受当前的 context 值，返回一个 React 节点<figure class="highlight xquery"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">MyContext.Consumer</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span><span class="xquery">{</span></span><br><span class="line"><span class="xquery">    <span class="keyword">context</span> =&gt; /* 基于 <span class="keyword">context</span> 值进行渲染 */</span></span><br><span class="line"><span class="xquery">}</span><span class="xml"></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">MyContext.Consumer</span>&gt;</span></span></span><br></pre></td></tr></tbody></table></figure>
+<blockquote>
+<p>函数式组件，不需要进行 <code>MyClass.contextType = MyContext</code> 操作，否则会报警告：<code>Warning: xxx: Function components do not support contextType.</code></p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参数的类型限制（propTypes）"><a href="#参数的类型限制（propTypes）" class="headerlink" title="参数的类型限制（propTypes）"></a>参数的类型限制（<code>propTypes</code>）</h2><p>对于传递给子组件的数据，有时候我们希望进行验证，特别是大型项目中。</p>
+<p>当然，如果你的项目中集成了 <code>Flow</code> 或者 <code>TypeScript</code> 的话，那么直接就可以进行类型验证，</p>
+<p>但是，即使我们没有集成了 <code>Flow</code> 或者 <code>TypeScript</code>，也可以通过 <code>prop-types</code> 来进行参数验证。</p>
+<p>从 <code>React v15.5</code> 开始，<code>React.PropTypes</code> 已移入到另一个包中：<code>prop-types</code> 库，所以想用时需要对其进行引用。</p>
+<blockquote>
+<p>一些简单的校验可以使用 <code>prop-types</code>，但如果是较为复杂的，期望使用 <code>TypeScript</code>。</p>
+</blockquote>
+<p>在原有的函数式组件中，对字段进行类型限制：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* 子组件 - 函数组件 */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Children</span> (<span class="params">props</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> ( </span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>子组件展示数据：{`${props.name} is ${props.age} &amp; ${props.height}`}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {</span></span><br><span class="line"><span class="xml">                    props.names.map(name =&gt; {</span></span><br><span class="line"><span class="xml">                        return <span class="tag">&lt;<span class="name">li</span>&gt;</span>{name}<span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                    })</span></span><br><span class="line"><span class="xml">                }</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">     );</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 想要验证时 */</span></span><br><span class="line">Children.propTypes = {</span><br><span class="line">    <span class="attr">name</span>: PropTypes.string.isRequired,</span><br><span class="line">    <span class="attr">age</span>: PropTypes.number,</span><br><span class="line">    <span class="attr">height</span>: PropTypes.number,</span><br><span class="line">    <span class="attr">names</span>: PropTypes.array</span><br><span class="line">}</span><br><span class="line"><span class="comment">/* 想要设置初始值时 */</span></span><br><span class="line">Children.defaultProps = {</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'Jamediii'</span>,</span><br><span class="line">    <span class="attr">age</span>: <span class="number">25</span>,</span><br><span class="line">    <span class="attr">height</span>: <span class="number">171</span>,</span><br><span class="line">    <span class="attr">names</span>: [<span class="string">'jamediii'</span>, <span class="string">'lacey'</span>]</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">/* 在类组件中也可以这样子设置 */</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Children2</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="comment">/* 必须要有 static 关键字，因为是在类上加该属性。 */</span></span><br><span class="line">    <span class="keyword">static</span> propTypes = {}</span><br><span class="line">    <span class="keyword">static</span> defaultProps = {}</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>当给组件设置 <code>defaultProps.xx</code> 时，即使该 <code>xx</code> 在 <code>propTypes.xx: PropTypes.isRequired</code> 也不会报警告。</p>
+<p>所以这说明是通过该属性给 <code>props</code> 中的值设置初始值</p>
+</blockquote>
+<p>当然也有其他的类型的校验，如有兴趣，可以查看官网，点<a target="_blank" rel="noopener" href="https://reactjs.bootcss.com/docs/typechecking-with-proptypes.html">这里</a>。</p>
+<h1 id="React-实现类似-Vue-中的-Slot"><a href="#React-实现类似-Vue-中的-Slot" class="headerlink" title="React 实现类似 Vue 中的 Slot"></a>React 实现类似 Vue 中的 Slot</h1><blockquote>
+<p>React 中并没有插槽(slot)这个概念的</p>
+<p>原因是：jsx 太灵活了，jsx 既是一个变量，也是一个数据，所以可以直接传给我们的子组件的:</p>
+<p>jsx -&gt; 数据 -&gt; 子组件</p>
+</blockquote>
+<p>在父组件 <code>App</code> 内：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, { Component } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> NavBar <span class="keyword">from</span> <span class="string">"./NavBar"</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="string">"./style.css"</span>;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">Component</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">        <span class="built_in">super</span>(props);</span><br><span class="line">        <span class="built_in">this</span>.state = {  }</span><br><span class="line">    }</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {/* 方案一：得按照顺序来放置插槽组件 */}</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">NavBar</span>&gt;</span></span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;<span class="name">span</span>&gt;</span>aaa<span class="tag">&lt;/<span class="name">span</span>&gt;</span> {/* 插槽组件一 */}</span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;<span class="name">strong</span>&gt;</span>bbb<span class="tag">&lt;/<span class="name">strong</span>&gt;</span> {/* 插槽组件二 */}</span></span><br><span class="line"><span class="xml">                    <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"/#"</span>&gt;</span>ccc<span class="tag">&lt;/<span class="name">a</span>&gt;</span> {/* 插槽组件三 */}</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;/<span class="name">NavBar</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {/* 方案一：可以通过属性名称随意放置插槽组件 */}</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">NavBar2</span> <span class="attr">leftSlot</span>=<span class="string">{</span>&lt;<span class="attr">span</span>&gt;</span>aaa<span class="tag">&lt;/<span class="name">span</span>&gt;</span>}</span></span><br><span class="line"><span class="xml">                         centerSlot={<span class="tag">&lt;<span class="name">strong</span>&gt;</span>bbb<span class="tag">&lt;/<span class="name">strong</span>&gt;</span>}</span></span><br><span class="line"><span class="xml">                         rightSlot={<span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">"/#"</span>&gt;</span>ccc<span class="tag">&lt;/<span class="name">a</span>&gt;</span>}/&gt;</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> App;</span><br></pre></td></tr></tbody></table></figure>
+
+<ol>
+<li>通过 <code>prop.children[下标值]</code> 获取对应的插槽组件</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> NavBar = <span class="function">(<span class="params">prop</span>) =&gt;</span> {</span><br><span class="line">    <span class="keyword">const</span> [left, center, right] = prop.children</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"nav-bar"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"item left"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {left}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"item center"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {center}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"item right"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {right}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> NavBar;</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>采用这种方案时，一般都是组件中只存在一个子组件时，否则就缺少了灵活性</p>
+</blockquote>
+<ol start="2">
+<li>通过直接在组件上自定义属性，该属性值是插槽组件</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> NavBar2 = <span class="function">(<span class="params">prop</span>) =&gt;</span> {</span><br><span class="line">    <span class="keyword">const</span> {leftSlot, centerSlot, rightSlot} = prop</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"nav-bar"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"item left"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {leftSlot}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"item center"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {centerSlot}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"item right"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {rightSlot}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> NavBar2;</span><br></pre></td></tr></tbody></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1385832995.html">https://bljj-dbld.github.io/posts/1385832995.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/3526460681.html">P5 setState 详细解析 &amp; React 性能优化</a>
+            
+            
+            <a class="next" rel="next" href="/posts/3934457119.html">P3 React 脚手架</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

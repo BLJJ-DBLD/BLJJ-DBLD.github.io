@@ -1,0 +1,470 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P5 setState 详细解析 &amp; React 性能优化 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P5 setState 详细解析 &amp; React 性能优化</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;6:03:26</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="为什么使用-setState"><a href="#为什么使用-setState" class="headerlink" title="为什么使用 setState"></a>为什么使用 setState</h1><p>在开发中，我们并不能直接通过修改 state 的值来让界面发生更新，因为 React 并没有实现类似 Vue2 中 Object.definedProerty 或者 Vue3 中的 Proxy 的方式监听数据的变化；我们必须通过 setState 来告知 React 数据发生了改变</p>
+<blockquote>
+<p>在组件中并没有实现对 setState 的方法，为什么可以调用呢？</p>
+<p>原因是，setState 是从 Component 中继承过来的。</p>
+</blockquote>
+<h1 id="setState-是异步更新的？我们来探究一下"><a href="#setState-是异步更新的？我们来探究一下" class="headerlink" title="setState 是异步更新的？我们来探究一下"></a>setState 是异步更新的？我们来探究一下</h1><h2 id="为什么-setState-设计为异步呢？"><a href="#为什么-setState-设计为异步呢？" class="headerlink" title="为什么 setState 设计为异步呢？"></a>为什么 setState 设计为异步呢？</h2><ol>
+<li>setState 设计为异步，可以显著的提升性能；<ul>
+<li>如果每次调用 setState 都进行一次更新，那么意味着 render 方法会被频繁调用，界面重新渲染，这样效率会很低；</li>
+<li>最好的办法应该是获取到多个更新，之后进行批量更新</li>
+</ul>
+</li>
+<li>如果同步更新了 state，但是还没有执行 render 函数，那么父组件内的 state 与子组件内的 prop 将不能保持同步。<ul>
+<li>state 和 props 不能保持一致，会在开发中产生很多的问题</li>
+</ul>
+</li>
+</ol>
+<h2 id="如何获取异步的结果"><a href="#如何获取异步的结果" class="headerlink" title="如何获取异步的结果"></a>如何获取异步的结果</h2><p>方式一：通过 setState 的第二个参数（回调函数）等待更新后，再去获取具体的值</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">&lt;!-- setState(更新的 state 属性, 回调函数) --&gt;</span><br><span class="line"><span class="built_in">this</span>.setState({</span><br><span class="line">    <span class="attr">message</span>: <span class="built_in">this</span>.state.message</span><br><span class="line">}, <span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.state.message)</span><br><span class="line">})</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>方式二：在 <code>componentDidUpdate</code> 方法中获取到更新后的当前值</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="title">componentDidUpdate</span>(<span class="params"></span>)</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.state.message)</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>方式二会在方式一之前被调用到。</p>
+</blockquote>
+<h2 id="setState-一定是异步的吗？"><a href="#setState-一定是异步的吗？" class="headerlink" title="setState 一定是异步的吗？"></a>setState 一定是异步的吗？</h2><blockquote>
+<p>首先说出结论：不一定的。</p>
+</blockquote>
+<p>其实是分为两种的：</p>
+<ul>
+<li>在组件生命周期或 React 合成事件中，setState 是异步的；</li>
+<li>在 <code>setTimeout</code> 或者原生 <code>DOM</code> 事件内，setState 是同步的；</li>
+</ul>
+<h3 id="什么是-React-的合成事件？为什么要这样子做？"><a href="#什么是-React-的合成事件？为什么要这样子做？" class="headerlink" title="什么是 React 的合成事件？为什么要这样子做？"></a>什么是 React 的合成事件？为什么要这样子做？</h3><ol>
+<li>什么是 React 的合成事件：指的是 jsx 中的事件绑定，例如 <code>onClick</code> 等此类事件。甚至于，合成事件内的 <code>event</code> 对象也是 React 合成的。</li>
+<li>为何要如此做法：<ul>
+<li>因为 React 不仅仅想要跑在浏览器中，当我们使用的是 React-Native 的话，是跑在原生的手机上的。</li>
+<li>我们在 React 的 render 方法内编写的都是 jsx 代码，当跑在浏览器上，那就意味着到时候浏览器产生的 DOM 事件对象 <code>event</code> 给到 React；</li>
+<li>如果 React 是跑在原生手机上时，就需要给到原生控件的对象。</li>
+<li>所以，当你在写这个代码的时候， React 是不明确你到底跑在哪个平台上的</li>
+<li>既然不明确，那 React 就将这个事件对象改成合成对象。</li>
+<li>改成合成对象后的好处是：如果是跑在浏览器中，我就将浏览器事件对象与我的其他属性 合成到 合成对象当中；如果是跑在原生当中，我就将 <code>Button</code> 或者其他原生控件的相关属性与我的其他属性 合成到 合成对象当中。</li>
+</ul>
+</li>
+</ol>
+<blockquote>
+<p>总结：合成对象 <code>event</code> 会根据不同的平台（浏览器 / 原生）会发生相应的变化。</p>
+</blockquote>
+<h3 id="在-React-当中，到底是如何决定是同步还是异步的？"><a href="#在-React-当中，到底是如何决定是同步还是异步的？" class="headerlink" title="在 React 当中，到底是如何决定是同步还是异步的？"></a>在 React 当中，到底是如何决定是同步还是异步的？</h3><blockquote>
+<p>探究源码：</p>
+<p>总结：React 源码当中做过一个判断，它会根据我们当前处于的上下文不同情况来返回当前这里到底是同步的还是异步的 </p>
+</blockquote>
+<h1 id="setState-中的合并"><a href="#setState-中的合并" class="headerlink" title="setState 中的合并"></a>setState 中的合并</h1><h2 id="setState-中的数据合并"><a href="#setState-中的数据合并" class="headerlink" title="setState 中的数据合并"></a>setState 中的<strong>数据</strong>合并</h2><p>上源码讲解：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"> <span class="built_in">this</span>.state = { <span class="attr">message</span>: <span class="string">'Hello World'</span>, <span class="attr">name</span>: <span class="string">'jamediii'</span> }</span><br><span class="line">...</span><br><span class="line">changeMessage () {</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">message</span>: <span class="string">'hello jamediii'</span></span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>此时的 <code>name</code> 并不会消失，因为在 React 对 state 的更新手法是：<code>Object.assgin({}, prevState, partialState)</code></p>
+<h2 id="setState-中自身的合并"><a href="#setState-中自身的合并" class="headerlink" title="setState 中自身的合并"></a>setState 中自身的合并</h2><p>依旧上源码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">increment () {</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">    });</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">    });</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">    });</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这个是之前的计数器案例，此时我多次调用 <code>setState</code> 方法，输出的 count 会是多少呢？</p>
+<blockquote>
+<p>结论：会输出 <code>1</code></p>
+</blockquote>
+<p>为什么不是 <code>3</code> 呢？</p>
+<ul>
+<li>原因是： React 会对 <code>setState</code> 方法进行内部合并，虽然被调用了三次，但是会被合并成一个对象，而这一个对象（最后调用的 <code>setState</code> 对象），才是最终我们更新的的对象。</li>
+</ul>
+<p>如果我们将代码修改为：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">increment () {</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">1</span></span><br><span class="line">    });</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">2</span></span><br><span class="line">    });</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">count</span>: <span class="built_in">this</span>.state.count + <span class="number">3</span></span><br><span class="line">    });</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>按照之前的结论，每次输出是：+ <code>3</code></p>
+<p>但是，有时我们有并不希望是当前的结果，我们希望的是每一次调用 <code>setState</code> 后获取到的结果累加。此时，<code>setState</code> 方法的第一个参数可以为函数这个优点就有所体现了，但是需要注意的是，为函数时，需要传递参数。</p>
+<p>上代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">increment () {</span><br><span class="line">    <span class="built_in">this</span>.setState(<span class="function">(<span class="params">prevState, props</span>) =&gt;</span> {</span><br><span class="line">        <span class="keyword">return</span> {</span><br><span class="line">            <span class="attr">count</span>: prevState.count + <span class="number">1</span></span><br><span class="line">        }</span><br><span class="line">    });</span><br><span class="line">    <span class="built_in">this</span>.setState(<span class="function">(<span class="params">prevState, props</span>) =&gt;</span> {</span><br><span class="line">        <span class="keyword">return</span> {</span><br><span class="line">            <span class="attr">count</span>: prevState.count + <span class="number">1</span></span><br><span class="line">        }</span><br><span class="line">    });</span><br><span class="line">    <span class="built_in">this</span>.setState(<span class="function">(<span class="params">prevState, props</span>) =&gt;</span> {</span><br><span class="line">        <span class="keyword">return</span> {</span><br><span class="line">            <span class="attr">count</span>: prevState.count + <span class="number">1</span></span><br><span class="line">        }</span><br><span class="line">    });</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>结论是：输出 <code>3</code>; ohhhhhhhh!</p>
+</blockquote>
+<blockquote>
+<p>总结来说：根据 <code>setState</code> 的第一个参数是指 对象，还是 函数，会有不同的操作。</p>
+<ol>
+<li><p>当参数是对象时，会对多个 <code>setState</code> 只会合并并且只会将最后一次的 <code>setState</code> 方法进行执行</p>
+</li>
+<li><p>当参数时函数时，会对多个 <code>setState</code> 进行合并，但是，会将每次的函数都执行一次；函数中需要至少传递一个参数 <code>prevState</code> 指代的是上一次执行后的 <code>state</code> 值，在此基础上就可以在上次的前提下进行累加操作了。</p>
+</li>
+</ol>
+</blockquote>
+<h1 id="React-的更新机制"><a href="#React-的更新机制" class="headerlink" title="React 的更新机制"></a>React 的更新机制</h1><p>React 的渲染流程：<code>jsx -&gt; 虚拟 DOM -&gt; 真实 DOM</code></p>
+<p>React 的更新流程：<code>props/state 改变 -&gt; render 方法的重新执行 —&gt; 会产生新的虚拟 DOM 树 -&gt; 新旧虚拟 DOM 树作 diff 比较 -&gt; 计算出差异进行更新 -&gt; 更新到真实的 DOM 上</code></p>
+<p>每一次进行比较更新时，即使是最先进的算法，该算法的复杂程度为 <code>O(n^3)</code>，其中 <code>n</code> 是指树中元素个数。</p>
+<p>假如页面中展示 1000 个元素，那所需要的执行的计算量将在 十亿的量级范围；这种开销太过昂贵，会使得 React 更新性能变得非常低效。</p>
+<p>于是，React 对算法进行了优化，将其优化成了 <code>O(n)</code>，具体的优化过程：</p>
+<ul>
+<li>只会对同层节点之间相互比较，不会跨节点比较；</li>
+<li>新旧 DOM 树上，同层的节点发生类型改变时，会重铸该节点及以下的所有节点；</li>
+<li>开发中，可以通过 <code>key</code> 来指定哪些节点在不同的渲染下保持稳定；</li>
+</ul>
+<ol>
+<li>情况一：对比不同类型的元素，会触发 <code>componentUnmount -&gt; componentDidMount</code><ul>
+<li>当节点为不同的元素，React 会拆卸原有的树，并且建立起新的树</li>
+<li>比如下面的代码：React 会销毁 Counter 组件并且重新装载一个新的组件，而不会对 Counter 进行复用。  <figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原先的 jsx </span></span><br><span class="line">&lt;div&gt;</span><br><span class="line">	<span class="xml"><span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span></span><br><span class="line">&lt;/div&gt;</span><br><span class="line"><span class="comment">// 更新后的 jsx</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">span</span>&gt;</span></span></span><br><span class="line"><span class="xml">	<span class="tag">&lt;<span class="name">Counter</span> /&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;/<span class="name">span</span>&gt;</span></span></span><br></pre></td></tr></tbody></table></figure></li>
+</ul>
+</li>
+<li>情况二：对比同一类型的元素，会触发 <code>componentDidUpdate</code><ul>
+<li>当比较两个相同类型的 React 元素时，React 会保留 DOM 节点，仅对比更新有改变的属性。</li>
+<li>比如下面的代码：通过比较，React 知道只需要修改 DOM 元素上的 className 属性  <figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原先的 jsx</span></span><br><span class="line">&lt;div className=<span class="string">"before"</span> title=<span class="string">"stuff"</span> /&gt;</span><br><span class="line"><span class="comment">// 更新后的 jsx</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"after"</span> <span class="attr">title</span>=<span class="string">"stuff"</span> /&gt;</span></span></span><br></pre></td></tr></tbody></table></figure></li>
+<li>又比如，当更新 style 中的某个属性时，React 仅更新有所更变的属性。</li>
+<li>通过对比这两个元素，React 知道只需要修改 DOM 元素上的 color 样式，无需修改 fontWeight  <figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原先的 jsx</span></span><br><span class="line">&lt;div style={{<span class="attr">color</span>: <span class="string">'red'</span>, <span class="attr">fontWeight</span>: <span class="string">'blod'</span>}} /&gt;</span><br><span class="line"><span class="comment">// 更新后的 jsx</span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">{{color:</span> '<span class="attr">green</span>', <span class="attr">fontWeight:</span> '<span class="attr">blod</span>'}} /&gt;</span></span></span><br></pre></td></tr></tbody></table></figure></li>
+</ul>
+</li>
+<li>情况三：对子节点进行递归<ul>
+<li>默认条件下，当递归 DOM 节点的子元素时，React 会同时遍历两个子元素的列表，当产生差异时，生成一个 mutation。</li>
+<li>当只是向列表的尾部插入数据时，不会有什么影响，但如果是向列表的中间或者头部插入数据时，就会导致插入的数据之后的元素重新构建，即使没有任何变化。</li>
+<li>此时， <code>key</code> 的出现，就是为了优化这一点，它会比较列表中每一项的 key &amp; 元素是否一致，一致时就不会被重构，只会将位置进行置换。</li>
+<li>使用 <code>key</code> 时需要注意的是：<ul>
+<li>key 应该是在当前根节点下唯一的；</li>
+<li>key 尽量不要使用随机数</li>
+<li>使用 index 作为 key 时，对性能是没有优化的</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h2 id="render-方法被无效调用"><a href="#render-方法被无效调用" class="headerlink" title="render 方法被无效调用"></a>render 方法被无效调用</h2><p>我们在使用之前的一个嵌套案例：当 App 中，我们增加一个计数器的代码；当点击 +1 时，会重新调用 render 方法，而当 App 的 render 方法被调用时，所有的子组件的 render 方法也会被重新调用；</p>
+<p>那么，只要根组件的 render 被重新调用，那所有子组件也需要被迫重新 render，当进行 diff 算法时，性能必然很低；</p>
+<p>事实上，很多的组件只要没有涉及到自身的更改时，是没有必要重新 render 的，它们调用 render 时应该有一个前提，那就是依赖的数据（state / props）发生了更新，再调用自己的 render 方法</p>
+<p>那如何自由的控制组件内的 render 是否被调用呢？答案是通过 <code>shouldComponentUpdate</code> 方法即可；</p>
+<h3 id="shouldComponentUpdate-方法"><a href="#shouldComponentUpdate-方法" class="headerlink" title="shouldComponentUpdate 方法"></a>shouldComponentUpdate 方法</h3><p>React 提供了一个生命周期方法 <code>shouldComponentUpdate</code>，这个方法接受参数。并且需要有返回值：</p>
+<ul>
+<li>该方法有两个参数（nextProps, nextState）均返回最新的参数数据。</li>
+<li>该方法返回值是一个 boolean 类型：<ul>
+<li>当返回值为 true 时，那就会调用 render 方法</li>
+<li>当返回值为 false 时，将不会调用 render 方法</li>
+<li>默认返回是 true，也就是只要 state 发生改变，就会调用 render 方法</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p><code>shouldComponentUpdate</code> 方法虽好，但是也会有两个问题：</p>
+<ol>
+<li>需要在每一个组件内一次次的声明该方法</li>
+<li>无法对函数组件使用该方法</li>
+</ol>
+</blockquote>
+<h3 id="PureComponent-类"><a href="#PureComponent-类" class="headerlink" title="PureComponent 类"></a>PureComponent 类</h3><p>只能是类组件通过继承 <code>PureComponent</code> 类：</p>
+<ol>
+<li>检测该组件中是否有使用 shouldComponentUpdate 方法。<ol>
+<li>当组件内使用了该方法时，就会按照该方法的输出来决定是否进行 render。</li>
+<li>当未使用时，在 <code>PureComponent</code> 类中会通过 <code>checkShouldComponentUpdate</code> 方法对新旧 <code>props, state, context</code> 比较，当返回 true 时才会进行 render。</li>
+</ol>
+</li>
+<li>比较时，只是进行浅层比较。</li>
+<li>不建议在 <code>shouldComponentUpdate</code> 中进行深层比较或使用 <code>JSON.stringify()</code>，原因是这样非常影响效率，且会损害性能。<blockquote>
+<p>一般情况下，基本可以使用 <code>PureComponent</code> 来代替 <code>Component</code> 的使用。因为 <code>PureComponent</code> 在一定程度上能够优化我们的性能。</p>
+</blockquote>
+</li>
+</ol>
+<p>上代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> {PureComponent} <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Children</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    render () {</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">        	<span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>子组件<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        )</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="memo-高阶函数组件"><a href="#memo-高阶函数组件" class="headerlink" title="memo 高阶函数组件"></a>memo 高阶函数组件</h3><blockquote>
+<p>高阶函数组件：能够对一个函数操作并且返回一个函数</p>
+</blockquote>
+<p>上代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> {memo} <span class="keyword">from</span> <span class="string">'react'</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数式组件</span></span><br><span class="line"><span class="keyword">const</span> MemoChildren = memo(<span class="function"><span class="keyword">function</span> <span class="title">Children</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">    	<span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span>子组件<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<hr>
+<h1 id="钻个🐂尖"><a href="#钻个🐂尖" class="headerlink" title="钻个🐂尖"></a>钻个🐂尖</h1><h2 id="深入理解-setState-的“异步”"><a href="#深入理解-setState-的“异步”" class="headerlink" title="深入理解 setState 的“异步”"></a>深入理解 <code>setState</code> 的“异步”</h2><p>Q: <code>setState</code> 为什么给人的感觉是异步的？</p>
+<p>A:<br>在 <code>setState()</code> 之后无法立即获取到最新的 <code>state</code></p>
+<p>Q: 那为什么 <code>React</code> 要把状态的更新设计成这种方式呢？直接 <code>this.state.count = 1</code> 不好吗？</p>
+<p>A:<br>首先，<code>this.state.count = 1</code> 这般做法是不能触发更新。 <code>React</code> 与 <code>Vue</code> 不同，<code>Vue</code> 是响应式系统（Reactivity System），在 Vue3 中通过 <code>Proxy</code> 监听对象或 Vue2.x 中通过 <code>Object.defineProperty</code> 监听对象的属性来实现更新视图的。而 <code>React</code> 是通过 <code>setState()</code> 触发更新视图的。</p>
+<p><code>React</code> 设计成这种方式的原因，设计者已经正面回答了。<a target="_blank" rel="noopener" href="https://github.com/facebook/react/issues/11527#issuecomment-360199710">点这里</a>。总结起来：</p>
+<ul>
+<li>保证内部的一致性：即使 <code>state</code> 是同步更新，<code>props</code> 也不是。（你只有在父组件重新渲染时才能知道<code>props</code>）</li>
+<li>将 <code>state</code> 的更新延缓到最后批量合并再去渲染对于应用的性能优化是有极大好处的，如果每次的状态改变都去重新渲染真实dom，那么它将带来巨大的性能消耗。</li>
+</ul>
+<p>Q: <code>setState</code> 真的是异步吗？</p>
+<p>A:<br>其实不然，<code>setState</code> 内部是没有编写异步代码的。它只是模拟了异步的行为。就像上文说的，<code>setState</code> 根据<strong>上下文环境</strong>来判断是异步更新还是同步更新。再通俗点是，<code>React</code> 会维护一个标识（<code>isBatchingUpdates</code>），判断是直接更新还是先暂存 state 到队列。</p>
+<p>而这个上下文环境指的是执行 <code>setState</code> 方法时，是在 合成方法和钩子函数【1】 中，还是在 原生事件和 <code>setTimeout</code>【2】 中。在 【1】 中会表现成 “异步”，在 【2】 中时会表现成 同步。并且在 “异步” 状态下，<code>setState</code> 会进行批量更新优化，对同一个值进行多次 <code>setState</code>，<code>setState</code> 的批量更新策略会对其进行覆盖，去最后一次的执行；如果是同时多个值进行多次 <code>setState</code>，则会合并批量更新。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3526460681.html">https://bljj-dbld.github.io/posts/3526460681.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1641527773.html">P6-前面的知识点补充</a>
+            
+            
+            <a class="next" rel="next" href="/posts/1385832995.html">P4 React 组件化开发</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

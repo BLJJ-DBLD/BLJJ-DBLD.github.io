@@ -1,0 +1,494 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P2 jsx 语法 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P2 jsx 语法</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;5:56:26</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="认识-JSX"><a href="#认识-JSX" class="headerlink" title="认识 JSX"></a>认识 JSX</h1><p>看一段代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> element = <span class="xml"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>Hello World<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line">ReactDOM.render(element, <span class="built_in">document</span>.getElementById(<span class="string">"app"</span>))</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><p>在这段 <code>element</code> 变量的声明右侧赋值的标签语法是什么呢？</p>
+<ul>
+<li>它不是一段字符串（因为没有使用 引号 包裹），它看上去是一段 HTML 原生，但是我们能在 js 中直接给一个变量赋值 html 吗？</li>
+<li>其实是不可以的，如果我们将 <code>script</code> 标签上的 <code>type="text/babel"</code> 属性去掉，那么就会出现语法错误。</li>
+<li>它到底是什么呢？ 其实它是一段 jsx 语法。</li>
+</ul>
+</li>
+<li><p>jsx 是什么？</p>
+<ul>
+<li>jsx 是一种 JavaScript 的语法扩展，在很多地方被称为 JavaScript XML ，因为看起来就是一段 XML 语法；</li>
+<li>它用于描述我们的 UI 界面，并且其完全可以和 JavaScript 融合在一起使用</li>
+<li>它不同于 Vue 中的模板语法，你可以不用专门学习模板语法中的一些指令（比如 <code>v-if, v-else, v-bind, v-for</code>）</li>
+</ul>
+</li>
+<li><p>jsx 的书写规范</p>
+<ul>
+<li>jsx 的顶层<strong>只能有一个根元素</strong>，所以我们很多时候会在外层包裹一个 <code>div</code>，或者使用 <code>Fragment</code> 包裹</li>
+<li>为了方便阅读，我们通常会在 jsx 的外层包裹一个小括号<code>()</code>，这样方便阅读，并且 jsx 可以进行换行书写</li>
+<li>jsx 中的标签可以是单标签，也可以是双标签<ul>
+<li>注意：如果是单标签，必须以 <code>/&gt;</code> 结尾（即使用严格语法）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="为什么-React-选择了-JSX"><a href="#为什么-React-选择了-JSX" class="headerlink" title="为什么 React 选择了 JSX"></a>为什么 React 选择了 JSX</h1><ul>
+<li><p>React 认为渲染逻辑本质上与其他 UI 逻辑存在内在耦合</p>
+<ul>
+<li>比如 UI 需要绑定事件（button、a 原生等等）</li>
+<li>比如 UI 中需要展示数据状态，在某些状态发生改变时，又需要改变 UI</li>
+</ul>
+</li>
+<li><p>他们之间是密不可分的，所以 React 没有将标记分离到不同的文件中，而是组合在了一起</p>
+</li>
+</ul>
+<h1 id="JSX-的使用"><a href="#JSX-的使用" class="headerlink" title="JSX 的使用"></a>JSX 的使用</h1><h2 id="jsx-中的注释"><a href="#jsx-中的注释" class="headerlink" title="jsx 中的注释"></a>jsx 中的注释</h2><blockquote>
+<p>推荐使用一种，如下：</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">{<span class="comment">/**/</span>}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="jsx-中嵌入变量"><a href="#jsx-中嵌入变量" class="headerlink" title="jsx 中嵌入变量"></a>jsx 中嵌入变量</h2><ul>
+<li>情况一：当变量是 <code>Number, String, Array</code> 类型时，可以直接显示。</li>
+<li>情况二：当变量是 <code>null, undefined, Boolean</code> 类型时，内容为空；<ul>
+<li>如果希望可以显示 <code>null, undefined, Boolean</code>，需要转成字符串<ul>
+<li>转换的方法有很多，比如在 <code>Boolean</code> 类型中使用 <code>toString</code> 方法。</li>
+<li><code>null, undefined</code> 它们没有 <code>toString</code> 方法，可以是利用 <code>String()</code> 方法，或者是和 空字符串（””） 做拼接</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>情况三：对象 类型不能作为子元素（not valid as a React child）。但是 数组 类型可以</li>
+</ul>
+<h2 id="jsx-绑定属性"><a href="#jsx-绑定属性" class="headerlink" title="jsx 绑定属性"></a>jsx 绑定属性</h2><ul>
+<li>元素中的 title 属性</li>
+<li>img 元素中的 src 属性</li>
+<li>a 元素中的 href 属性</li>
+<li>元素需要绑定 class 类</li>
+<li>原生使用内联样式 style</li>
+</ul>
+<h3 id="绑定普通属性"><a href="#绑定普通属性" class="headerlink" title="绑定普通属性"></a>绑定普通属性</h3><ol>
+<li>比如每个元素都有的一个属性：<code>title</code></li>
+<li>比如 <code>img</code> 中的 <code>src</code> 属性中需要动态的添加路径。 </li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">message</span>: <span class="string">'hello world'</span>,</span><br><span class="line">        <span class="attr">imgSrc</span>: <span class="string">'http://p1.music.126.net/vb_M0LwztnrUE61_LtyEaw==/109951165799377902.jpg'</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">render () {</span><br><span class="line">    <span class="keyword">const</span> {message, imgSrc} = <span class="built_in">this</span>.state</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            {/* 1. 绑定普通的属性 */}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">p</span> <span class="attr">title</span>=<span class="string">{message}</span>&gt;</span>Hello World<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">"this.getSizeImage(imgSrc, 160)"</span> <span class="attr">alt</span>=<span class="string">"图片"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    )</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getSizeImage</span> (<span class="params">url, size</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> url + <span class="string">`?param=<span class="subst">${size}</span>y<span class="subst">${size}</span>`</span></span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="绑定-className-html-中的-class"><a href="#绑定-className-html-中的-class" class="headerlink" title="绑定 className(html 中的 class)"></a>绑定 className(html 中的 class)</h3><blockquote>
+<p>在 render 中的 return 中，编写的是 jsx 语法。而 class 在语法中是代指类。与 html 中的 class 有冲突，所以在 jsx 中将 html 中的 class 需要写成 className。诸如此类的，还有比如 label 中的 for 属性，在 jsx 中需要写成 htmlFor。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">{<span class="comment">/* 2. 绑定 class 类 */</span>}</span><br><span class="line">{<span class="comment">/* 在 jsx 中 class 是一个关键词，所以并不能使用 html 中的 class 属性名，而要改成使用特定的名称： className */</span>}</span><br><span class="line">&lt;div className=<span class="string">"title body"</span>&gt;我是 div 元素&lt;/div&gt;</span><br><span class="line">{<span class="comment">/* 还有就是比如说在 label 中的 for 属性名。在 jsx 中 for 应该是遍历关键字，所以需要改为：htmlFor */</span>}</span><br><span class="line">&lt;label htmlFor=<span class="string">""</span>&gt;&lt;/label&gt;</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="绑定-style-属性"><a href="#绑定-style-属性" class="headerlink" title="绑定 style 属性"></a>绑定 style 属性</h3><blockquote>
+<p>需要注意的是要分清楚两层花括号的含义。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">{<span class="comment">/* 3. 绑定 style 内容 */</span>}</span><br><span class="line">{<span class="comment">/* 一定要清楚，第一个花括号是表示在里面写 js 代码。第二个花括号是表示在里面是要写一个对象 {} */</span>}</span><br><span class="line">{<span class="comment">/* 还有一点，属性名必须是驼峰式 */</span>}</span><br><span class="line">&lt;div style={{<span class="attr">color</span>: <span class="string">"red"</span>, <span class="attr">fontSize</span>: <span class="string">"20px"</span>}}&gt;我是div，我绑定了 style 属性&lt;/div&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="jsx-绑定事件"><a href="#jsx-绑定事件" class="headerlink" title="jsx 绑定事件"></a>jsx 绑定事件</h2><h3 id="通过-bind-显示绑定-this"><a href="#通过-bind-显示绑定-this" class="headerlink" title="通过 bind 显示绑定 this"></a>通过 <code>bind</code> 显示绑定 this</h3><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">    <span class="built_in">super</span>()</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">message</span>: <span class="string">'Hello World'</span>,</span><br><span class="line">        <span class="attr">counter</span>: <span class="number">100</span></span><br><span class="line">    }</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>);</span><br><span class="line">    <span class="built_in">this</span>.bindClick = <span class="built_in">this</span>.bindClick.bind(<span class="built_in">this</span>)</span><br><span class="line">}</span><br><span class="line">...</span><br><span class="line">{<span class="comment">/* 方案一：通过 bind 绑定 this(显示绑定) */</span>}</span><br><span class="line">{<span class="comment">/* </span></span><br><span class="line"><span class="comment">    这样子做的坏处有二：</span></span><br><span class="line"><span class="comment">    1. 需要每次通过 bind 绑定，重复性代码偏多; 解决方案：在 构造器(constructor) 中手动一次性绑定</span></span><br><span class="line"><span class="comment">    2. </span></span><br><span class="line"><span class="comment">*/</span>}</span><br><span class="line">&lt;button onClick={<span class="built_in">this</span>.bindClick.bind(<span class="built_in">this</span>)}&gt;按钮<span class="number">1</span>&lt;/button&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.bindClick}</span>&gt;</span>按钮2<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.bindClick}</span>&gt;</span>按钮3<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="利用箭头函数的特性"><a href="#利用箭头函数的特性" class="headerlink" title="利用箭头函数的特性"></a>利用箭头函数的特性</h3><ol>
+<li>在类中定义变量，赋值其箭头函数方法</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">{<span class="comment">/* 方案二：定义函数时，使用箭头函数 */</span>}</span><br><span class="line">&lt;button onClick={<span class="built_in">this</span>.increment}&gt;+<span class="number">1</span>&lt;/button&gt;</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="comment">// 首先得清楚，箭头函数中永远不会绑定 this，只会通过上下文查找</span></span><br><span class="line"><span class="comment">// 这样子 相当于在 ES6 中给每个对象都添加了个 increment 属性。</span></span><br><span class="line">increment = <span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.state.counter);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="2">
+<li>在给元素绑定事件时，直接传入一个箭头函数（<strong>推荐</strong>）</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">{<span class="comment">/* </span></span><br><span class="line"><span class="comment">    方案三：通过在绑定时，直接传入一个箭头函数，优点颇多，也是最推荐的一种</span></span><br><span class="line"><span class="comment">    1. 虽然跟方案二相比只是在绑定时采用箭头函数，但是却不会给每个实例中添加各自的同名属性方法</span></span><br><span class="line"><span class="comment">    2. 还可以方便的往绑定的函数中添加参数</span></span><br><span class="line"><span class="comment">*/</span>}</span><br><span class="line">&lt;button onClick={<span class="function">() =&gt;</span> {<span class="built_in">this</span>.decrement(<span class="string">'name'</span>)}}&gt;-<span class="number">1</span>&lt;/button&gt;</span><br><span class="line">...</span><br><span class="line">decrement (name) {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.state.counter, name);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="向绑定事件中添加参数"><a href="#向绑定事件中添加参数" class="headerlink" title="向绑定事件中添加参数"></a>向绑定事件中添加参数</h3><blockquote>
+<p>这时，就体现出了在事件绑定时，直接利用箭头函数的优势了！</p>
+</blockquote>
+<p>在原生事件绑定中，我们需要手动的将 event 传给事件函数。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;button onclick=<span class="string">"btnClick(this, event)"</span>&gt;按钮&lt;/button&gt;</span><br><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span></span><br><span class="line"><span class="javascript"><span class="xml">    <span class="function"><span class="keyword">function</span> <span class="title">btnClick</span> (<span class="params">dom, event</span>) </span>{</span></span></span><br><span class="line"><span class="javascript"><span class="xml">        <span class="built_in">console</span>.log(dom, event);</span></span></span><br><span class="line"><span class="javascript"><span class="xml">    }</span></span></span><br><span class="line"><span class="javascript"><span class="xml"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>而在 jsx 中，react 已经默认的通过回调，将 event 传递给绑定方法了。</p>
+<blockquote>
+<p>有一个注意点是，bind 在三种改变 this 指针方法中优先级最高！</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">    <span class="built_in">super</span>()</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">message</span>: <span class="string">'Hello World'</span>,</span><br><span class="line">        <span class="attr">movies</span>: [<span class="string">'大话西游'</span>, <span class="string">'流浪地球'</span>, <span class="string">'正义联盟'</span>, <span class="string">'阿凡达'</span>]</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">render () {</span><br><span class="line">    <span class="comment">// 使用 () 的原因是将内部的内容当作一个整体</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.btnClick}</span>&gt;</span>jsx 按钮<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml"></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {</span></span><br><span class="line"><span class="xml">                    this.state.movies.map((item, index) =&gt; {</span></span><br><span class="line"><span class="xml">                        return (</span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;<span class="name">li</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                                <span class="attr">key</span>=<span class="string">{index}</span></span></span></span><br><span class="line"><span class="tag"><span class="xml">                                <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> {this.liClick(e, index, item)}}&gt;</span></span><br><span class="line"><span class="xml">                                {item}</span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                        )</span></span><br><span class="line"><span class="xml">                    })</span></span><br><span class="line"><span class="xml">                }</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line">btnClick (event) {</span><br><span class="line">    <span class="built_in">console</span>.log(event);</span><br><span class="line">}</span><br><span class="line">liClick (event, index, item) {</span><br><span class="line">    <span class="built_in">console</span>.log(event, index, item);</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="jsx-中的条件渲染"><a href="#jsx-中的条件渲染" class="headerlink" title="jsx 中的条件渲染"></a>jsx 中的条件渲染</h2><ol>
+<li>方案一：通过 <code>if</code> 判断，适合逻辑代码多的情况</li>
+<li>方案二：通过 三元运算符</li>
+<li>方案三：利用 逻辑与（一个条件不成立时，后面的条件将都不会执行）</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">    <span class="built_in">super</span>()</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">isLogin</span>: <span class="literal">true</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">render () {</span><br><span class="line">    <span class="keyword">const</span> {isLogin} = <span class="built_in">this</span>.state</span><br><span class="line">    <span class="comment">// 方案一：if 语句判断</span></span><br><span class="line">    <span class="keyword">let</span> welcome = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">if</span> (isLogin) {</span><br><span class="line">        welcome = <span class="string">"欢迎回来~"</span></span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">        welcome = <span class="string">"请先登录"</span></span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 使用 () 的原因是将内部的内容当作一个整体</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>{welcome}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            {/* 方案二：三元运算符 */}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{()</span> =&gt;</span> this.btnClick()}&gt;{isLogin ? '退出' : '登录'}<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            {/* 方案三：逻辑与 */}</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>{isLogin &amp;&amp; '你是傻吊'}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">btnClick () {</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">isLogin</span>: !<span class="built_in">this</span>.state.isLogin</span><br><span class="line">    })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="jsx-中的列表渲染"><a href="#jsx-中的列表渲染" class="headerlink" title="jsx 中的列表渲染"></a>jsx 中的列表渲染</h2><blockquote>
+<p>多去了解 Array 中的纯函数，比如：<code>map, slice, filter</code> 等</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">    <span class="built_in">super</span>()</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">message</span>: <span class="string">'Hello World'</span>,</span><br><span class="line">        <span class="attr">movies</span>: [<span class="string">'大话西游'</span>, <span class="string">'流浪地球'</span>, <span class="string">'正义联盟'</span>, <span class="string">'阿凡达'</span>],</span><br><span class="line">        <span class="attr">numbers</span>: [<span class="number">100</span>, <span class="number">221</span>, <span class="number">21</span>, <span class="number">43</span>, <span class="number">430</span>, <span class="number">10</span>, <span class="number">50</span>]</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line">render () {</span><br><span class="line">    <span class="keyword">const</span> {movies, numbers} = <span class="built_in">this</span>.state</span><br><span class="line">    <span class="comment">// 使用 () 的原因是将内部的内容当作一个整体</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>电影列表<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {</span></span><br><span class="line"><span class="xml">                    movies.map(item =&gt; <span class="tag">&lt;<span class="name">li</span>&gt;</span>{item}<span class="tag">&lt;/<span class="name">li</span>&gt;</span>)</span></span><br><span class="line"><span class="xml">                }</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>数字列表（筛选大于50）<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {</span></span><br><span class="line"><span class="xml">                    numbers.filter(item =&gt; item &gt;= 50).map(item =&gt; <span class="tag">&lt;<span class="name">li</span>&gt;</span>{item}<span class="tag">&lt;/<span class="name">li</span>&gt;</span>)</span></span><br><span class="line"><span class="xml">                }</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">h2</span>&gt;</span>数字列表（截取 [2, 5)）<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {</span></span><br><span class="line"><span class="xml">                    numbers.slice(2, 5).map(item =&gt; <span class="tag">&lt;<span class="name">li</span>&gt;</span>{item}<span class="tag">&lt;/<span class="name">li</span>&gt;</span>)</span></span><br><span class="line"><span class="xml">                }    </span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="jsx-的本质"><a href="#jsx-的本质" class="headerlink" title="jsx 的本质"></a>jsx 的本质</h2><ul>
+<li>实际上，jsx 仅仅只是 <code>React.creatElement(component, props, ...children)</code> 函数的语法糖。<ul>
+<li>所有的 jsx 最终都会被转换成 React.createElement 的函数调用</li>
+<li>babel 在中间的角色是：jsx -&gt; babel -&gt; React.creatElement()</li>
+</ul>
+</li>
+<li>React.createElement 在源码的什么位置？ 项目下 -&gt; packages -&gt; react -&gt; src -&gt; ReactELement.js 中的 <code>createElement</code> 函数</li>
+<li>createElement 需要传递的三个参数：<ul>
+<li>参数一：type<ul>
+<li>当前 ReactElement 类型；</li>
+<li>如果是 标签元素（比如 <code>div, p</code> 等） 或者 组件元素，那么直接使用字符串名称表示即可</li>
+</ul>
+</li>
+<li>参数二：config<ul>
+<li>所有的 jsx 中的属性都在 config 中以对象的属性 &amp; 值的形式存储</li>
+</ul>
+</li>
+<li>参数三：children<ul>
+<li>存放在标签内的内容，以 children 数组的方式存储；</li>
+<li>当然如果是多个元素，React 内部会对它们做处理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="jsx-的基本写法"><a href="#jsx-的基本写法" class="headerlink" title="jsx 的基本写法"></a>jsx 的基本写法</h3><p>使用 jsx 的语法写出来的代码，最终会通过 babel 将其转换成 <code>React.createELement()</code> 的形式。</p>
+<p><code>message1</code> 就是 jsx 的语法所编写的，如果没有在 script 中通过 <code>type='text/babel'</code> 明确指出是采用的 babel，那样子就会出现错误。<br>而 <code>message2</code> 却不需要。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;script&gt;</span><br><span class="line">    <span class="comment">// const message1 = &lt;h2&gt;hello world&lt;/h2&gt;</span></span><br><span class="line">    <span class="keyword">const</span> message2 = React.createElement(<span class="string">'h2'</span>, <span class="literal">null</span>, <span class="string">'hello world'</span>)</span><br><span class="line">    ReactDOM.render(message2, <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>))</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="jsx-的-bable-转换"><a href="#jsx-的-bable-转换" class="headerlink" title="jsx 的 bable 转换"></a>jsx 的 bable 转换</h3><p>其实上面我已经简单的做了个 jsx -&gt; babel 的例子了。</p>
+<p>当 jsx 中根元素下的包含多个子元素时， <code>React.createElement</code> 将如何编写呢？</p>
+<p>首先看看采用 jsx 的语法编写</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">render () {</span><br><span class="line">    <span class="comment">// 使用 () 的原因是将内部的内容当作一个整体</span></span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"header"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h1</span> <span class="attr">className</span>=<span class="string">"title"</span>&gt;</span>我是标题<span class="tag">&lt;/<span class="name">h1</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">className</span>=<span class="string">"content"</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>我是页面内容<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span>&gt;</span>按钮<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span>&gt;</span>+<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">a</span> <span class="attr">href</span>=<span class="string">""</span>&gt;</span>baidu.cn<span class="tag">&lt;/<span class="name">a</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>像如上的情况，同级的子标签元素，将继续在 <code>React.createElement()</code> 的参数中添加，内部元素则时按照再创建一个 <code>React.createElement</code> 继续。<br>利用 babel 的官网提供的<a target="_blank" rel="noopener" href="https://babeljs.io/repl#?browsers=defaults%2C%20not%20ie%2011%2C%20not%20ie_mob%2011&amp;build=&amp;builtIns=false&amp;spec=false&amp;loose=false&amp;code_lz=DwEwlgbgfAUABAupJwMYBsCGBnbA5TAWwFMBeAIgAtjMRiAnc2RFpSgRjS1wJIoBcw_dMSaBEI0D0ZoHALQBkZwAPQdmiBeGjwVarjnxEy5VAHsAdv2KmmG1mwBMUSYFcMwEbpgUMVAndoLKdq62AAjAFd-fhMoQEhjQDqUhUDg0J8WfyCQ4ygAamikuOsEYEw4SnpiADMKJj9MMBAAgDpUYwVMZRz5NVhVSCggA&amp;debug=false&amp;forceAllTransforms=false&amp;shippedProposals=false&amp;circleciRepo=&amp;evaluate=false&amp;fileSize=false&amp;timeTravel=false&amp;sourceType=module&amp;lineWrap=false&amp;presets=env%2Creact&amp;prettier=false&amp;targets=&amp;version=7.13.11&amp;externalPlugins=">编辑器</a>，我们可以清楚的看出：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> App = <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"div"</span>, <span class="literal">null</span>, <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"div"</span>, {</span><br><span class="line"><span class="attr">className</span>: <span class="string">"header"</span></span><br><span class="line">}, <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"h1"</span>, {</span><br><span class="line"><span class="attr">className</span>: <span class="string">"title"</span></span><br><span class="line">}, <span class="string">"\u6211\u662F\u6807\u9898"</span>)), <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"div"</span>, {</span><br><span class="line"><span class="attr">className</span>: <span class="string">"content"</span></span><br><span class="line">}, <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"h2"</span>, <span class="literal">null</span>, <span class="string">"\u6211\u662F\u9875\u9762\u5185\u5BB9"</span>), <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"button"</span>, <span class="literal">null</span>, <span class="string">"\u6309\u94AE"</span>), <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"button"</span>, <span class="literal">null</span>, <span class="string">"+"</span>), <span class="comment">/*#__PURE__*/</span>React.createElement(<span class="string">"a"</span>, {</span><br><span class="line"><span class="attr">href</span>: <span class="string">""</span></span><br><span class="line">}, <span class="string">"baidu.cn"</span>)));</span><br><span class="line"></span><br><span class="line">ReactDOM.render(App, <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>))</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>/<em>#<strong>PURE</strong></em>/: 含义是说明该 <code>React.createElement</code> 函数是一个纯函数。在 React 中纯函数尤其重要</p>
+</blockquote>
+<h2 id="虚拟-DOM-创建过程"><a href="#虚拟-DOM-创建过程" class="headerlink" title="虚拟 DOM 创建过程"></a>虚拟 DOM 创建过程</h2><p>我们是通过 <code>React.createElement</code> 最终创建出一个 ReactElement 对象</p>
+<p>而这个 ReactElement 对象的作用是什么呢？为什么 React 要创建它呢？</p>
+<ul>
+<li>原因就是 React 利用 ReactElement 对象组成了一个 <strong>JavaScript 对象树</strong>；</li>
+<li>JavaScript 对象树就是大名鼎鼎的**虚拟 DOM (Virtual DOM)**；</li>
+<li>之后再由虚拟 DOM 树通过 <code>ReactDOM.render()</code> 方法构建成真实的 DOM 树。</li>
+</ul>
+<p>由这个 JavaScript 对象树组成我们的 <strong>树结构</strong></p>
+<blockquote>
+<p>树结构：数据结构概念中的一种组织数据的方式。</p>
+<p>我们构建的 JavaScript 树与 DOM 树是一一对应的。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">React</span>.<span class="title">Component</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">        <span class="built_in">super</span>()</span><br><span class="line">        <span class="built_in">this</span>.state = {</span><br><span class="line">            <span class="attr">message</span>: <span class="string">'Hello World'</span></span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    render () {</span><br><span class="line">        <span class="comment">// jsx -&gt; babel -&gt; React.createElement() -&gt; ReactElement 对象树(虚拟 DOM 树) -&gt; ReactDOM.render() -&gt; 真实 DOM 树</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 在 React Native 中，只是最后一步不一样</span></span><br><span class="line">        <span class="comment">// jsx -&gt; babel -&gt; React.createElement() -&gt; ReactElement 对象树(虚拟 DOM 树) -&gt; ReactDOM.render() -&gt; 原生控件(IOS 中的 UIButton 等)</span></span><br><span class="line">        <span class="comment">// 使用 () 的原因是将内部的内容当作一个整体</span></span><br><span class="line">        <span class="keyword">const</span> elementObj = (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>{this.state.message}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">        <span class="built_in">console</span>.log(elementObj); <span class="comment">// {$$typeof: Symbol(react.element), type: "div", key: null, ref: null, props: {…},&nbsp;…}</span></span><br><span class="line">        <span class="keyword">return</span> elementObj</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line">ReactDOM.render(<span class="xml"><span class="tag">&lt;<span class="name">App</span> /&gt;</span></span>, <span class="built_in">document</span>.getElementById(<span class="string">'app'</span>))</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>jsx -&gt; babel -&gt; React.createElement() -&gt; ReactElement 对象树(虚拟 DOM 树) -&gt; ReactDOM.render() -&gt; 真实 DOM 树</p>
+</blockquote>
+<h3 id="为什么使用虚拟-DOM"><a href="#为什么使用虚拟-DOM" class="headerlink" title="为什么使用虚拟 DOM"></a>为什么使用虚拟 DOM</h3><ul>
+<li>为什么要采用虚拟 DOM，而不是直接修改真实的 DOM 呢？</li>
+</ul>
+<ol>
+<li>很难跟踪状态发生的改变：原有的开发模式，我们很难跟踪到状态发生了改变，不方便我们针对程序进行调试；</li>
+<li>操作真实的 DOM 性能特别低：传统的开发模式会进行频繁的 DOM 操作，而这一做法性能非常低。</li>
+</ol>
+<p>比如，我们有一组数据需要渲染：[0, 2, 4, 6]，我们会怎么做呢？</p>
+<ul>
+<li>我们可以通过 ul &amp; li 进行展示</li>
+</ul>
+<p>但是后来，我们又新增了数据：[0, 2, 4, 6, 8, 10]，做显示时，我们可能有两种方案</p>
+<ol>
+<li>方式一：重新遍历整个数组（不推荐）</li>
+<li>方式二：在 ul 后面再追加 li</li>
+</ol>
+<p>但是不管是哪种方法，都是非常低效的。因为我们通过 document.createElement 创建元素，再通过 ul.appendChild() 方法渲染到 DOM 上，会进行多次的 DOM 操作；当然对于批量操作，最好的办法不是一次次修改 DOM，而是对批量的操作进行合并；（比如可以通过 DocumentFragment 生成一块游离在 DOM 树外的元素，之后进行统一合并）。</p>
+<h3 id="命名式编程向声明式编程的转换"><a href="#命名式编程向声明式编程的转换" class="headerlink" title="命名式编程向声明式编程的转换"></a>命名式编程向声明式编程的转换</h3><ul>
+<li><strong>虚拟 DOM 帮助我们从命令式编程转到了声明式编程的模式</strong></li>
+<li>React 官方的说法：Virtual DOM 是一种编程理念<ul>
+<li>在这个理念中，UI 以一种理想化或者虚拟化的方式保存在内存中，并且它是一个相对简单的 JavaScript 对象；</li>
+<li>我们可以通过 ReactDOM.render 让虚拟 DOM 和 真实 DOM 同步起来，这个过程中叫做协调(Reconciliation)</li>
+</ul>
+</li>
+<li>这种编程方式赋予了 React 声明式 API：<ul>
+<li>你只需要告诉 React 希望 UI 是什么状态；</li>
+<li>React 来确保 DOM 和这些状态是匹配的；</li>
+<li>你不需要直接进行 DOM 操作，就可以从手动更改 DOM，属性操作、事件处理中解放出来！</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/2450581629.html">https://bljj-dbld.github.io/posts/2450581629.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/3934457119.html">P3 React 脚手架</a>
+            
+            
+            <a class="next" rel="next" href="/posts/2864467857.html">P1 React 开发初体验</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

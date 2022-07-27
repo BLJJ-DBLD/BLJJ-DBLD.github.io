@@ -1,0 +1,363 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P15 配置 tsconfig.json | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P15 配置 tsconfig.json</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 25, 2022&nbsp;&nbsp;20:54:57</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/TypeScript/">TypeScript</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="配置-tsconfig-json"><a href="#配置-tsconfig-json" class="headerlink" title="配置 tsconfig.json"></a>配置 tsconfig.json</h1><h2 id="1-学习与文件相关的选项"><a href="#1-学习与文件相关的选项" class="headerlink" title="1. 学习与文件相关的选项"></a>1. 学习与文件相关的选项</h2><h3 id="1-1-files-属性："><a href="#1-1-files-属性：" class="headerlink" title="1.1 files 属性： [...]"></a>1.1 <code>files</code> 属性： <code>[...]</code></h3><blockquote>
+<p>该字段的含义是：编译数组中的 <strong>具体文件</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    ...</span><br><span class="line">    <span class="string">"files"</span>: [</span><br><span class="line">        <span class="string">"src/a.ts"</span></span><br><span class="line">    ]</span><br><span class="line">    ...</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>随后在控制台中直接输入 <code>tsc</code> ，<code>ts</code> 就会自动的搜索 <code>tsconfig.json</code> 文件。假如该文件内没有内容就会按照默认配置编译，但是现在是编写了 <code>files</code> 属性。此时就会按照该属性，只会编译具体的文件。</p>
+<h3 id="1-2-include-属性："><a href="#1-2-include-属性：" class="headerlink" title="1.2 include 属性： [...]"></a>1.2 <code>include</code> 属性： <code>[...]</code></h3><blockquote>
+<p>该字段的含义是：编译数组中包含的 <strong>具体文件夹</strong></p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    ...</span><br><span class="line">    <span class="string">"include"</span>: [</span><br><span class="line">        <span class="string">"src"</span> <span class="comment">// 表示 src 文件夹下的所有文件，嵌套文件也算</span></span><br><span class="line">    ]</span><br><span class="line">    ...</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>允许通过使用 通配符 <code>*</code> 确定具体文件夹层级：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    ...</span><br><span class="line">    <span class="string">"include"</span>: [</span><br><span class="line">        <span class="string">"src/*"</span> <span class="comment">// 表示 src 文件夹下的一级内部所有文件，嵌套文件夹内部的文件不会被编译。</span></span><br><span class="line">        <span class="string">"src/*/*"</span> <span class="comment">// 表示 src 文件夹下的二级内部所有文件，一级内部的文件 &amp; 再嵌套文件夹内部的文件不会被编译。</span></span><br><span class="line">    ]</span><br><span class="line">    ...</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="1-3-exclude-属性："><a href="#1-3-exclude-属性：" class="headerlink" title="1.3 exclude 属性： [...]"></a>1.3 <code>exclude</code> 属性： <code>[...]</code></h3><blockquote>
+<p>该属性的含义是：不编译数组中包含的 <strong>具体文件夹</strong></p>
+</blockquote>
+<p>与 <code>include</code> 正好相反</p>
+<h3 id="1-4-extends-属性：-具体的相对路径"><a href="#1-4-extends-属性：-具体的相对路径" class="headerlink" title="1.4 extends 属性： ... 具体的相对路径"></a>1.4 <code>extends</code> 属性： <code>...</code> 具体的相对路径</h3><blockquote>
+<p>该属性的含义是：当有多个 <code>tsconfig.xx.js</code> 文件时，可以在 <code>tsconfig.js</code> 中通过 <code>extends</code> 字段导入。同时在 <code>tsconfig.js</code> 中允许通过重写相应的属性去覆盖 <code>extends</code> 文件内的属性。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="string">"extends"</span>: <span class="string">"./tsconfig.base"</span>;</span><br><span class="line">    <span class="string">"exclude"</span>: []</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="1-5-compileOnSave-属性：-true-false"><a href="#1-5-compileOnSave-属性：-true-false" class="headerlink" title="1.5 compileOnSave 属性： true / false"></a>1.5 <code>compileOnSave</code> 属性： <code>true / false</code></h3><blockquote>
+<p>该属性的含义是：当保存文件的时候让编译器自动编译。</p>
+</blockquote>
+<h2 id="2-学习编译选项（一些常用选项），在-compilerOptions-中的一些属性"><a href="#2-学习编译选项（一些常用选项），在-compilerOptions-中的一些属性" class="headerlink" title="2. 学习编译选项（一些常用选项），在 compilerOptions 中的一些属性"></a>2. 学习编译选项（一些常用选项），在 <code>compilerOptions</code> 中的一些属性</h2><h3 id="2-1-compilerOptions-incremental-属性：-true-false"><a href="#2-1-compilerOptions-incremental-属性：-true-false" class="headerlink" title="2.1 compilerOptions.incremental 属性： true/false"></a>2.1 <code>compilerOptions.incremental</code> 属性： <code>true/false</code></h3><blockquote>
+<p>该属性翻译过来就是 <strong>增量编译</strong>，当第一次编译后会缓存当前的 编译信息，然后在二次编译的时候会根据这个文件做增量的编译，这样就可以增加编译的速度。</p>
+</blockquote>
+<p>当我们通过在终端中使用命令 <code>tsc</code> 时，除了会将 <code>x.ts</code> 文件编译为 <code>x.js</code> 文件外，还会额外的有一个 <strong>编译信息(默认在 tsconfig.tsbuildinfo 文件内)</strong></p>
+<h3 id="2-2-compilerOptions-tsBuildInfoFile-属性：-相对项目文件夹的路径（类似：-quot-buildFile-quot-）"><a href="#2-2-compilerOptions-tsBuildInfoFile-属性：-相对项目文件夹的路径（类似：-quot-buildFile-quot-）" class="headerlink" title="2.2 compilerOptions.tsBuildInfoFile 属性： 相对项目文件夹的路径（类似： &quot;./buildFile&quot;）"></a>2.2 <code>compilerOptions.tsBuildInfoFile</code> 属性： <code>相对项目文件夹的路径（类似： "./buildFile"）</code></h3><blockquote>
+<p>这个属性就好理解，就是设置 编译信息 的具体文件名称路径。</p>
+</blockquote>
+<p>如 “./buildFile” 就是指出将 编译信息 放在项目文件夹下的一级目录下的 <code>buildFile</code> 文件内</p>
+<h3 id="2-3-compilerOptions-diagnostics-属性：-true-false"><a href="#2-3-compilerOptions-diagnostics-属性：-true-false" class="headerlink" title="2.3 compilerOptions.diagnostics 属性： true / false"></a>2.3 <code>compilerOptions.diagnostics</code> 属性： <code>true / false</code></h3><blockquote>
+<p>该属性的含义是，当运行 <code>tsc</code> 命令时会在控制台输出一些信息，其中包括需要编译的总时间。</p>
+</blockquote>
+<figure class="highlight zsh"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">jamediii  ~/Notes/TypeScript/liangxiao-typescript/08.tsconfig.json 配置   main  tsc</span><br><span class="line">Files:             107</span><br><span class="line">Lines:           50978</span><br><span class="line">Nodes:          214569</span><br><span class="line">Identifiers:     75896</span><br><span class="line">Symbols:         50728</span><br><span class="line">Types:              76</span><br><span class="line">Instantiations:      0</span><br><span class="line">Memory used:    89344K</span><br><span class="line">I/O <span class="built_in">read</span>:        0.02s</span><br><span class="line">I/O write:       0.00s</span><br><span class="line">Parse time:      0.77s</span><br><span class="line">Bind time:       0.35s</span><br><span class="line">Check time:      0.00s</span><br><span class="line">Emit time:       0.00s</span><br><span class="line">Total time:      1.12s</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="3-工程引用"><a href="#3-工程引用" class="headerlink" title="3. 工程引用"></a>3. 工程引用</h2><p>当我们有一个较大的工程项目，其中包含前端（client 目录） &amp; 后端（server 目录） &amp; 公共函数（common 目录） （在 src/.. 中），有一个 tses 目录与 src 同级。此时我们想通过 tsc 命令进行构建，且在 <code>tsconfig.json</code> 中设置输出到 <code>dist</code> 文件夹下（<code>compilerOptions.outDir: './dist</code>）。</p>
+<p>此时，我们会有几个问题：</p>
+<ol>
+<li>输出的 前端 &amp; 后端 &amp; 公共函数 会输出在 <code>dist/.src</code> 目录下，但我们的目的是想将三个文件夹直接在 <code>dist</code> 目录下输出。</li>
+</ol>
+<blockquote>
+<p>解决方案是：在根目录下的 <code>tsconfig.json</code> 中，<code>include: ['src']</code> 指定只构建 <code>src</code> 目录下的 ts 文件。</p>
+</blockquote>
+<ol start="2">
+<li>通过上面的操作能解决问题一，但同时也会引发新的问题，就是 <code>test</code> 文件将不会在被构建。还有不方便的地方是，我们不能单独去构建 前端应用 或者是 后端应用。</li>
+</ol>
+<ol start="3">
+<li>我们也不想把 <code>test</code> 文件构建在 <code>dist</code> 目录下。</li>
+</ol>
+<p>以上问题，并不能通过根目录下的通用 <code>tsconfig.json</code> 文件解决的。工程引用就是解决这类问题的。可以灵活的配置输出目录，还能使工程之间产生依赖关系。有利于把一个大的项目拆分成小项目。同时还能利用增量编译提升编译速度。</p>
+<h3 id="3-1-开发一个简单的工程引用"><a href="#3-1-开发一个简单的工程引用" class="headerlink" title="3.1 开发一个简单的工程引用"></a>3.1 开发一个简单的工程引用</h3><p>目录结构：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">project</span><br><span class="line">    src</span><br><span class="line">        client</span><br><span class="line">            index.ts</span><br><span class="line">            tsconfig.json <span class="comment">// 1</span></span><br><span class="line">        common</span><br><span class="line">            index.ts</span><br><span class="line">            tsconfig.json <span class="comment">// 3</span></span><br><span class="line">        server</span><br><span class="line">            index.ts</span><br><span class="line">            tsconfig.json <span class="comment">// 2</span></span><br><span class="line">    test</span><br><span class="line">        client.test.ts</span><br><span class="line">        server.test.ts</span><br><span class="line">        tsconfig.json <span class="comment">// 4</span></span><br><span class="line">    tsconfig.json <span class="comment">// 通用配置</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>在项目中，有一个通用 <code>tsconfig.json</code> 配置。在该 <code>json</code> 文件内，除了默认的配置外，还额外的设置： <code>compilerOptions.composite: true</code> ，即：工程允许被引用 &amp; 可以进行增量编译。</p>
+<p>在 <code>1</code> 配置文件内，会继承基础配置文件 &amp;&amp; 配置依赖的 <code>3</code> 配置文件，并且指定 <code>compilerOptions.outDir: xxx（相对 project 的路径）</code> ，具体内容有：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="comment">// 配置了继承的基础配置文件</span></span><br><span class="line">    <span class="string">"extends"</span>: <span class="string">"../../tsconfig.json"</span>,</span><br><span class="line">    <span class="string">"compilerOptions"</span>: {</span><br><span class="line">        <span class="comment">// 配置了输出目录</span></span><br><span class="line">        <span class="string">"outDir"</span>: <span class="string">"../../dist/client"</span></span><br><span class="line">    },</span><br><span class="line">    <span class="comment">// 配置所依赖的工程</span></span><br><span class="line">    <span class="string">"references"</span>: [</span><br><span class="line">        {<span class="string">"path"</span>: <span class="string">"../common"</span>}</span><br><span class="line">    ]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>加入 <code>references</code> 所依赖的工程原因是，在 <code>./src/client/index.ts</code> 文件内引用了 <code>./src/common/index.ts</code> 文件。</p>
+</blockquote>
+<p>在 <code>2</code> 配置文件内与 <code>1</code> 大差不差：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="string">"extends"</span>: <span class="string">"../../tsconfig.json"</span>,</span><br><span class="line">    <span class="string">"compilerOptions"</span>: {</span><br><span class="line">        <span class="string">"outDir"</span>: <span class="string">"../../dist/server"</span></span><br><span class="line">    },</span><br><span class="line">    <span class="string">"references"</span>: [</span><br><span class="line">        {<span class="string">"path"</span>: <span class="string">"../common"</span>}</span><br><span class="line">    ]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>通用的 <code>common</code> 配置文件内容：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    <span class="string">"extends"</span>: <span class="string">"../../tsconfig.json"</span>,</span><br><span class="line">    <span class="string">"compilerOptions"</span>: {</span><br><span class="line">        <span class="string">"outDir"</span>: <span class="string">"../../dist/common"</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>根据需求的不同，可以对每个独立工程中的 <code>tsconfig.json</code> 做独自的配置，并且可以单独的只构建想构建的独立工程。</p>
+<p>命令： <code>tsc --build(允许缩写成 -b) xxx(具体相对路径) --verbose(将构建的信息打印出来)</code></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/212067372.html">https://bljj-dbld.github.io/posts/212067372.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/3797739102.html">Less 和 Sass 的使用</a>
+            
+            
+            <a class="next" rel="next" href="/posts/4115532424.html">P14 编写声明类库</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

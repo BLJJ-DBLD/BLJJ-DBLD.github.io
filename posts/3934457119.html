@@ -1,0 +1,395 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P3 React 脚手架 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P3 React 脚手架</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;5:59:49</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="为什么要工程化？"><a href="#为什么要工程化？" class="headerlink" title="为什么要工程化？"></a>为什么要工程化？</h1><p>现代的前端项目已经越来越复杂了：</p>
+<ul>
+<li>不会再是 HTML 中引入几个 CSS 文件，引入几个编写好的 JS 文件或者第三方 JS 文件这么简单了；</li>
+<li>比如现在，CSS 会可能使用 Less、Sass 等预处理器编写，我们需要将它们转换成普通的 CSS 才能被浏览器解析；</li>
+<li>比如 JavaScript 代码不再是编写在几个文件中，而是通过模块化的方式，被组成成百上千个文件中，我们需要通过模块化的技术来管理它们之间的互相依赖；</li>
+<li>比如项目中需要依赖很多的第三方库，如何更好，更有效的管理它们（比如管理它们的依赖，版本升级等）</li>
+</ul>
+<p>为了解决上面这些问题，我们需要去学习一些工具：</p>
+<ul>
+<li>比如 babel、webpack、gulp。配置它们转换规则、打包依赖、热更新等一些内容</li>
+<li><strong>脚手架的出现，就是为了帮助我们解决这一系列问题的；</strong></li>
+</ul>
+<h1 id="安装-nodejs"><a href="#安装-nodejs" class="headerlink" title="安装 nodejs"></a>安装 <code>nodejs</code></h1><p>React 脚手架本身需要依赖 nodejs，所以我们需要安装 nodejs 环境（<a target="_blank" rel="noopener" href="https://nodejs.org/en/download/">下载官网</a>）</p>
+<blockquote>
+<p>注意：推荐大家下载 LTS(Long-term support) 版本，是长期支持版本，比较稳定。</p>
+</blockquote>
+<p>下载后，傻瓜式安装即可</p>
+<ol>
+<li>安装过程中，会自动的配置环境变量；</li>
+<li>安装的同时，会帮助我们安装 npm 包管理工具；</li>
+</ol>
+<blockquote>
+<p>如果想对 npm 的全局下载做更改，可以查阅<a target="_blank" rel="noopener" href="https://note.youdao.com/web/#/file/WEBa83ec839683f782059fd96ed61b193ab/markdown/WEB54476253d9412bc767fe6c016017b5ca/">这里</a></p>
+</blockquote>
+<h1 id="包管理工具"><a href="#包管理工具" class="headerlink" title="包管理工具"></a>包管理工具</h1><ol>
+<li>什么是 <code>npm</code>?</li>
+</ol>
+<ul>
+<li>全称是 Node Package Manager，即“node包管理工具”；</li>
+<li>作用就是帮助我们管理依赖的工具包（比如 react、react-dom、axios、babel、webpack 等）；</li>
+</ul>
+<ol start="2">
+<li>另外还有一个鼎鼎大名的 node 包管理工具 yarn：</li>
+</ol>
+<ul>
+<li>Yarn 是由 Facebook、Google、Exponent 和 Tilde 联合推出的一个新的 JS 包管理工具；</li>
+<li>Yarn 的出现是为了弥补 npm 的一些缺陷而存在；<ul>
+<li>早期的 npm 存在诸多缺陷，比如安装依赖速度缓慢、版本管理混乱等一系列问题</li>
+<li>虽然从 npm5 版本开始，进行了很多的升级和改进，但是依然有很多人喜欢使用 yarn</li>
+</ul>
+</li>
+<li>React 脚手架默认也是使用 yarn；</li>
+<li>安装 yarn 也是很简单的：<code>npm install -g yarn</code>，就可以在全局安装 yarn 了。</li>
+</ul>
+<ol start="3">
+<li>在国内，有可能因为墙的问题，导致某些包无法正常的下载安装，这时我们就可以选择使用 taobao 源；</li>
+</ol>
+<ul>
+<li>更改源的操作有很多种，这里，我建议在 yarn 中采用 <code>yrm</code> 来对源进行统一的管理，在 npm 中也存在类似的管理工具 <code>nrm</code></li>
+<li>常使用的命令有：<ul>
+<li>查看所有的源 &amp; 目前使用的源：<code>yrm ls</code></li>
+<li>使用某一源：<code>yrm use &lt;镜像名称，例如：taobao&gt;</code></li>
+</ul>
+</li>
+</ul>
+<h1 id="通过-create-react-app-创建一个-React-项目"><a href="#通过-create-react-app-创建一个-React-项目" class="headerlink" title="通过 create-react-app 创建一个 React 项目"></a>通过 <code>create-react-app</code> 创建一个 <code>React</code> 项目</h1><p>创建命令：<code>create-react-app &lt;项目名称&gt;</code></p>
+<blockquote>
+<p>注意：项目名称只能是英文 &amp; 不允许有大写字母</p>
+</blockquote>
+<p>从项目根目录出发，看目录结构：</p>
+<figure class="highlight awk"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">|- node_modules <span class="regexp">//</span> 通过 package.json 安装的架包</span><br><span class="line">|- public <span class="regexp">//</span> 项目的资源文件 &amp; 入口 html </span><br><span class="line">|- src <span class="regexp">//</span> </span><br><span class="line">|- .gitignore <span class="regexp">//</span> git 的忽略文件</span><br><span class="line">|- package.json <span class="regexp">//</span> 关于我们整个项目管理的配置文件 &amp; 一些配置信息。</span><br><span class="line">|- README.md <span class="regexp">//</span> 项目说明 &amp; 自己想写的一些东西</span><br><span class="line">|- yarn.lock <span class="regexp">//</span> 用来记录我们真实的版本依赖，用来解决版本混乱的问题的（版本号中带有 <span class="string">"^"</span> 说明允许小版本迭代）</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="深入了解-public-文件夹"><a href="#深入了解-public-文件夹" class="headerlink" title="深入了解 public 文件夹"></a>深入了解 <code>public</code> 文件夹</h2><blockquote>
+<p>用来存储我们静态资源的文件夹</p>
+</blockquote>
+<p>在 <code>public</code> 文件夹内：</p>
+<figure class="highlight gherkin"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">|<span class="string">- public</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- favicon.ico // 网页中图标文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- index.html // 入口 html 文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- logo192.png  // 在 manifest.json 中使用</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- logo512.png // 在 manifest.json 中使用</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- manifest.json // 和 web app 配置相关</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- robots.txt // 指定搜索引擎可以或者无法爬取哪些文件</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="深入理解-src-文件夹"><a href="#深入理解-src-文件夹" class="headerlink" title="深入理解 src 文件夹"></a>深入理解 <code>src</code> 文件夹</h2><blockquote>
+<p>用来编写我们源代码的文件夹</p>
+</blockquote>
+<p>在 <code>src</code> 文件夹内：</p>
+<figure class="highlight gherkin"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">|<span class="string">- src</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- App.css // App 组件相关的样式</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- App.js // App 组件的代码文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- App.test.js // App 组件的测试代码文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- index.css // 全局的样式文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- index.js // 整个应用程序的入口文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- logo.svg // 图标文件</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- reportWebVitals.js // 默认帮助我们写好的注册 PWA 相关的代码</span></span><br><span class="line"><span class="string"></span>|<span class="string">   </span>|<span class="string">- setupTests.js // 测试初始化文件</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="了解-PWA"><a href="#了解-PWA" class="headerlink" title="了解 PWA"></a>了解 PWA</h1><p>整个项目目录结构非常好理解，只是这其中有一个 PWA 相关的概念：</p>
+<ul>
+<li>PWA 全称 Progressive Web App，即渐进式 WEB 应用</li>
+<li>一个 PWA 应用首先是一个网页，可以通过 Web 技术编写出一个网页应用</li>
+<li>随后添加 App Manifest 和 Service Worker 来实现 PWA 的安装和离线功能</li>
+<li>这中 Web 存在的形式，我们也称之为 Web App；</li>
+</ul>
+<blockquote>
+<p>要想做到 PWA，我们要有两个文件：manifest &amp; reportWebVitals，通过 reportWebVitals 来做一个配置</p>
+</blockquote>
+<h2 id="PWA解决了什么问题"><a href="#PWA解决了什么问题" class="headerlink" title="PWA解决了什么问题"></a>PWA解决了什么问题</h2><ul>
+<li>可以添加至主屏幕，点击主屏幕图标可以实现启动动画以及隐藏地址栏</li>
+<li>实现离线缓存功能，即使用户手机没有网络，依然可以使用一些离线功能</li>
+<li>实现了消息推送</li>
+<li>等一系列类似 Navtive App 相关的功能</li>
+</ul>
+<h1 id="脚手架中的-webpack"><a href="#脚手架中的-webpack" class="headerlink" title="脚手架中的 webpack"></a>脚手架中的 webpack</h1><blockquote>
+<p>create-react-app, vue-cli, angular-cli 都是使用 node 编写的，并且都是基于 webpack 的！</p>
+</blockquote>
+<ul>
+<li>虽说脚手架是基于 webpack 的，那为什么我们没有在目录结构中看到任何的 webpack 相关内容？<ul>
+<li>原因是 React 脚手架将 webpack 相关的配置隐藏起来了（Vue Cli3 开始，也将其隐藏了起来）。</li>
+</ul>
+</li>
+<li>如果我们希望看到 webpack 配置信息，那应该如何做呢？<ul>
+<li>我们可以执行一个 package.json 文件中的一个脚本命令：<code>"eject": "react-script eject"</code></li>
+<li>该操作是不可逆的，所以在执行过程中会给我们提示；</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3934457119.html">https://bljj-dbld.github.io/posts/3934457119.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1385832995.html">P4 React 组件化开发</a>
+            
+            
+            <a class="next" rel="next" href="/posts/2450581629.html">P2 jsx 语法</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

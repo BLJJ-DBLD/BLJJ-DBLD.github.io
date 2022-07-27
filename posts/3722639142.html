@@ -1,0 +1,352 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P10 配置一个 TS 环境 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P10 配置一个 TS 环境</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 25, 2022&nbsp;&nbsp;20:11:19</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/TypeScript/">TypeScript</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="配置-TS-运行环境"><a href="#配置-TS-运行环境" class="headerlink" title="配置 TS 运行环境"></a>配置 TS 运行环境</h1><h2 id="1-创建一个-npm-项目"><a href="#1-创建一个-npm-项目" class="headerlink" title="1. 创建一个 npm 项目"></a>1. 创建一个 <code>npm</code> 项目</h2><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm init -y <span class="comment">// -y 是全使用默认配置，生成 package.json 文件</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="2-创建-TS-配置文件"><a href="#2-创建-TS-配置文件" class="headerlink" title="2. 创建 TS 配置文件"></a>2. 创建 <code>TS</code> 配置文件</h2><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tsc --init <span class="comment">// 生成默认的 tsconfig.json 配置文件</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>如果报错 <code>tsc</code> 不存在时，必须通过 <code>npm</code> 在该项目中安装 <code>typescript</code> ，全局安装的好处是，在何处都能使用 <code>tsc</code> 命令，但是该项目中安装 <code>typescript</code> 是不可或缺的。</p>
+<p>安装命令：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install typescript -D</span><br><span class="line">npm install typescript -g</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="3-让这个项目跑起来！"><a href="#3-让这个项目跑起来！" class="headerlink" title="3. 让这个项目跑起来！"></a>3. 让这个项目跑起来！</h2><h3 id="3-1-安装-webpack-工具"><a href="#3-1-安装-webpack-工具" class="headerlink" title="3.1 安装 webpack 工具"></a>3.1 安装 <code>webpack</code> 工具</h3><ol>
+<li>安装三个包： <code>webpack webpack-cli webpack-dev-server</code></li>
+</ol>
+<blockquote>
+<p>命令： <code>npm i webpack webpack-cli webpack-dev-server -D</code></p>
+</blockquote>
+<ol start="2">
+<li>根据 开发 / 生产 两个环境，配置不同的 <code>webpack</code> 配置文件。配置文件放置在 <code>./build</code> 文件夹下。</li>
+<li><code>webpack.config.js</code>：是所有文件的入口。</li>
+<li><code>webpack.base.js</code>：是 开发 / 生产 环境的公共配置文件。</li>
+<li><code>webpack.dev.js</code>：开发环境配置文件。</li>
+<li><code>webpack.pro.js</code>：生产环境配置文件。</li>
+</ol>
+<h3 id="3-2-对各个-webpack-配置文件的简单配置与解释"><a href="#3-2-对各个-webpack-配置文件的简单配置与解释" class="headerlink" title="3.2 对各个 webpack 配置文件的简单配置与解释"></a>3.2 对各个 <code>webpack</code> 配置文件的简单配置与解释</h3><ol>
+<li><code>webpack.base.js</code>：公共环境配置文件</li>
+<li>利用 <code>module.rules</code> ,这些规则能够修改模块的创建方式。 这些规则能够对模块(module)应用 loader，或者修改解析器(parser)。<a target="_blank" rel="noopener" href="https://webpack.docschina.org/configuration/module/#modulerules">*外链</a></li>
+<li>在 <code>plugins</code> 中添加 <code>html-webpack-plugin</code> 插件，<code>HtmlWebpackPlugin</code> 简化了 <code>HTML</code> 文件的创建，以便为你的 <code>webpack</code> 包提供服务。<a target="_blank" rel="noopener" href="https://www.webpackjs.com/plugins/html-webpack-plugin/">*外链</a></li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> HtmlWebpackPlugin = <span class="built_in">require</span>(<span class="string">'html-webpack-plugin'</span>)</span><br><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">    <span class="comment">// 配置入口文件</span></span><br><span class="line">    <span class="attr">entry</span>: <span class="string">'./src/index.ts'</span>,</span><br><span class="line">    <span class="attr">output</span>: {</span><br><span class="line">        <span class="comment">// 配置输出文件名，输出目录使用的是默认的： dist 目录</span></span><br><span class="line">        <span class="attr">filename</span>: <span class="string">'app.js'</span></span><br><span class="line">    },</span><br><span class="line">    <span class="attr">resolve</span>: {</span><br><span class="line">        <span class="comment">// 指定的三个扩展名</span></span><br><span class="line">        <span class="attr">extensions</span>: [<span class="string">'.js'</span>, <span class="string">'.ts'</span>, <span class="string">'.tsx'</span>]</span><br><span class="line">    },</span><br><span class="line">    <span class="attr">module</span>: {</span><br><span class="line">        <span class="comment">// 根据具体的规则解析文件</span></span><br><span class="line">        <span class="attr">rules</span>: [</span><br><span class="line">             {</span><br><span class="line">                <span class="comment">// all files with a `.ts` or `.tsx` extension will be handled by `ts-loader`</span></span><br><span class="line">                <span class="attr">test</span>: <span class="regexp">/\.tsx?$/</span>,</span><br><span class="line">                loader: <span class="string">"ts-loader"</span>,</span><br><span class="line">                <span class="attr">exclude</span>: <span class="regexp">/node_module/</span></span><br><span class="line">            }</span><br><span class="line">        ]</span><br><span class="line">    },</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="comment">// 通过模板，帮助我们生成网站的首页，而且帮助我们把输出文件自动的嵌入到这个 index.html 文件中</span></span><br><span class="line">        <span class="keyword">new</span> HtmlWebpackPlugin({</span><br><span class="line">            <span class="attr">template</span>: <span class="string">'./src/tpl/index.html'</span> <span class="comment">// 指定具体的模板 html 文件</span></span><br><span class="line">        })</span><br><span class="line">    ]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="2">
+<li><code>webpack.dev.js</code>：开发环境的配置文件</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">    <span class="attr">devtool</span>: <span class="string">'eval-cheap-module-source-map'</span> <span class="comment">// 一般推荐的配置</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>拆解 <code>devtool</code> 中的字符含义：</p>
+<blockquote>
+<p>eval 打包后的模块都使用 eval() 执行，行映射可能不准；不产生独立的 map 文件<br>cheap map 映射只显示行不显示列，忽略源自 loader 的 source map<br>inline 映射文件以 base64 格式编码，加在 bundle 文件最后，不产生独立的 map 文件<br>module 增加对 loader source map 和第三方模块的映射</p>
+</blockquote>
+<ol start="3">
+<li><code>webpack.pro.js</code>：生产环境的配置文件</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> {CleanWebpackPlugin} = <span class="built_in">require</span>(<span class="string">'clean-webpack-plugin'</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">    <span class="attr">plugins</span>: [</span><br><span class="line">        <span class="keyword">new</span> CleanWebpackPlugin()</span><br><span class="line">    ]</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>CleanWebpackPlugin</code> 的作用是，在成功构建以后，帮助我们清空构建目录，因为有的时候为了避免缓存，我们需要在文件后加入 <code>hash</code> 。这样再多次构建后就会产生很多无用的旧构建文件，通过这个插件就能自动的帮我们清空这些目录。</p>
+<ol start="4">
+<li><code>webapck.config.js</code>：配置文件的入口文件</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> {merge} = <span class="built_in">require</span>(<span class="string">'webpack-merge'</span>)</span><br><span class="line"><span class="keyword">const</span> base = <span class="built_in">require</span>(<span class="string">'./webpack.base'</span>)</span><br><span class="line"><span class="keyword">const</span> dev = <span class="built_in">require</span>(<span class="string">'./webpack.dev'</span>)</span><br><span class="line"><span class="keyword">const</span> pro = <span class="built_in">require</span>(<span class="string">'./webpack.pro'</span>)</span><br><span class="line"><span class="keyword">const</span> config = process.NODE_ENV === <span class="string">'development'</span> ? dev : pro</span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = merge(base, config)</span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>WebpackMerge</code> 的作用就是将多个配置文件合并为一个配置文件。</p>
+<h3 id="3-3-配置-package-json-文件"><a href="#3-3-配置-package-json-文件" class="headerlink" title="3.3 配置 package.json 文件"></a>3.3 配置 <code>package.json</code> 文件</h3><p>修改内容有：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    ...</span><br><span class="line">    <span class="comment">// 指定入口文件</span></span><br><span class="line">    <span class="string">"main"</span>: <span class="string">"./src/index.ts"</span>,</span><br><span class="line">    <span class="string">"scripts"</span>: {</span><br><span class="line">        <span class="comment">// 编写运行命令</span></span><br><span class="line">        <span class="string">"serve"</span>: <span class="string">"webpack-dev-server --mode=develop ./"</span></span><br><span class="line">        <span class="string">"test"</span>: <span class="string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span></span><br><span class="line">    }</span><br><span class="line">    ...</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="4-爬出来的坑"><a href="#4-爬出来的坑" class="headerlink" title="4. 爬出来的坑"></a>4. 爬出来的坑</h2><h3 id="4-1-webpack-cli-webpack-dev-server-的升级导致命令的修改"><a href="#4-1-webpack-cli-webpack-dev-server-的升级导致命令的修改" class="headerlink" title="4.1 webpack-cli, webpack-dev-server 的升级导致命令的修改"></a>4.1 <code>webpack-cli, webpack-dev-server</code> 的升级导致命令的修改</h3><p>目前采用的版本号：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"webpack"</span>: <span class="string">"^5.18.0"</span>,</span><br><span class="line"><span class="string">"webpack-cli"</span>: <span class="string">"^4.4.0"</span>,</span><br><span class="line"><span class="string">"webpack-dev-server"</span>: <span class="string">"^3.11.2"</span>,</span><br></pre></td></tr></tbody></table></figure>
+
+<p>命令的改变是：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// package.json</span></span><br><span class="line">{</span><br><span class="line">    ...</span><br><span class="line">    <span class="string">"script"</span>: {</span><br><span class="line">        <span class="string">"serve"</span>: <span class="string">"webpack serve --mode=development --config ./build/webpack.config.js"</span></span><br><span class="line">    }</span><br><span class="line">    ...</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p><code>webpack-cli v4</code> 自带了 <code>@webpack-cli/serve</code> 的开箱即用支持，这意味着你可以使用 <code>webpack serve</code> 来调用 <code>webpack-dev-server</code> 命令。<a target="_blank" rel="noopener" href="https://github.com/webpack/webpack-dev-server/issues/2759">外链</a></p>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3722639142.html">https://bljj-dbld.github.io/posts/3722639142.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/2998623655.html">P11 TS 对常用的 ES6 模块导入 &amp; CommonJs 模块导入的兼容处理</a>
+            
+            
+            <a class="next" rel="next" href="/posts/2624511287.html">P9.4 高级类型：条件类型</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

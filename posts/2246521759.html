@@ -1,0 +1,320 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>NPM 包管理工具 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">NPM 包管理工具</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 10, 2022&nbsp;&nbsp;21:38:31</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">工具使用</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="1-两种安装方式"><a href="#1-两种安装方式" class="headerlink" title="1. 两种安装方式"></a>1. 两种安装方式</h1><p>我们都知道，npm的安装方式有两种，分为<code>全局安装</code>和<code>局部安装</code>。<br>顾名思义：全局安装就是在任何文件夹都可运行，其实原理也就是写进环境变量，每次在命令行中敲入命令时，根据环境变量的设置寻找对应的可执行程序运行。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install -g &lt;package_name&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>局部安装就是在当前项目中建立包，在当前项目中起作用</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install &lt;package_name&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>其中，在当前项目中建立安装的包，还可以根据需要，是放置在 <code>dependencies</code> 下，还是放置在 <code>desDependencies</code> 下。</p>
+<p>命令分别是：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;!-- dependencies --&gt;</span><br><span class="line">npm install &lt;package_name&gt; --save/-S</span><br><span class="line"></span><br><span class="line">&lt;!-- desDependencies --&gt;</span><br><span class="line">npm install &lt;package_name&gt; --save-dev/-D</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="2-包的默认安装路径"><a href="#2-包的默认安装路径" class="headerlink" title="2. 包的默认安装路径"></a>2. 包的默认安装路径</h1><h2 id="2-1-局部安装"><a href="#2-1-局部安装" class="headerlink" title="2.1 局部安装"></a>2.1 局部安装</h2><p>当选择项目局部安装包时，默认的安装路径为项目根目录文件夹 <code>node_modules</code>。这个不是主题就不多说了。</p>
+<h2 id="2-2-全局安装"><a href="#2-2-全局安装" class="headerlink" title="2.2 全局安装"></a>2.2 全局安装</h2><p>当选择全局安装时，默认的安装路径为 <code>C:\Users\xxx\AppData\Roaming\npm</code>，缓存路径为<code>C:\Users\xxx\AppData\Roaming\npm_cache</code>，其中xxx根据自己是自己系统的用户名。由于我已经改了路径，文件夹也删了，所以就不放图了。这里就是强迫症来源了，你让我每次全局安装包的时候都安装到C盘里，那我肯定受不了的，所以开始改。</p>
+<h2 id="2-3-修改全局包安装路径"><a href="#2-3-修改全局包安装路径" class="headerlink" title="2.3 修改全局包安装路径"></a>2.3 修改全局包安装路径</h2><h3 id="2-3-1-修改-npm-默认安装路径"><a href="#2-3-1-修改-npm-默认安装路径" class="headerlink" title="2.3.1 修改 npm 默认安装路径"></a>2.3.1 修改 npm 默认安装路径</h3><p>其实就很简单，npm给了我们配置的方法，可以通过命令行的方式</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm config set prefix <span class="string">"E:/Developer/nodejs/npm_global"</span></span><br><span class="line">npm config set cache <span class="string">"E:/Developer/nodejs/npm_cache"</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>当然了，不一定得是这个路径，得是这个文件名，只是我选择了这个路径这个文件名。配置成功后，可以查看一下是否配置成功</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm config ls</span><br></pre></td></tr></tbody></table></figure>
+
+<p>虽然我们修改了路径，环境变量却还没配置，所以系统找不到可执行程序。</p>
+<h3 id="2-3-2-修改环境变量"><a href="#2-3-2-修改环境变量" class="headerlink" title="2.3.2 修改环境变量"></a>2.3.2 修改环境变量</h3><p>打开环境变量配置：</p>
+<ol>
+<li>在系统变量中新增 <code>NODE_PATH</code>，变量值为设置的安装路径下的 <code>node_modules</code>，如果你是按照我上面的做法做的话，那设置的安装路径：<code>E:/Developer/nodejs/npm_global/node_modules</code></li>
+<li>在用户变量的 <code>path</code> 中新增一个值：<code>E:/Developer/nodejs/npm_global</code></li>
+</ol>
+<p>然后就可以愉快的将全局包不安装在 C 盘了。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/2246521759.html">https://bljj-dbld.github.io/posts/2246521759.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/npm/"># npm</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/3829252120.html">HTTP + 加密 + 认证 + 完整性保护 = HTTPS</a>
+            
+            
+            <a class="next" rel="next" href="/posts/339853394.html">Windows Terminal 配置oh-my-posh主题</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

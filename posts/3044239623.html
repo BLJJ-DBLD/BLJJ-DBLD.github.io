@@ -1,0 +1,342 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>Vue CLI4.x 多个子项目合并探路 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Vue CLI4.x 多个子项目合并探路</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 31, 2021&nbsp;&nbsp;14:57:22</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Vue/">Vue</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>依托公司项目，得以对多子项目能够有基础的使用，但是具体是如何的通过简单命令就能将各个子项目单独开发和打包的呢？带着这个疑惑，打算自己去实现一下从构建到打包的全过程。</p>
+<p>因为该部分内容的实现并不是很复杂，官网内也有提到过一嘴（<a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/config/#pages">点这里</a>）。因此只是对自己的学习做一点总结，以免忘记。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/BLJJ-DBLD/Microhabit-Study/tree/main/Vue/test-multiple-projects">Github 地址</a></p>
+<h2 id="项目创建"><a href="#项目创建" class="headerlink" title="项目创建"></a>项目创建</h2><p>先通过 <code>vue create test-multiple-projects</code> 命令创建项目，再选中 <code>Default (Vue 3 Preview) ([Vue 3] babel, eslint)</code> 选项。</p>
+<p>此时，脚手架帮助我们创建了一个以单个项目为主导的文件夹。这并不是目前的需求，所以我们需要在当前根目录内创建 <code>vue.config.js</code> 以做配置文件。也可以使用 <code>package.json</code> 中的 <code>vue</code> 字段，但是注意这种写法需要严格遵照 JSON 的格式来写。 </p>
+<h3 id="新建并配置-vue-config-js"><a href="#新建并配置-vue-config-js" class="headerlink" title="新建并配置 vue.config.js"></a>新建并配置 <code>vue.config.js</code></h3><p>将以下内容复制进 <code>vue.config.js</code> 中：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@type <span class="type">{import('@vue/cli-service').ProjectOptions}</span></span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">var</span> PROJECT_NAME = process.env.VUE_APP_PROJECT_NAME <span class="comment">// 当前运行的项目</span></span><br><span class="line"><span class="keyword">var</span> NODE_ENV = process.env.NODE_ENV <span class="comment">// 当前运行的环境</span></span><br><span class="line"><span class="built_in">console</span>.log({PROJECT_NAME, NODE_ENV});</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (!PROJECT_NAME &amp;&amp; NODE_ENV !==<span class="string">'development'</span>) {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'请输入要启动或者打包模块'</span>);</span><br><span class="line">    process.exit();<span class="comment">//退出执行</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getEntry</span>(<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">var</span> entries = {};</span><br><span class="line">    <span class="keyword">if</span> (NODE_ENV === <span class="string">"production"</span>) {</span><br><span class="line">        entries = {</span><br><span class="line">            <span class="attr">index</span>: {</span><br><span class="line">                <span class="comment">// page的入口</span></span><br><span class="line">                <span class="attr">entry</span>: <span class="string">"src/"</span> + PROJECT_NAME + <span class="string">"/main.js"</span>,</span><br><span class="line">                <span class="comment">// 模板来源</span></span><br><span class="line">                <span class="attr">template</span>: <span class="string">"public/index.html"</span>,</span><br><span class="line">                <span class="comment">// 在 dist/index.html 的输出</span></span><br><span class="line">                <span class="attr">filename</span>: <span class="string">"index.html"</span>,</span><br><span class="line">                <span class="attr">title</span>: PROJECT_NAME,</span><br><span class="line">                <span class="attr">chunks</span>: [<span class="string">"chunk-vendors"</span>, <span class="string">"chunk-common"</span>, <span class="string">"index"</span>]</span><br><span class="line">            }</span><br><span class="line">        };</span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 1. 多个子项目同步启动</span></span><br><span class="line">        <span class="comment">// 启动后 url 路径：http://localhost:8080/${PROJECT_NAME}</span></span><br><span class="line">        <span class="comment">// var glob = require("glob");</span></span><br><span class="line">        <span class="comment">// var items = glob.sync("./src/*/*.js");</span></span><br><span class="line">        <span class="comment">// for (var i in items) {</span></span><br><span class="line">        <span class="comment">//     var filepath = items[i];</span></span><br><span class="line">        <span class="comment">//     var fileList = filepath.split("/");</span></span><br><span class="line">        <span class="comment">//     var fileName = fileList[fileList.length - 2];</span></span><br><span class="line">        <span class="comment">//     entries[fileName] = {</span></span><br><span class="line">        <span class="comment">//         entry: `src/${fileName}/main.js`,</span></span><br><span class="line">        <span class="comment">//         // 模板来源</span></span><br><span class="line">        <span class="comment">//         template: `public/index.html`,</span></span><br><span class="line">        <span class="comment">//         // 在 dist/index.html 的输出</span></span><br><span class="line">        <span class="comment">//         filename: `${fileName}.html`,</span></span><br><span class="line">        <span class="comment">//         // 提取出来的通用 chunk 和 vendor chunk。</span></span><br><span class="line">        <span class="comment">//         chunks: ["chunk-vendors", "chunk-common", fileName]</span></span><br><span class="line">        <span class="comment">//     };</span></span><br><span class="line">        <span class="comment">// }</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 让子项目单独启动</span></span><br><span class="line">        <span class="comment">// 启动后 url 路径：http://localhost:8080/${PROJECT_NAME}</span></span><br><span class="line">        <span class="comment">/* entries[PROJECT_NAME] = {</span></span><br><span class="line"><span class="comment">            entry: `src/${PROJECT_NAME}/main.js`,</span></span><br><span class="line"><span class="comment">            // 模板来源</span></span><br><span class="line"><span class="comment">            template: 'public/index.html',</span></span><br><span class="line"><span class="comment">            // 在 dist/index.html 的输出</span></span><br><span class="line"><span class="comment">            filename: `${PROJECT_NAME}.html`,</span></span><br><span class="line"><span class="comment">            // 提取出来的通用 chunk 和 vendor chunk。</span></span><br><span class="line"><span class="comment">            chunks: ["chunk-vendors", "chunk-common", PROJECT_NAME]</span></span><br><span class="line"><span class="comment">        }; */</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">// 启动后 url 路径：http://localhost:8080</span></span><br><span class="line">        entries = {</span><br><span class="line">            <span class="attr">index</span>: {</span><br><span class="line">                <span class="comment">// page的入口</span></span><br><span class="line">                <span class="attr">entry</span>: <span class="string">"src/"</span> + PROJECT_NAME + <span class="string">"/main.js"</span>,</span><br><span class="line">                <span class="comment">// 模板来源</span></span><br><span class="line">                <span class="attr">template</span>: <span class="string">"public/index.html"</span>,</span><br><span class="line">                <span class="comment">// 在 dist/index.html 的输出</span></span><br><span class="line">                <span class="attr">filename</span>: <span class="string">"index.html"</span>,</span><br><span class="line">                <span class="attr">title</span>: PROJECT_NAME,</span><br><span class="line">                <span class="attr">chunks</span>: [<span class="string">"chunk-vendors"</span>, <span class="string">"chunk-common"</span>, <span class="string">"index"</span>]</span><br><span class="line">            }</span><br><span class="line">        };</span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> entries;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">module</span>.exports = {</span><br><span class="line">    <span class="attr">productionSourceMap</span>: <span class="literal">false</span>, <span class="comment">// 生产禁止显示源代码</span></span><br><span class="line">    <span class="attr">outputDir</span>: <span class="string">"./dist/"</span> + PROJECT_NAME, <span class="comment">// 输出目录</span></span><br><span class="line">    <span class="attr">publicPath</span>: <span class="string">"/"</span>,</span><br><span class="line">    <span class="attr">pages</span>: getEntry()</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>当自己在配置内容时，有几个地方极容易忽略而导致项目无法启动或启动后出现问题</p>
+<ol>
+<li>pages 的字段名与字段内的 <code>chunks</code> 数组的最后一个文件名字符串一致</li>
+<li>publicPath 在配置相对位置时有一些限制，其中就囊括使用 <code>pages</code> 选项构建多页面应用。更多详细内容 <a target="_blank" rel="noopener" href="https://cli.vuejs.org/zh/config/#publicpath">点这里</a></li>
+</ol>
+</blockquote>
+<h3 id="新建并运行子项目"><a href="#新建并运行子项目" class="headerlink" title="新建并运行子项目"></a>新建并运行子项目</h3><h4 id="子项目内容构建"><a href="#子项目内容构建" class="headerlink" title="子项目内容构建"></a>子项目内容构建</h4><p>在复制完内容后，需要创建相应的子项目在 src 内。目录结构大致如下：</p>
+<figure class="highlight awk"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">src</span><br><span class="line">|- base</span><br><span class="line">    |- views            <span class="regexp">//</span> 具体的页面内容</span><br><span class="line">        |- Home.vue     <span class="regexp">//</span> 具体的独立模块页面</span><br><span class="line">    |- App.vue          <span class="regexp">//</span> 模板 html 挂载的文件</span><br><span class="line">    |- main.js          <span class="regexp">//</span> 入口 js 文件</span><br><span class="line">|- mixture</span><br><span class="line">    |- views            <span class="regexp">//</span> 具体的页面内容</span><br><span class="line">    |- App.vue          <span class="regexp">//</span> 模板 html 挂载的文件</span><br><span class="line">    |- main.js          <span class="regexp">//</span> 入口 js 文件</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>注意一个细节： mixture 文件夹内并没有 <code>Home.vue</code> 文件，目的是为了在 mixture 的 <code>App.vue</code> 内直接引入 base 的 <code>Home.vue</code> 文件</p>
+</blockquote>
+<p>在 base 文件夹内：</p>
+<p>在 <code>main.js</code> 中复制以下内容：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> { createApp } <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> App <span class="keyword">from</span> <span class="string">'./App.vue'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = createApp(App)</span><br><span class="line"></span><br><span class="line">app.mount(<span class="string">'#app'</span>)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在 <code>App.vue</code> 中复制以下内容：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class="App"&gt;</span><br><span class="line">    &lt;img alt="Vue logo" src="img/assets/logo.png"&gt;</span><br><span class="line">    &lt;home /&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Home from './Home'</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  name: 'App',</span><br><span class="line">  component: {Home}</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">#app {</span><br><span class="line">  font-family: Avenir, Helvetica, Arial, sans-serif;</span><br><span class="line">  -webkit-font-smoothing: antialiased;</span><br><span class="line">  -moz-osx-font-smoothing: grayscale;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: #2c3e50;</span><br><span class="line">  margin-top: 60px;</span><br><span class="line">}</span><br><span class="line">.home {</span><br><span class="line">  color: #663399; /* 用文字颜色简单的以示区别 */</span><br><span class="line">}</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在 <code>Home.vue</code> 内复制以下内容：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">    &lt;div class="home"&gt;</span><br><span class="line">        Base_Home</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default {</span><br><span class="line">    name: 'Home'</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在 mixture 文件夹内：</p>
+<p>在 <code>main.js</code> 中内容与 base 文件夹内的 <code>main.js</code> 文件内容一致</p>
+<p>在 <code>App.vue</code> 中只是引入了 base 文件夹内的 <code>Home.vue</code> 文件，复制以下内容：</p>
+<figure class="highlight plaintext"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class="App"&gt;</span><br><span class="line">    &lt;img alt="Vue logo" src="img/assets/logo.png"&gt;</span><br><span class="line">    &lt;home /&gt;</span><br><span class="line">  &lt;/div&gt;</span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">import Home from '../base/views/Home' // 引入了 base 文件夹内的 Home.vue 文件</span><br><span class="line"></span><br><span class="line">export default {</span><br><span class="line">  name: 'App',</span><br><span class="line">  component: {Home}</span><br><span class="line">}</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">#app {</span><br><span class="line">  font-family: Avenir, Helvetica, Arial, sans-serif;</span><br><span class="line">  -webkit-font-smoothing: antialiased;</span><br><span class="line">  -moz-osx-font-smoothing: grayscale;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: #2c3e50;</span><br><span class="line">  margin-top: 60px;</span><br><span class="line">}</span><br><span class="line">.home {</span><br><span class="line">  color: #ff1f01; /* 用文字颜色简单的以示区别 */</span><br><span class="line">}</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<p>至此，我们已经完成了对子项目的基本构建，但是目前还是不能运行或打包。下面就让我们根据对应的环境以及子项目进行配置</p>
+<h4 id="配置命令及环境"><a href="#配置命令及环境" class="headerlink" title="配置命令及环境"></a>配置命令及环境</h4><p>涉及的文件在目录中的位置：</p>
+<figure class="highlight awk"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">根文件夹</span><br><span class="line">|- package.json       <span class="regexp">//</span> 修改 scripts 内相应的命令</span><br><span class="line">|- .env.base          <span class="regexp">//</span> base 项目开发环境配置内容</span><br><span class="line">|- .env.base_pro      <span class="regexp">//</span> base 项目生产环境配置内容</span><br><span class="line">|- .env.mixture       <span class="regexp">//</span> mixture 项目开发环境配置内容</span><br><span class="line">|- .env.mixture_pro   <span class="regexp">//</span> mixture 项目生产环境配置内容</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在 package.json 内对 <code>scripts</code> 内容进行调整：</p>
+<figure class="highlight json"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"scripts"</span>: {</span><br><span class="line">  <span class="attr">"build"</span>: <span class="string">"vue-cli-service build"</span>, <span class="comment">// 已经失效，不能使用了</span></span><br><span class="line">  <span class="attr">"lint"</span>: <span class="string">"vue-cli-service lint"</span>,</span><br><span class="line">  <span class="attr">"serve_base"</span>: <span class="string">"vue-cli-service serve --mode base"</span>, <span class="comment">// 运行 base 版本</span></span><br><span class="line">  <span class="attr">"build_base"</span>: <span class="string">"vue-cli-service build --mode base_pro"</span>, <span class="comment">// 打包 base 版本</span></span><br><span class="line">  <span class="attr">"serve_mixture"</span>: <span class="string">"vue-cli-service serve --mode mixture"</span>, <span class="comment">// 运行 mixture 版本</span></span><br><span class="line">  <span class="attr">"build_mixture"</span>: <span class="string">"vue-cli-service build --mode mixture_pro"</span> <span class="comment">// 打包 mixture 版本</span></span><br><span class="line">},</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在控制台中输入 <code>npm run serve_${projectName}</code>，根据 <code>vue.config.js</code> 内对 <code>pages</code> 的配置，能够指出如何访问页面内容。</p>
+<p><img src="/posts/3044239623/image_1.png" alt="页面展示"></p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3044239623.html">https://bljj-dbld.github.io/posts/3044239623.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Vue-CLI/"># Vue CLI</a>
+                    
+                        <a href="/tags/vue-3/"># vue@3</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1498460868.html">P1 类型基础</a>
+            
+            
+            <a class="next" rel="next" href="/posts/1612587612.html">P15 React 的深入浅出</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

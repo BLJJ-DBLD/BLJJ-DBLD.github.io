@@ -1,0 +1,960 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>Vue 进阶篇 - Vue 响应式原理 | BLJJ-DBLD Blog</title><meta name="robots" content="noindex">
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Vue 进阶篇 - Vue 响应式原理</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 12, 2022&nbsp;&nbsp;15:16:04</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Vue/">Vue</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="Vue-响应式原理"><a href="#Vue-响应式原理" class="headerlink" title="Vue 响应式原理"></a>Vue 响应式原理</h1><h2 id="Vue2-x-原理"><a href="#Vue2-x-原理" class="headerlink" title="Vue2.x 原理"></a>Vue2.x 原理</h2><blockquote>
+<p>核心是通过 ES5 的保护对象的 <code>Object.defineProperty</code> 中的访问器属性中的 <code>get</code> 和 <code>set</code> 方法，<code>data</code> 中声明的属性都被添加了访问器属性，当读取 <code>data</code> 中的数据时自动调用 <code>get</code> 方法，当修改 <code>data</code> 中的数据时，自动调用 <code>set</code> 方法。<br>检测到数据变化时，会通知观察者 <code>Wather</code>，观察者 <code>Wather</code> 会自动重新 <code>render</code> 当前的组件（<strong>子组件不会重新渲染</strong>），生成新的虚拟 DOM 树，Vue 框架会遍历并比较新旧虚拟 DOM 树中每个节点的差别，并记录下来。最后将所有记录的不同点，局部的修改到真实 DOM 树上</p>
+</blockquote>
+<p><img src="/posts/152167171/image_1.png" alt="VUE 更新 DOM 过程图"></p>
+<ul>
+<li>虚拟 DOM（Virtal DOM）:用 js 对象模拟的，保存当前视图内所有的 DOM 节点对象基本描述属性和节点关系的树结构。用 js 对象描述每一个节点，及其父子关系，形成虚拟 DOM 对象树结构。</li>
+</ul>
+<p>因为只要在 <code>data</code> 中声明的基本数据类型的数据，基本不存在数据不响应问题。所以重点介绍数组和对象在 <code>vue</code> 中数据响应问题。</p>
+<p><code>vue</code> 可以监听对象属性的修改，但无法监听数组的所有变动及其对象的新增和删除，只能使用数组的变异方法及 <code>$set</code> 方法。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> arrayProto = <span class="built_in">Array</span>.prototype</span><br><span class="line"><span class="keyword">var</span> arrayMethods = <span class="built_in">Object</span>.create(arrayProto)</span><br><span class="line"><span class="keyword">var</span> methodsToPatch = [</span><br><span class="line">  <span class="string">'push'</span>,</span><br><span class="line">  <span class="string">'pop'</span>,</span><br><span class="line">  <span class="string">'shift'</span>,</span><br><span class="line">  <span class="string">'unshift'</span>,</span><br><span class="line">  <span class="string">'splice'</span>,</span><br><span class="line">  <span class="string">'sort'</span>,</span><br><span class="line">  <span class="string">'reverse'</span></span><br><span class="line">]</span><br><span class="line">methodsToPatch.forEach(<span class="function"><span class="keyword">function</span> (<span class="params">method</span>) </span>{</span><br><span class="line">  <span class="keyword">var</span> original = arrayProto[method]</span><br><span class="line">  def(arrayMethods, method, <span class="function"><span class="keyword">function</span> <span class="title">mutator</span> (<span class="params"></span>) </span>{</span><br><span class="line">    <span class="keyword">var</span> args = [], len = <span class="built_in">arguments</span>.length</span><br><span class="line">    <span class="keyword">while</span> (len--) args[len] = argument[len]</span><br><span class="line">    <span class="keyword">var</span> result = original.apply(<span class="built_in">this</span>, args)</span><br><span class="line">    <span class="keyword">var</span> ob = <span class="built_in">this</span>.__ob__</span><br><span class="line">    <span class="keyword">var</span> inserted</span><br><span class="line">    <span class="keyword">switch</span> (method) {</span><br><span class="line">      <span class="keyword">case</span> <span class="string">'push'</span>:</span><br><span class="line">      <span class="keyword">case</span> <span class="string">'unshift'</span>:</span><br><span class="line">        inserted = args</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">      <span class="keyword">case</span> <span class="string">'splice'</span>:</span><br><span class="line">        inserted = args.slice(<span class="number">2</span>)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">if</span> (inserted) {ob.observeArray(inserted)}</span><br><span class="line">    ob.dep.notify()</span><br><span class="line">  })</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>可以看到，<code>arrayMethods</code> 首先继承了 <code>Array</code>，然后对数组中所有<strong>能够改变数组自身的方法进行重写（如 <code>push</code>、<code>pop</code>等）</strong>。重写后的方法会先执行它们本身原有的逻辑，并对能增加数组长度的 3 个方法 <code>push</code>、<code>unshift</code>、<code>splice</code> 方法做判断，获取到插入的值，然后把新添加的值变成一个响应式对象。并且再调用 <code>ob.dep.notify()</code> 手动触发依赖通知。这就很好的解释了用 <code>vm.items.splice(newLength)</code> 方法可以检测到变化。</p>
+</blockquote>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>Vue</code> 采用数据劫持结合发布-订阅模式的方法，通过 <code>Object.defineProperty</code> 来劫持各个属性的 <code>getter</code>、<code>setter</code>。在数据变化时发布消息给订阅者，触发相应的监听回调。</p>
+<p><img src="/posts/152167171/image_2.png" alt="new MVVM() 所发生的事儿"></p>
+<ul>
+<li><code>Observer</code>: 遍历数据对象，给所有属性上加 <code>setter</code> 和 <code>getter</code>，监听数据的变化</li>
+<li><code>Compile</code>: 解析模板指令，将模板中的变量替换成数据，然后初始化渲染页面视图，并将每个指令对应的节点绑定更新函数，添加监听数据的订阅者，一旦数据有变动，收到通知，更新视图。</li>
+</ul>
+<blockquote>
+<p><code>Watcher</code> 订阅者是 <code>Observer</code> 和 <code>Compile</code> 之间通信的桥梁，主要做的事情有：</p>
+<ul>
+<li>在自身实例化时往属性订阅器 <code>Dep</code> 里添加自己</li>
+<li>待属性变动 <code>dep.notice()</code> 通知时，调用自身的 <code>update()</code> 方法，并触发 <code>Compile</code> 中绑定的回调</li>
+</ul>
+</blockquote>
+<p>那 <code>Object.defineProperty</code> 的用法是什么，优缺点是什么？</p>
+<p>优点：</p>
+<ul>
+<li>可以检测对象中数据发生的修改</li>
+</ul>
+<p>缺点：</p>
+<ul>
+<li>对于复杂的对象，层级很深的话，需要去做深度监听（即递归到底）</li>
+<li>对于一个对象中，如果新增/删除属性，<code>Object.definedProperty</code> 是不能观测到的。但是可以通过 <code>vue.$set()</code> 和 <code>vue.$delete()</code> 来实现的。</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 中 data 实现</span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">  <span class="attr">msg</span>: <span class="string">'hello'</span></span><br><span class="line">}</span><br><span class="line"><span class="comment">// 模拟 Vue 的实例</span></span><br><span class="line"><span class="keyword">let</span> vm = {}</span><br><span class="line"><span class="comment">// 数据劫持：当访问或者设置 vm 中的成员的时候，可以设置一些干预操作</span></span><br><span class="line"><span class="comment">// defineProperty 有三个参数：param1：对象；param2：为vm对象添加的属性；param3：属性描述符</span></span><br><span class="line"><span class="built_in">Object</span>.defineProperty(vm, <span class="string">'msg'</span>, {</span><br><span class="line">  <span class="comment">// 可枚举（可遍历）</span></span><br><span class="line">  <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="comment">// 可配置（可以使用 delete 删除，可以通过 defineProperty 重新定义）</span></span><br><span class="line">  <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="comment">// 访问器，当获取值得时候执行</span></span><br><span class="line">  get () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'get'</span>, data.msg)</span><br><span class="line">    <span class="keyword">return</span> data.msg</span><br><span class="line">  },</span><br><span class="line">  set (newVal) {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'set'</span>, newVal)</span><br><span class="line">    <span class="keyword">if</span> (newVal === data.msg) {</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    }</span><br><span class="line">    data.msg = newVal</span><br><span class="line">    <span class="comment">// 数据变更，更新 DOM 的值</span></span><br><span class="line">    <span class="built_in">document</span>.getElementById(<span class="string">'#app'</span>).textContent = data.msg</span><br><span class="line">  }</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试：当 vm.msg 改变时，视图中的数据随之改变</span></span><br><span class="line">vm.msg = <span class="string">'Hello World'</span></span><br><span class="line"><span class="built_in">console</span>.log(vm.msg) <span class="comment">// 'Hello World'</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="Vue3-x-响应式数据原理"><a href="#Vue3-x-响应式数据原理" class="headerlink" title="Vue3.x 响应式数据原理"></a>Vue3.x 响应式数据原理</h2><p><code>Vue3.x</code> 改用 <code>Proxy</code> 代替 <code>Object.defineProperty</code>。因为 <code>Proxy</code> 可以直接监听 <strong>对象和数组</strong> 的变化，并且有多达 13 种拦截方法。并且作为新标准将受到浏览器厂商重点持续的性能优化。</p>
+<p>常见的几种拦截方法有：</p>
+<ul>
+<li>handler.get(): 属性读取操作的捕捉器。</li>
+<li>handler.set(): 属性设置操作的捕捉器。</li>
+<li>handler.deleteProperty(): delete 操作符的捕捉器。<br>…等 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy">其他拦截器</a></li>
+</ul>
+<blockquote>
+<p>Q: <code>Proxy</code> 只会代理对象的第一层，那 <code>Vue3.x</code> 是如何处理的呢？</p>
+<p>A: 判断当前 <code>Reflect.get</code> 的返回值是否为 <code>object</code>，如果是则通过 <code>reactive</code> 方法做代理，这样子就实现了深度监听。</p>
+</blockquote>
+<blockquote>
+<p>Q: 监测数组的时候可能触发多次 <code>get/set</code>，那如何防止触发多次呢？</p>
+<p>A: </p>
+<ol>
+<li>判断 <code>key</code> 是否为当前被代理对象 <code>target</code> 自身属性；</li>
+<li>判断旧值与新值是否相等</li>
+</ol>
+<p>只有满足以上两个条件之一时，才有可能执行trigger</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 模拟 Vue 中的 data 选项 </span></span><br><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">  <span class="attr">msg</span>: <span class="string">'hello'</span>,</span><br><span class="line">  <span class="attr">count</span>: <span class="number">0</span> </span><br><span class="line">}</span><br><span class="line"><span class="comment">// 模拟 Vue 实例</span></span><br><span class="line"><span class="keyword">let</span> vm = <span class="keyword">new</span> <span class="built_in">Proxy</span>(data, {</span><br><span class="line">  <span class="comment">// 当访问 vm 的成员会执行</span></span><br><span class="line">  get (target, key) {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'get, key: '</span>, key, target[key])</span><br><span class="line">    <span class="keyword">return</span> target[key]</span><br><span class="line">  },</span><br><span class="line">  <span class="comment">// 当设置 vm 的成员会执行</span></span><br><span class="line">  set (target, key, newValue) {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'set, key: '</span>, key, newValue)</span><br><span class="line">    <span class="keyword">if</span> (target[key] === newValue) {</span><br><span class="line">      <span class="keyword">return</span></span><br><span class="line">    }</span><br><span class="line">    target[key] = newValue</span><br><span class="line">    <span class="built_in">document</span>.querySelector(<span class="string">'#app'</span>).textContent = target[key]</span><br><span class="line">  }</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试</span></span><br><span class="line">vm.msg = <span class="string">'Hello World'</span></span><br><span class="line"><span class="built_in">console</span>.log(vm.msg)</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h2><p><img src="/posts/152167171/image_2.png" alt="数据监听-发布订阅模式"></p>
+<ul>
+<li>Vue<ul>
+<li>记录传入的选项，设置 <code>$data/$el</code></li>
+<li>把 <code>data</code> 的成员注入到 <code>Vue</code> 实例</li>
+<li>负责调用 <code>Observer</code> 实现数据响应式处理(数据劫持)</li>
+<li>负责调用 <code>Compiler</code> 编译指令/插值表达式等</li>
+</ul>
+</li>
+<li>Observer<ul>
+<li>数据劫持</li>
+<li>负责把 <code>data</code> 中的成员转换成 <code>getter/setter</code></li>
+<li>负责把多层属性转换成 <code>getter/setter</code></li>
+<li>如果给属性赋值为新对象，把新对象的成员设置为 <code>getter/setter</code></li>
+<li>添加 <code>Dep</code> 和 <code>Watcher</code> 的依赖关系</li>
+<li>数据变化发送通知</li>
+</ul>
+</li>
+<li>Compiler<ul>
+<li>负责编译模板，解析指令/插值表达式</li>
+<li>负责页面的首次渲染过程</li>
+<li>当数据变化后重新渲染</li>
+</ul>
+</li>
+<li>Dep<ul>
+<li>收集依赖，添加订阅者(<code>watcher</code>)</li>
+<li>通知所有订阅者</li>
+</ul>
+</li>
+<li>Watcher<ul>
+<li>自身实例化的时候往 <code>dep</code> 对象中添加自己</li>
+<li>当数据变化 <code>dep</code> 通知所有的 <code>Watcher</code> 实例更新视图</li>
+</ul>
+</li>
+</ul>
+<h1 id="发布-订阅模式和观察者模式"><a href="#发布-订阅模式和观察者模式" class="headerlink" title="发布/订阅模式和观察者模式"></a>发布/订阅模式和观察者模式</h1><h2 id="发布-订阅模式"><a href="#发布-订阅模式" class="headerlink" title="发布/订阅模式"></a>发布/订阅模式</h2><ul>
+<li>发布者</li>
+<li>信号中心</li>
+<li>订阅者</li>
+</ul>
+<blockquote>
+<p>我们假定，存在一个“信号中心”，某个任务执行完成，就向信号中心“发布（publish）”一个信号，其他任务可以向信号中心“订阅（subscribe）”这个信号，从而知道自己什么时候开始执行。这就叫做“发布/订阅模式（publish-subscribe pattern）”</p>
+</blockquote>
+<p>Vue 的自定义事件</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// eventBus.js</span></span><br><span class="line"><span class="comment">// 事件中心</span></span><br><span class="line"><span class="keyword">let</span> eventHub = <span class="keyword">new</span> Vue()</span><br><span class="line"></span><br><span class="line"><span class="comment">// ComponentA.vue</span></span><br><span class="line"><span class="comment">// 发布者</span></span><br><span class="line"><span class="attr">addTodo</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>{</span><br><span class="line">  <span class="comment">// 发布消息(事件)</span></span><br><span class="line">  eventHub.$emit(<span class="string">'add-todo'</span>, { <span class="attr">text</span>: <span class="built_in">this</span>.newTodoText }) </span><br><span class="line">  <span class="built_in">this</span>.newTodoText = <span class="string">''</span></span><br><span class="line">}</span><br><span class="line"><span class="comment">// ComponentB.vue</span></span><br><span class="line"><span class="comment">// 订阅者</span></span><br><span class="line"><span class="attr">created</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>{</span><br><span class="line">  <span class="comment">// 订阅消息(事件)</span></span><br><span class="line">  eventHub.$on(<span class="string">'add-todo'</span>, <span class="built_in">this</span>.addTodo)</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>模拟 Vue 自定义事件的实现</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现 EventEmitter</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">EventEmitter</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">        <span class="comment">// { eventType: [ handler1, handler2 ] }</span></span><br><span class="line">        <span class="built_in">this</span>.subs = {}</span><br><span class="line">    }</span><br><span class="line">    $on (eventType, fn) {</span><br><span class="line">        <span class="built_in">this</span>.subs[eventType] = <span class="built_in">this</span>.subs[eventType] || []</span><br><span class="line">        <span class="built_in">this</span>.subs[eventType].push(fn)</span><br><span class="line">    }</span><br><span class="line">    $emit (eventType, data) {</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.subs[eventType]) {</span><br><span class="line">            <span class="built_in">this</span>.subs[eventType].forEach(<span class="function"><span class="params">fn</span> =&gt;</span> {</span><br><span class="line">                fn(data)</span><br><span class="line">            })</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">    $off (eventType, fn) {</span><br><span class="line">        <span class="keyword">if</span> (<span class="built_in">this</span>.subs[eventType]) {</span><br><span class="line">            <span class="keyword">if</span> (fn) {</span><br><span class="line">                <span class="keyword">const</span> findIndex = <span class="built_in">this</span>.subs[eventType].findIndex</span><br><span class="line">                <span class="keyword">if</span> (findIndex !== -<span class="number">1</span>) {</span><br><span class="line">                    <span class="built_in">this</span>.subs[eventType].splice(findIndex, <span class="number">1</span>)</span><br><span class="line">                }</span><br><span class="line">            } <span class="keyword">else</span> {</span><br><span class="line">                <span class="keyword">delete</span> <span class="built_in">this</span>.subs[eventType]</span><br><span class="line">            }</span><br><span class="line">        }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="观察者模式"><a href="#观察者模式" class="headerlink" title="观察者模式"></a>观察者模式</h2><ul>
+<li>观察者（订阅者）：<code>Wather</code><ul>
+<li><code>update()</code>：当事件发生时，具体要做的事情</li>
+</ul>
+</li>
+<li>目标（发布者）：<code>Dep</code><ul>
+<li><code>subs</code> 数组：存储所有的观察者</li>
+<li><code>addSub()</code>：添加观察者</li>
+<li><code>notify()</code>：当事件发生时，调用所有的观察者的 <code>update()</code> 方法</li>
+</ul>
+</li>
+<li>没有事件中心</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 目标（发布者）</span></span><br><span class="line"><span class="comment">// Dependency</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dep</span> </span>{</span><br><span class="line">	<span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">		<span class="built_in">this</span>.subs = []</span><br><span class="line">	}</span><br><span class="line">	<span class="comment">// 添加观察者</span></span><br><span class="line">	addSub (sub) {</span><br><span class="line">		<span class="keyword">if</span> (sub &amp;&amp; sub.update) {</span><br><span class="line">			<span class="built_in">this</span>.subs.push(sub)</span><br><span class="line">		}</span><br><span class="line">	}</span><br><span class="line">	<span class="comment">// 通知所有观察者</span></span><br><span class="line">	notify () {</span><br><span class="line">		<span class="built_in">this</span>.subs.forEach(<span class="function"><span class="params">sub</span> =&gt;</span> sub.update())</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 观察者（订阅者）</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Watcher</span> </span>{</span><br><span class="line">	update () {</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'update'</span>)</span><br><span class="line">	}</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 测试</span></span><br><span class="line"><span class="keyword">let</span> dep = <span class="keyword">new</span> Dep()</span><br><span class="line"><span class="keyword">let</span> watcher = <span class="keyword">new</span> Watcher()</span><br><span class="line">dep.addSub(watcher) </span><br><span class="line">dep.notify()</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h2><ul>
+<li><strong>观察者模式</strong> 是具体目标调度，如当事件触发，<code>Dep</code> 就会去调用观察者的方法，所以观察者模式的 <em>订阅者</em> 和 <em>发布者</em> 之间是存在依赖的</li>
+<li><strong>发布/订阅模式</strong> 是由统一调度中心调用，因此发布者和订阅者不需要知道对方的存在</li>
+</ul>
+<p><img src="/posts/152167171/image_3.png" alt="两种模式的区别"></p>
+<h1 id="为什么使用-Virtual-DOM"><a href="#为什么使用-Virtual-DOM" class="headerlink" title="为什么使用 Virtual DOM"></a>为什么使用 Virtual DOM</h1><ul>
+<li>手动操作 <code>DOM</code> 比较麻烦，还需要考虑浏览器兼容性问题，虽然有 <code>jQuery</code> 等库简化 <code>DOM</code> 操作，但是随着项目的复杂 DOM 操作复杂提升</li>
+<li>为了简化 <code>DOM</code> 的复杂操作于是出现了各种 <code>MVVM</code> 框架，<code>MVVM</code> 框架解决的是视图与状态的同步问题</li>
+<li>为了简化视图的操作，我们使用了模板引擎，但是模板引擎没有解决跟踪状态变化的问题，于是 <code>Virtual DOM</code> 出现</li>
+<li><code>Virtual DOM</code> 的好处是当状态改变时不需要立即更新 <code>DOM</code>，只需要创建一个虚拟树来描述 <code>DOM</code>，<code>Virtual DOM</code> 内部将弄清楚如何有效（<code>diff</code>）的更新 <code>DOM</code></li>
+<li>虚拟 <code>DOM</code> 可以维护程序的状态，跟踪上一次的状态</li>
+<li>通过比较前后两次状态的差异更新真实 <code>DOM</code></li>
+</ul>
+<h2 id="虚拟-DOM-的作用"><a href="#虚拟-DOM-的作用" class="headerlink" title="虚拟 DOM 的作用"></a>虚拟 DOM 的作用</h2><ul>
+<li>维护视图和状态的关系</li>
+<li>复杂视图情况下提升渲染性能</li>
+<li>除了渲染 <code>DOM</code> 外，还可以实现 <code>SSR(Nuxt.js)</code>、原生应用（<code>Wexx/React Native</code>）、小程序（<code>mpvue/uni-app</code>）等</li>
+</ul>
+<p><img src="/posts/152167171/image_4.png" alt="Virtual DOM"></p>
+<h2 id="VDOM：三个部分"><a href="#VDOM：三个部分" class="headerlink" title="VDOM：三个部分"></a>VDOM：三个部分</h2><ul>
+<li>虚拟节点类：将真实 <code>DOM</code> 节点用 <code>js</code> 对象的形式进行展示，并提供 <code>render</code> 方法，将虚拟节点渲染成真实 <code>DOM</code></li>
+<li>节点 <code>diff</code> 比较：对虚拟节点进行 <code>js</code> 层面的计算，并将不同的操作都记录到 <code>patch</code> 对象</li>
+<li><code>re-render</code>：解析 <code>patch</code> 对象，进行 <code>re-render</code></li>
+</ul>
+<h3 id="节点-diff-比较详细过程："><a href="#节点-diff-比较详细过程：" class="headerlink" title="节点 diff 比较详细过程："></a>节点 <code>diff</code> 比较详细过程：</h3><ul>
+<li>同级比较，再比较子节点</li>
+<li>先判断一方有子节点一方没有子节点的情况(如果新的 <code>children</code> 没有子节点，将旧的子节点移除)</li>
+<li>比较都有子节点的情况(<strong>核心 <code>Diff</code></strong>)</li>
+</ul>
+<p>正常 <code>Diff</code> 两个树的时间复杂度是 <code>O(n^3)</code>，但实际情况下我们很少会进行跨层级的移动 <code>DOM</code>，所以 Vue 将 <code>Diff</code> 进行了优化，从 <code>O(n^3) -&gt; O(n)</code>，只有当新旧 <code>children</code> 都为多个子节点时才需要用 <strong>核心 <code>Diff</code></strong> 算法进行同层级比较。</p>
+<p>Vue2.x 的 <strong>核心 <code>Diff</code></strong> 算法采用的了两端比较的算法，同时从新旧 <code>children</code> 的两端开始进行比较，借助 <code>key</code> 值找到可复用的节点，再进行相关操作。相比 React 的 <code>diff</code> 算法，同样情况下可以减少移动节点次数，减少不必要的性能损耗，更加的优雅。</p>
+<p>Vue3.x 在创建 <code>VNode</code> 时就确定其类型，以及在 <code>mount/patch</code> 的过程中采用位运算来判断一个 <code>VNode</code> 的类型，在这个基础之上再配合 <strong>核心 <code>Diff</code></strong> 算法，使得性能上较 Vue2.x 有了提升</p>
+<h4 id="key-属性的作用"><a href="#key-属性的作用" class="headerlink" title="key 属性的作用"></a><code>key</code> 属性的作用</h4><ul>
+<li>新旧 <code>children</code> 中的节点只有顺序是不同的时候，最佳的操作应该是通过移动元素的位置来达到更新的目的</li>
+<li>需要在新旧 <code>children</code> 的节点中保存映射关系，以便能够在旧 <code>children</code> 的节点中找到可复用的节点。<code>key</code> 也就是<code>children</code> 中节点的唯一标识</li>
+</ul>
+<h3 id="补充1：VDOM-的必要性"><a href="#补充1：VDOM-的必要性" class="headerlink" title="补充1：VDOM 的必要性"></a>补充1：VDOM 的必要性</h3><ul>
+<li><strong>创建真实 <code>DOM</code> 的代价高</strong>：真实 <code>DOM</code> 节点 <code>node</code> 实现的属性很多，而 <code>vnode</code> 仅仅实现一些必要的属性，相比较，创建一个 <code>vnode</code> 的成本比较低</li>
+<li><strong>触发多次浏览器重绘及回流</strong>：使用 <code>vnode</code>，相当于加了一个缓冲，让一次数据的变动所带来的所有 <code>node</code> 变化，现在 <code>vnode</code> 中进行修改，然后 <code>diff</code> 之后对所有产生差异的节点集中一次对    <code>DOM tree</code> 进行修改，以减少浏览器的重绘与回流</li>
+</ul>
+<h4 id="重绘（Repaint）与回流（Reflow）"><a href="#重绘（Repaint）与回流（Reflow）" class="headerlink" title="重绘（Repaint）与回流（Reflow）"></a>重绘（Repaint）与回流（Reflow）</h4><ul>
+<li><strong>重绘</strong>：是当节点需要更改外观而不影响布局的，比如改变 <code>color</code> 就叫做重绘</li>
+<li><strong>回流</strong>：是布局或者几何属性需要改变就称为回流</li>
+</ul>
+<blockquote>
+<p>回流必定会发生重绘，重绘不一定引发回流。回流所需的成本比重绘高得多，改变深层次的节点很可能导致父节点的一系列回流。</p>
+</blockquote>
+<p><strong>很多人不知道的是，重绘和回流其实和 <code>Event loop</code> 有关</strong></p>
+<ul>
+<li>当 <code>Event loop</code> 执行完 <code>Microtasks</code> 后，会判断 <code>document</code> 是否需要更新，因为浏览器是 <code>60Hz</code> 的刷新率，每 <code>16ms</code> 才会更新一次。</li>
+<li>然后判断是否有 <code>resize</code> 或者 <code>scroll</code>，有的话就会触发事件，所以 <code>resize</code> 和 <code>scroll</code> 事件也是至少 <code>16ms</code> 才会触发一次，并且自带节流功能</li>
+<li>判断是否触发了 <code>media query</code></li>
+<li>更新动画并且发送事件</li>
+<li>判断是否有全屏操作事件</li>
+<li>执行 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestAnimationFrame"><code>requestAnimationFrame</code></a> 回调</li>
+<li>执行 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/IntersectionObserver"><code>IntersectionObserver</code></a> 回调，该方法用于判断元素是否可见，可以用于懒加载上，但是兼容性不好</li>
+<li>更新界面</li>
+</ul>
+<p>以上就是一帧中可能会做的事情。如果在一帧中有空闲时间，就会去执行 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/API/Window/requestIdleCallback"><code>requestIdleCallback</code></a> 回调</p>
+<p>所以以下几个动作可能会导致性能问题：</p>
+<ul>
+<li>改变 <code>window</code> 大小</li>
+<li>改变字体</li>
+<li>添加或删除样式</li>
+<li>文字改变</li>
+<li>定位或者浮动</li>
+<li>盒模型</li>
+</ul>
+<p>常见的引起重绘的属性</p>
+<ul>
+<li>color</li>
+<li>border-style</li>
+<li>border-radius</li>
+<li>background</li>
+<li>background-image</li>
+<li>background-position</li>
+<li>background-repeat</li>
+<li>background-size</li>
+<li>outline</li>
+<li>outline-color</li>
+<li>outline-style</li>
+<li>outline-width</li>
+<li>box-shadow</li>
+<li>visibility</li>
+<li>text-decoration</li>
+</ul>
+<p>常见引起回流属性和方法</p>
+<ul>
+<li>添加或者删除可见的 <code>DOM</code> 元素；</li>
+<li>元素尺寸改变——边距、填充、边框、宽度和高度</li>
+<li>内容变化，比如用户在 <code>input</code> 框中输入文字</li>
+<li>浏览器窗口尺寸改变——<code>resize</code> 事件发生时</li>
+<li>计算 <code>offsetWidth</code> 和 <code>offsetHeight</code> 属性</li>
+<li>设置 <code>style</code> 属性的值</li>
+</ul>
+<p>减少重绘和回流</p>
+<ul>
+<li>使用 <code>translate</code> 代替 <code>top</code></li>
+<li>使用 <code>visibility</code> 代替 <code>display: none</code>，前者只会引起重绘，后者会引发回流（改变了布局）</li>
+<li>不要使用 <code>table</code> 布局，可能因为一个很小的改动会造成整个 <code>table</code> 的重新布局</li>
+<li>动画实现的速度的选择，动画速度越快，回流次数越多。也可以选择使用 <code>requestAnimationFrame</code></li>
+<li><code>CSS</code> 选择符是从右往左匹配查找，避免 <code>DOM</code> 层级过深</li>
+<li>将频繁运行的动画变为图层，图层能够阻止该节点回流影响别的元素。比如对于 <code>video</code> 标签，浏览器会自动将该节点变为图层。<ul>
+<li>拥有 3d 变换的 css 属性</li>
+<li>video 标签</li>
+<li>canvas 标签</li>
+<li>css 的变换属性 will-change</li>
+</ul>
+</li>
+</ul>
+<h3 id="补充2：vue-为什么采用-vdom-？"><a href="#补充2：vue-为什么采用-vdom-？" class="headerlink" title="补充2：vue 为什么采用 vdom ？"></a>补充2：vue 为什么采用 vdom ？</h3><blockquote>
+<p>引入 <code>Virtual DOM</code> 在性能方面的考量仅仅是一方面。</p>
+</blockquote>
+<p>vue 之所以引入 <code>Virtual DOM</code>，更重要的原因是为了解耦 <code>HTML</code> 依赖，这带来了两个非常重要的好处：</p>
+<ol>
+<li>不再依赖 <code>HTML</code> 解析器进行模板解析，可以进行更多的 <code>AOT</code> 工作提高运行时效率：通过模板 <code>AOT</code> 编译，Vue 的运行时体积可以进一步压缩，运行时效率    可以进一步提升。</li>
+<li>可以渲染到 <code>DOM</code> 以外的平台，实现 <code>SSR</code>，同时渲染这些高级特性，<code>weex</code> 等框架应用的就是这一特性。</li>
+</ol>
+<p>综上，<code>Virtual DOM</code> 在性能上的收益并不是最主要的，更重要的是它使得 <code>vue</code> 具备了现代框架应有的高级特性。</p>
+<h1 id="Vue-和-React-的技术选型"><a href="#Vue-和-React-的技术选型" class="headerlink" title="Vue 和 React 的技术选型"></a>Vue 和 React 的技术选型</h1><p>相同点：</p>
+<ol>
+<li>数据驱动页面，提供响应式的视图组件</li>
+<li>都有 <code>Virtual DOM</code>，组件化开发，实现了 <code>props</code> 传参进行父子组件之间传递数据，都实现了 <code>WebComponents</code> 规范</li>
+<li>数据流动单向，都支持服务器的渲染 <code>SSR</code></li>
+<li>都有支持 <code>Native</code> 的方法，React 有 <code>React native</code>，Vue 有 <code>Weex</code></li>
+</ol>
+<p>不同点：</p>
+<ol>
+<li>数据绑定：<ul>
+<li>Vue 实现了双向的数据绑定</li>
+<li>React 数据流动是单向的</li>
+</ul>
+</li>
+<li>数据渲染：<ul>
+<li>大规模的数据渲染时，React 更快</li>
+</ul>
+</li>
+<li>使用场景：<ul>
+<li>React 配合 Redux 架构适合大规模多人协作复杂项目，Vue 更适合小快项目</li>
+</ul>
+</li>
+<li>开发风格：<ul>
+<li>React 推荐做法 jsx + inline style 把 html 和 css 都写在 js 中</li>
+<li>Vue 采用 webpack + vue-loader 单文件组件格式。</li>
+</ul>
+</li>
+</ol>
+<h2 id="为什么-React-比-Vue-更适合大型应用？"><a href="#为什么-React-比-Vue-更适合大型应用？" class="headerlink" title="为什么 React 比 Vue 更适合大型应用？"></a>为什么 React 比 Vue 更适合大型应用？</h2><ol>
+<li>大型项目的庞大带来的是代码优化以及性能优化。</li>
+</ol>
+<ul>
+<li>React 提倡的更细粒度的封装，带来的组件的复用性提高。</li>
+<li>更高自由度的编写（几乎无 <code>api</code>）可以为手动优化性能带来更大的便利性</li>
+</ul>
+<ol start="2">
+<li>React 社区的活跃性</li>
+</ol>
+<ul>
+<li>这点会反复提及，因为这点更加重要</li>
+<li>社区提供了多样性的解决方案和更多的选择，这对于一个大型项目（大量的坑）来说也是至关重要的</li>
+</ul>
+<blockquote>
+<p>但是这些问题，经过时间的沉淀，Vue 终会解决，并且现在也不差。</p>
+</blockquote>
+<h1 id="nextTick"><a href="#nextTick" class="headerlink" title="nextTick"></a>nextTick</h1><blockquote>
+<p>nextTick 可以让我们在下次 <code>DOM</code> 更新循环结束后执行延迟回调，用于获得更新后得 <code>DOM</code></p>
+</blockquote>
+<p><code>nextTick</code> 主要使用了 宏任务 和 微任务。根据执行环境分别尝试采用。</p>
+<ul>
+<li><code>Promise</code></li>
+<li><code>MutationObserver</code>： 它会在指定的DOM发生变化时被调用</li>
+<li><code>setImmediate</code>：该方法用来把一些需要长时间运行的操作放在一个回调函数里，在浏览器完成后面的其他语句后，就立刻执行这个回调函数。</li>
+<li>如果以上都不行则采用 <code>setTimeout</code></li>
+</ul>
+<blockquote>
+<p>定义了一个异步方法，多次调用 <code>nextTick</code> 会将方法存入队列中，通过这个异步方法清空当前队列</p>
+</blockquote>
+<h2 id="Event-Loop"><a href="#Event-Loop" class="headerlink" title="Event Loop"></a>Event Loop</h2><h3 id="JS-中的-Event-Loop"><a href="#JS-中的-Event-Loop" class="headerlink" title="JS 中的 Event Loop"></a>JS 中的 Event Loop</h3><blockquote>
+<p>总所周知 <code>JS</code> 是门非阻塞单线程语言，因为在最初 <code>JS</code> 就是为了和浏览器交互而诞生的。如果 <code>JS</code> 是门多线程的语言，我们在多线程中处理 <code>DOM</code> 就可能发生问题（一个线程中新加节点，另一个线程中删除节点）</p>
+</blockquote>
+<p><code>JS</code> 在执行的过程中会产生执行环境，这些执行环境会被顺序的加入到执行栈中。如果遇到异步的代码，会被挂起并加入到 <code>Task</code>（有多种 <code>task</code>） 队列中。一旦执行栈为空，<code>Event Loop</code> 就会从 <code>Task</code> 队列中拿出需要执行的代码并放入执行栈中执行，所以本质上来说 <code>JS</code> 中的异步还是同步行为</p>
+<blockquote>
+<p>不同的任务源会被分配到不同的 <code>Task</code> 队列中，任务源可以分为 微任务（<code>microtask</code>） 和 宏任务（<code>macrotask</code>）。在 <code>ES6</code> 规范中，<code>microtask</code> 称为 <code>jobs</code>，<code>macrotask</code> 称为 <code>task</code></p>
+</blockquote>
+<p>简单的例子</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(<span class="string">'script start'</span>);</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>);</span><br><span class="line">}, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve</span>) =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'Promise'</span>)</span><br><span class="line">    resolve()</span><br><span class="line">}).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'promise1'</span>);</span><br><span class="line">}).then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'promise2'</span>);</span><br><span class="line">});</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">'script end'</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// script start -&gt; Promise -&gt; script end -&gt; promise1 -&gt; promise2 -&gt; setTimeout</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/152167171/image_5.png" alt="JS 执行过程"></p>
+<p>微任务：</p>
+<ul>
+<li><code>process.nextTick</code></li>
+<li><code>promise</code></li>
+<li><code>Object.observe</code></li>
+<li><code>MutationObserver</code></li>
+</ul>
+<p>宏任务：</p>
+<ul>
+<li><code>script</code></li>
+<li><code>setTimeout</code></li>
+<li><code>setInterval</code></li>
+<li><code>setImmediate</code></li>
+<li><code>I/O</code></li>
+<li><code>UI rendering</code></li>
+</ul>
+<blockquote>
+<p>宏任务中包括了 <code>script</code>，浏览器会先执行一个宏任务，接下来有异步代码的话就先执行微任务。</p>
+</blockquote>
+<h4 id="正确的一次-Event-Loop-顺序是这样的"><a href="#正确的一次-Event-Loop-顺序是这样的" class="headerlink" title="正确的一次 Event Loop 顺序是这样的"></a>正确的一次 <code>Event Loop</code> 顺序是这样的</h4><ul>
+<li>执行同步代码，这属于宏任务</li>
+<li>执行栈为空，查询是否有微任务需要执行</li>
+<li>执行所有微任务</li>
+<li>必要的话渲染 UI</li>
+<li>然后开始下一轮 <code>Event Loop</code>，执行宏任务中的异步代码</li>
+</ul>
+<blockquote>
+<p>通过上述的 <code>Event Loop</code> 顺序可知，如果宏任务中的异步代码有大量的计算并且需要操作 DOM 的话，为了更快的响应界面响应，我们可以把操作 <code>DOM</code> 放入微任务中</p>
+</blockquote>
+<h3 id="Node-中的-Event-Loop"><a href="#Node-中的-Event-Loop" class="headerlink" title="Node 中的 Event Loop"></a>Node 中的 Event Loop</h3><p><code>Node</code> 中的 <code>Evenet Loop</code> 和浏览器的不同。而是分为  <strong>6个阶段</strong>，它们会按照顺序反复运行</p>
+<figure class="highlight bash"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">   ┌───────────────────────┐</span><br><span class="line">┌─&gt;│        timers         │</span><br><span class="line">│  └──────────┬────────────┘</span><br><span class="line">│  ┌──────────┴────────────┐</span><br><span class="line">│  │     I/O callbacks     │</span><br><span class="line">│  └──────────┬────────────┘</span><br><span class="line">│  ┌──────────┴────────────┐</span><br><span class="line">│  │     idle, prepare     │</span><br><span class="line">│  └──────────┬────────────┘      ┌───────────────┐</span><br><span class="line">│  ┌──────────┴────────────┐      │   incoming:   │</span><br><span class="line">│  │         poll          │&lt;──connections───     │</span><br><span class="line">│  └──────────┬────────────┘      │   data, etc.  │</span><br><span class="line">│  ┌──────────┴────────────┐      └───────────────┘</span><br><span class="line">│  │        check          │</span><br><span class="line">│  └──────────┬────────────┘</span><br><span class="line">│  ┌──────────┴────────────┐</span><br><span class="line">└──┤    close callbacks    │</span><br><span class="line">   └───────────────────────┘</span><br></pre></td></tr></tbody></table></figure>
+
+
+
+<p>timers</p>
+<ul>
+<li><code>timers</code> 阶段会执行 <code>setTimeout</code> 和 <code>setInterval</code></li>
+<li>一个 <code>timer</code> 指定的时间并不是准确时间，而是在达到这个时间后尽快执行回调，可能会因为系统正在执行别的事务而延迟</li>
+</ul>
+<p>I/O</p>
+<ul>
+<li><code>I/O</code> 阶段会执行除了 <code>close</code> 事件、定时器和 <code>setImmediate</code> 的回调</li>
+</ul>
+<p>poll</p>
+<ul>
+<li><code>poll</code> 阶段很重要，这一阶段中，系统会做两件事<ul>
+<li>执行到点的定时器</li>
+<li>执行 <code>poll</code> 队列中的事件</li>
+</ul>
+</li>
+<li>并且当 <code>poll</code> 中没有定时器的情况下，会发生以下两件事<ol>
+<li>如果 <code>poll</code> 队列不为空，会遍历回调队列并同步执行，直到队列为空或者系统限制</li>
+<li>如果 <code>poll</code> 队列为空，会有两件事发生<ul>
+<li>如果有 <code>setImmediate</code> 需要执行，<code>poll</code> 阶段会停止并且进入到 <code>check</code> 阶段执行 <code>setImmediate</code></li>
+<li>如果没有 <code>setImmediate</code> 需要执行，会等待回调被加入到队列中并立即执行回调</li>
+<li>如果有别的定时器需要被执行，会回到 <code>timer</code> 阶段执行回调。</li>
+</ul>
+</li>
+</ol>
+</li>
+</ul>
+<p>check</p>
+<ul>
+<li><code>check</code> 阶段执行 <code>setImmediate</code></li>
+</ul>
+<p>close callbacks</p>
+<ul>
+<li><code>close callbacks</code> 阶段执行 <code>close</code> 事件</li>
+<li>并且在 <code>NodeJS</code> 中，有些情况下的定时器执行顺序是随机的</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setTimeout'</span>);</span><br><span class="line">}, <span class="number">0</span>);</span><br><span class="line">setImmediate(<span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'setImmediate'</span>);</span><br><span class="line">})</span><br><span class="line"><span class="comment">// 这里可能会输出 setTimeout，setImmediate</span></span><br><span class="line"><span class="comment">// 可能也会相反的输出，这取决于性能</span></span><br><span class="line"><span class="comment">// 因为可能进入 event loop 用了不到 1 毫秒，这时候会执行 setImmediate</span></span><br><span class="line"><span class="comment">// 否则会执行 setTimeout</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>上面介绍的都是 <code>macrotask</code> 的执行情况，<code>microtask</code> 会在以上每个阶段完成后立即执行</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>{</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'timer1'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'promise1'</span>)</span><br><span class="line">    })</span><br><span class="line">}, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">setTimeout</span>(<span class="function">()=&gt;</span>{</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'timer2'</span>)</span><br><span class="line"></span><br><span class="line">    <span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">'promise2'</span>)</span><br><span class="line">    })</span><br><span class="line">}, <span class="number">0</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 以上代码在浏览器和 node 中打印情况是不同的</span></span><br><span class="line"><span class="comment">// 浏览器中一定打印 timer1, promise1, timer2, promise2</span></span><br><span class="line"><span class="comment">// node 中可能打印 timer1, timer2, promise1, promise2</span></span><br><span class="line"><span class="comment">// 也可能打印 timer1, promise1, timer2, promise2</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>NodeJS</code> 中的 <code>process.nextTick</code> 会先于其他 <code>microtask</code> 执行</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">setTimeout</span>(<span class="function">() =&gt;</span> {</span><br><span class="line"> <span class="built_in">console</span>.log(<span class="string">"timer1"</span>);</span><br><span class="line"></span><br><span class="line"> <span class="built_in">Promise</span>.resolve().then(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>{</span><br><span class="line">   <span class="built_in">console</span>.log(<span class="string">"promise1"</span>);</span><br><span class="line"> });</span><br><span class="line">}, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">process.nextTick(<span class="function">() =&gt;</span> {</span><br><span class="line"> <span class="built_in">console</span>.log(<span class="string">"nextTick"</span>);</span><br><span class="line">});</span><br><span class="line"><span class="comment">// nextTick, timer1, promise1</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="生命周期"><a href="#生命周期" class="headerlink" title="生命周期"></a>生命周期</h1><p><img src="/posts/152167171/image_6.png" alt="Vue 生命周期解释图"></p>
+<p>文字解释版：</p>
+<p><em>init</em>：</p>
+<ul>
+<li><code>initLifecycle/Event</code>，往 <code>vm</code> 上挂载各种属性</li>
+<li><code>callHook: beforeCreated</code>: 实例刚创建</li>
+<li><code>initInjection/initState</code>: 初始化注入和 <code>data</code> 响应性</li>
+<li><code>created</code>: 创建完成，属性已经绑定， 但还未生成真实 <code>dom</code></li>
+<li>进行元素的挂载： <code>$el / vm.$mount()</code></li>
+<li>是否有 <code>template</code>: 解析成 <code>render function</code><ul>
+<li><code>*.vue</code> 文件: <code>vue-loader</code> 会将 <code>&lt;template&gt;</code> 编译成 <code>render function</code></li>
+</ul>
+</li>
+<li><code>beforeMount</code>: 模板编译/挂载之前</li>
+<li>执行 <code>render function</code>，生成真实的 <code>dom</code>，并替换到 <code>dom tree</code> 中</li>
+<li><code>mounted</code>: 组件已挂载</li>
+</ul>
+<p><em>update</em>：</p>
+<ul>
+<li>执行 <code>diff</code> 算法，比对改变是否需要触发 UI 更新</li>
+<li><code>flushScheduleQueue</code></li>
+<li><code>watcher.before</code>: 触发 <code>beforeUpdate</code> 钩子 - <code>watcher.run()</code>: 执行 <code>watcher</code> 中的 <code>notify</code>，通知所有依赖项更新 UI</li>
+<li>触发 <code>updated</code> 钩子: 组件已更新</li>
+<li><code>actived / deactivated(keep-alive)</code>: 不销毁，缓存，组件激活与失活</li>
+<li><code>destroy</code><ul>
+<li><code>beforeDestroy</code>: 销毁开始</li>
+<li>销毁自身且递归销毁子组件以及事件监听<ul>
+<li><code>remove()</code>: 删除节点</li>
+<li><code>watcher.teardown()</code>: 清空依赖</li>
+<li><code>vm.$off()</code>: 解绑监听</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>destroyed</code>: 完成后触发钩子</li>
+</ul>
+<h1 id="vue-router"><a href="#vue-router" class="headerlink" title="vue-router"></a>vue-router</h1><p>mode：</p>
+<ul>
+<li><code>hash</code><ul>
+<li>模式：在浏览器中符号 <code>#</code>，以及 <code>#</code> 后面的字符称为 <code>hash</code>，用 <code>window.location.hash</code> 读取。</li>
+<li>特点：<code>hash</code> 虽然在 <code>URL</code> 中，但是不会被包括在 <code>HTTP</code> 请求中；用来指导浏览器动作，对服务端安全无用，<code>hash</code> 不会重加载页面。</li>
+<li>监听：<code>hashchange</code> 事件</li>
+</ul>
+</li>
+<li><code>history</code><ul>
+<li>模式：采用 <code>HTML5</code> 的新特性；提供了两个新方法：<code>pushState()</code>，<code>replaceState()</code> 可以对浏览器历史记录栈进行修改。</li>
+<li>监听：<code>popState</code> 事件</li>
+</ul>
+</li>
+</ul>
+<p>导航守卫：</p>
+<ul>
+<li>全局守卫<ul>
+<li><code>router.beforeEach</code>：全局前置守卫，进入路由之前</li>
+<li><code>router.beforeResolve</code>：全局解析守卫(2.5.0+)在 <code>beforeRouteEnter</code> 调用之后调用</li>
+<li><code>router.afterEach</code>：全局后置守卫，进入路由之后</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// main.js 入口文件</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">'./router'</span>; <span class="comment">// 引入路由</span></span><br><span class="line">router.beforeEach(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> { </span><br><span class="line">  next();</span><br><span class="line">});</span><br><span class="line">router.beforeResolve(<span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> {</span><br><span class="line">  next();</span><br><span class="line">});</span><br><span class="line">router.afterEach(<span class="function">(<span class="params">to, <span class="keyword">from</span></span>) =&gt;</span> {</span><br><span class="line">  <span class="built_in">console</span>.log(<span class="string">'afterEach 全局后置钩子'</span>);</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li>路由独享守卫</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> router = <span class="keyword">new</span> VueRouter({</span><br><span class="line">  <span class="attr">routes</span>: [</span><br><span class="line">    {</span><br><span class="line">      <span class="attr">path</span>: <span class="string">'/foo'</span>,</span><br><span class="line">      <span class="attr">component</span>: Foo,</span><br><span class="line">      <span class="attr">beforeEnter</span>: <span class="function">(<span class="params">to, <span class="keyword">from</span>, next</span>) =&gt;</span> { </span><br><span class="line">        <span class="comment">// 参数用法什么的都一样,调用顺序在全局前置守卫后面，所以不会被全局守卫覆盖</span></span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">      }</span><br><span class="line">    }</span><br><span class="line">  ]</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<ul>
+<li><strong>路由组件</strong>内的守卫<ul>
+<li><code>beforeRouteEnter</code>：进入路由前，在路由独享守卫之后被调用。<strong>不能获取组件实例 <code>this</code>，因为此时实例还未创建。</strong></li>
+<li><code>beforeRouteUpdate</code>(2.2)：路由复用同一个组件时，在当前路由改变，但是该组件被复用时调用。<strong>可以访问组件实例 <code>this</code></strong></li>
+<li><code>beforeRouteLeave</code>：离开当前路由时，导航离开组件的对应路由时调用，<strong>可以访问组件实例 <code>this</code></strong></li>
+</ul>
+</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> Foo = {</span><br><span class="line">  <span class="attr">template</span>: <span class="string">`...`</span>,</span><br><span class="line">  beforeRouteEnter (to, <span class="keyword">from</span>, next) {</span><br><span class="line">    <span class="comment">// 在渲染该组件的对应路由被 confirm 前调用</span></span><br><span class="line">    <span class="comment">// 不！能！获取组件实例 `this`</span></span><br><span class="line">    <span class="comment">// 因为当守卫执行前，组件实例还没被创建</span></span><br><span class="line">  },</span><br><span class="line">  beforeRouteUpdate (to, <span class="keyword">from</span>, next) {</span><br><span class="line">    <span class="comment">// 在当前路由改变，但是该组件被复用时调用</span></span><br><span class="line">    <span class="comment">// 举例来说，对于一个带有动态参数的路径 /foo/:id，在 /foo/1 和 /foo/2 之间跳转的时候，</span></span><br><span class="line">    <span class="comment">// 由于会渲染同样的 Foo 组件，因此组件实例会被复用。而这个钩子就会在这个情况下被调用。</span></span><br><span class="line">    <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">  },</span><br><span class="line">  beforeRouteLeave (to, <span class="keyword">from</span>, next) {</span><br><span class="line">    <span class="comment">// 导航离开该组件的对应路由时调用，我们用它来禁止用户离开</span></span><br><span class="line">    <span class="comment">// 可以访问组件实例 `this`</span></span><br><span class="line">    <span class="comment">// 比如还未保存草稿，或者在用户离开前，</span></span><br><span class="line">    <span class="comment">// 将setInterval销毁，防止离开之后，定时器还在调用。</span></span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="vue-router-源码实现"><a href="#vue-router-源码实现" class="headerlink" title="vue-router 源码实现"></a><code>vue-router</code> 源码实现</h2><ul>
+<li>作为一个插件存在:实现 <code>VueRouter</code> 类和 <code>install</code> 方法</li>
+<li>实现两个全局组件: <code>router-view</code> 用于显示匹配组件内容，<code>router-link</code> 用于跳转</li>
+<li>监控 <code>url</code> 变化:监听 <code>hashchange</code> 或 <code>popstate</code> 事件</li>
+<li>响应最新 <code>url</code>:创建一个响应式的属性 <code>current</code>，当它改变时获取对应组件并显示</li>
+</ul>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">VueRouter</span> </span>{</span><br><span class="line">  <span class="comment">// 核心任务：</span></span><br><span class="line">  <span class="comment">// 1.监听url变化</span></span><br><span class="line">  <span class="function"><span class="title">constructor</span>(<span class="params">options</span>)</span> {</span><br><span class="line">    <span class="built_in">this</span>.$options = options;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 缓存path和route映射关系</span></span><br><span class="line">    <span class="comment">// 这样找组件更快</span></span><br><span class="line">    <span class="built_in">this</span>.routeMap = {}</span><br><span class="line">    <span class="built_in">this</span>.$options.routes.forEach(<span class="function"><span class="params">route</span> =&gt;</span> {</span><br><span class="line">      <span class="built_in">this</span>.routeMap[route.path] = route</span><br><span class="line">    })</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 数据响应式</span></span><br><span class="line">    <span class="comment">// 定义一个响应式的current，则如果他变了，那么使用它的组件会rerender</span></span><br><span class="line">    Vue.util.defineReactive(<span class="built_in">this</span>, <span class="string">'current'</span>, <span class="string">''</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 请确保onHashChange中this指向当前实例</span></span><br><span class="line">    <span class="built_in">window</span>.addEventListener(<span class="string">'hashchange'</span>, <span class="built_in">this</span>.onHashChange.bind(<span class="built_in">this</span>))</span><br><span class="line">    <span class="built_in">window</span>.addEventListener(<span class="string">'load'</span>, <span class="built_in">this</span>.onHashChange.bind(<span class="built_in">this</span>))</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="title">onHashChange</span>(<span class="params"></span>)</span> {</span><br><span class="line">    <span class="comment">// console.log(window.location.hash);</span></span><br><span class="line">    <span class="built_in">this</span>.current = <span class="built_in">window</span>.location.hash.slice(<span class="number">1</span>) || <span class="string">'/'</span></span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 插件需要实现install方法</span></span><br><span class="line"><span class="comment">// 接收一个参数，Vue构造函数，主要用于数据响应式</span></span><br><span class="line">VueRouter.install = <span class="function"><span class="keyword">function</span> (<span class="params">_Vue</span>) </span>{</span><br><span class="line">  <span class="comment">// 保存Vue构造函数在VueRouter中使用</span></span><br><span class="line">  Vue = _Vue</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 任务1：使用混入来做router挂载这件事情</span></span><br><span class="line">  Vue.mixin({</span><br><span class="line">    <span class="function"><span class="title">beforeCreate</span>(<span class="params"></span>)</span> {</span><br><span class="line">      <span class="comment">// 只有根实例才有router选项</span></span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">this</span>.$options.router) {</span><br><span class="line">        Vue.prototype.$router = <span class="built_in">this</span>.$options.router</span><br><span class="line">      }</span><br><span class="line"></span><br><span class="line">    }</span><br><span class="line">  })</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 任务2：实现两个全局组件</span></span><br><span class="line">  <span class="comment">// router-link: 生成一个a标签，在url后面添加#</span></span><br><span class="line">  <span class="comment">// &lt;a href="#/about"&gt;aaaa&lt;/a&gt;</span></span><br><span class="line">  <span class="comment">// &lt;router-link to="/about"&gt;aaa&lt;/router-link&gt;</span></span><br><span class="line">  Vue.component(<span class="string">'router-link'</span>, {</span><br><span class="line">    <span class="attr">props</span>: {</span><br><span class="line">      <span class="attr">to</span>: {</span><br><span class="line">        <span class="attr">type</span>: <span class="built_in">String</span>,</span><br><span class="line">        <span class="attr">required</span>: <span class="literal">true</span></span><br><span class="line">      },</span><br><span class="line">    },</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params">h</span>)</span> {</span><br><span class="line">      <span class="comment">// h(tag, props, children)</span></span><br><span class="line">      <span class="keyword">return</span> h(<span class="string">'a'</span>,</span><br><span class="line">        { <span class="attr">attrs</span>: { <span class="attr">href</span>: <span class="string">'#'</span> + <span class="built_in">this</span>.to } },</span><br><span class="line">        <span class="built_in">this</span>.$slots.default</span><br><span class="line">      )</span><br><span class="line">      <span class="comment">// 使用jsx</span></span><br><span class="line">      <span class="comment">// return &lt;a href={'#'+this.to}&gt;{this.$slots.default}&lt;/a&gt;</span></span><br><span class="line">    }</span><br><span class="line">  })</span><br><span class="line">  Vue.component(<span class="string">'router-view'</span>, {</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params">h</span>)</span> {</span><br><span class="line">      <span class="comment">// 根据current获取组件并render</span></span><br><span class="line">      <span class="comment">// current怎么获取?</span></span><br><span class="line">      <span class="comment">// console.log('render',this.$router.current);</span></span><br><span class="line">      <span class="comment">// 获取要渲染的组件</span></span><br><span class="line">      <span class="keyword">let</span> component = <span class="literal">null</span></span><br><span class="line">      <span class="keyword">const</span> { routeMap, current } = <span class="built_in">this</span>.$router</span><br><span class="line">      <span class="keyword">if</span> (routeMap[current]) {</span><br><span class="line">        component = routeMap[current].component</span><br><span class="line">      }</span><br><span class="line">      <span class="keyword">return</span> h(component)</span><br><span class="line">    }</span><br><span class="line">  })</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> VueRouter</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="Vue3-x-带来了哪些新特性-亮点"><a href="#Vue3-x-带来了哪些新特性-亮点" class="headerlink" title="Vue3.x 带来了哪些新特性/亮点"></a>Vue3.x 带来了哪些新特性/亮点</h1><h2 id="压缩包体积更小"><a href="#压缩包体积更小" class="headerlink" title="压缩包体积更小"></a>压缩包体积更小</h2><p>在 Vue3.x 中，实现了将大多数全局 API 和内部帮助程序移至 ES 模块导出来。这使得现代的打包工具可以静态分析模块依赖性并删除未使用的导出相关的代码。模板编译器还会生成友好的 Tree-shaking 代码，在模板中实际使用了该功能时才导入该功能的帮助程序。<br>但是，框架的某些部分永远不会被 Tree-shaking，因为它们对于任何类型的应用都是必不可少的。将这些必不可少的部分的度量标准成为基准尺寸。尽管新增了许多新功能，但 Vue3.x 的基准大小压缩后约为 <code>10kb</code>，还不到 Vue2.x(约 <code>22kb</code>) 的一半</p>
+<h2 id="Object-defineProperty-gt-Proxy"><a href="#Object-defineProperty-gt-Proxy" class="headerlink" title="Object.defineProperty -> Proxy"></a>Object.defineProperty -&gt; Proxy</h2><ul>
+<li><code>Object.defineProperty</code> 是一个相对昂贵的操作，因为它直接操作对象的属性，颗粒度比较小。将它替换成 ES6 的 <code>Proxy</code>，在目标对象之上架上一层拦截，代理的是对象而不再是对象的属性。这样可以将原本对对象属性的操作变为对整个对象的操作，颗粒度变大。</li>
+<li><code>javascript</code> 引擎在解析的时候希望对象的结构越稳定越好，如果对象一直在变，可优化性降低，<code>Proxy</code> 不需要对原始对象做太多操作。</li>
+</ul>
+<h3 id="Proxy-相比于-Object-defineProperty-的优势"><a href="#Proxy-相比于-Object-defineProperty-的优势" class="headerlink" title="Proxy 相比于 Object.defineProperty 的优势"></a>Proxy 相比于 Object.defineProperty 的优势</h3><p><code>Object.defineProperty</code> 的问题主要有三个：</p>
+<ol>
+<li>不能监听数组的变化</li>
+<li>必须遍历对象的每个属性</li>
+<li>必须深层遍历嵌套的对象</li>
+</ol>
+<p><code>Proxy</code> 在 ES2015(ES6) 规范中被正式加入，它有以下几个特点</p>
+<ol>
+<li>针对对象：针对整个对象，而不是对象的某个属性，所以也就不需要对 <code>keys</code> 进行遍历</li>
+<li>原生支持数组：<code>Proxy</code> 不需要对数组的方法进行重载，省去了众多 hack，减少代码量等于减少了维护成本，而且标准就是最好的。</li>
+</ol>
+<p>除了上述两点之外，<code>Proxy</code> 还拥有以下优势：</p>
+<ol>
+<li><code>Proxy</code> 的第二个参数有 13 种拦截方法，这比起 <code>Object.defineProperty</code> 要更加丰富</li>
+<li><code>Proxy</code> 作为新标准受到浏览器厂商的重点关注和性能优化，相比之下 <code>Object.defineProperty</code> 是一个已有的老方法。</li>
+</ol>
+<h2 id="Virtual-DOM-重构"><a href="#Virtual-DOM-重构" class="headerlink" title="Virtual DOM 重构"></a>Virtual DOM 重构</h2><blockquote>
+<p>vdom 的本质是一个抽象层，用 javascript 描述界面渲染成什么样子。React 用 jsx，没办法检测出可以优化的动态代码，所以做时间分片。Vue 中足够快的话可以不用时间分片<br>React 做时间分片的原因是：当 js 线程占着主线程时，渲染线程就无法工作，如果时间超过 16ms 就会给用户卡顿的感觉，所以采用时间分片，这也是为什么 React15 -&gt; React16 会将原来的 <code>Stack Reconciler</code> 重构为 <code>Fiber Reconciler</code></p>
+</blockquote>
+<h3 id="传统-vdom-的性能瓶颈"><a href="#传统-vdom-的性能瓶颈" class="headerlink" title="传统 vdom 的性能瓶颈"></a>传统 vdom 的性能瓶颈</h3><ul>
+<li>虽然 Vue 能够保证触发更新的组件最小化，但在单个组件内部依然需要便利该组件的整个 vdom 树。</li>
+<li>因此，传统的 vdom 的性能跟模板的大小正相关，跟动态节点的数量无关。在一些组件整个模板内只有少量动态节点的情况下，这些遍历都是性能的浪费。</li>
+<li>JSX 和手写的 render function 是完全动态的，过度的灵活性导致运行时可以用于优化的信息不足</li>
+</ul>
+<h3 id="Q-那为什么不直接抛弃-vdom-呢"><a href="#Q-那为什么不直接抛弃-vdom-呢" class="headerlink" title="Q: 那为什么不直接抛弃 vdom 呢?"></a>Q: 那为什么不直接抛弃 vdom 呢?</h3><p>A:</p>
+<ol>
+<li>高级场景下手写 <code>render function</code> 获得更强的表达力</li>
+<li>生成的代码更简洁</li>
+<li>兼容 Vue2.x</li>
+</ol>
+<blockquote>
+<p>虚拟 DOM(<code>Virtual DOM</code>)（简称：vdom） 本质上是 JS 和 DOM 之间的一个映射缓存，它在形态上表现为一个能够描述 DOM 结构及其属性信息的 JS 对象</p>
+</blockquote>
+<p>就 vdom 而言，需要把握住两个点：</p>
+<ol>
+<li>vdom 是 JS 对象</li>
+<li>vdom 是真实 DOM 的描述</li>
+</ol>
+<h4 id="vdom-如何解决问题"><a href="#vdom-如何解决问题" class="headerlink" title="vdom 如何解决问题"></a>vdom 如何解决问题</h4><p><img src="/posts/152167171/image_7.png" alt="Virtual DOM 的作用"></p>
+<blockquote>
+<p>注意图中的绿色加粗 **<font color="#30C7A1">模板</font>**，这是因为 vdom 在实现上并不总是借助模板。比如 React 就使用了 JSX，JSX 本质不是模板，而是一种使用体验和模板相似的 JS 语法糖。</p>
+</blockquote>
+<p>区别就在于多出了一层 vdom 作为缓冲层。这个缓冲层带来的利好是：当 DOM 操作（渲染更新）比较频繁时，它会先将前后两次的 vdom 树进行对比，定位出具体需要更新的部分，生成一个“补丁集”，最后只把“补丁”打在需要更新的那部分真实 DOM 上，实现精准的“差量更新”。这个过程对应的 vdom 工作流如下图所示：</p>
+<p><img src="/posts/152167171/image_8.png" alt="vdom 工作流程"></p>
+<blockquote>
+<p>注：图中的 <code>diff</code> 和 <code>patch</code> 其实都是函数名，这些函数取材于一个独立的 vdom 库</p>
+</blockquote>
+<h4 id="选用-vdom，真的是为了更好的性能吗？"><a href="#选用-vdom，真的是为了更好的性能吗？" class="headerlink" title="选用 vdom，真的是为了更好的性能吗？"></a>选用 vdom，真的是为了更好的性能吗？</h4><p><a target="_blank" rel="noopener" href="http://interview.poetries.top/principle-docs/react/15-%E7%9C%9F%E6%AD%A3%E7%90%86%E8%A7%A3%E8%99%9A%E6%8B%9FDOM.html#%E5%BF%AB%E9%80%9F%E6%90%9E%E5%AE%9A%E8%99%9A%E6%8B%9F-dom-%E7%9A%84%E4%B8%A4%E4%B8%AA-%E5%A4%A7%E9%97%AE%E9%A2%98">更详细的信息在这里</a></p>
+<p>以下只是对信息的摘取</p>
+<blockquote>
+<p>在整个 DOM 操作的演化过程中，主要矛盾并不在于性能，而在于开发者写得爽不爽，在于研发体验/研发效率。<code>虚拟 DOM 不是别的，正是前端开发们为了追求更好的研发体验和研发效率而创造出来的高阶产物</code>。</p>
+</blockquote>
+<p>vdom 并不一定会带来更好的性能，<code>vdom 的优越之处在于，它能够在提供更爽、更高效的研发模式（也就是函数式的 UI 编程方式）的同时，仍然保持一个还不错的性能</code></p>
+<p>总归 <strong>虚拟 DOM 的价值不在性能，而在别处</strong></p>
+<p>虚拟 DOM 解决的关键问题有以下两个：</p>
+<ol>
+<li><strong>研发体验/研发效率的问题</strong>：虚拟 DOM 的出现，为数据驱动视图这一思想提供了高度可用的载体，使得前端开发能够基于函数式 UI 的编程方式实现高效的声明式编程。</li>
+<li><strong>跨平台的问题</strong>：虚拟 DOM 是对真实渲染内容的一层抽象。若没有这一层抽象，那么视图层将和渲染平台紧密耦合在一起，为了描述同样的视图内容，你可能要分别在 Web 端和 Native 端写完全不同的两套甚至多套代码。</li>
+</ol>
+<p>除了差量更新以外，“批量更新”也是 vdom 在性能方面所做的一个重要努力：“批量更新”在通用虚拟 DOM 库里是由 <code>batch</code> 函数来处理的。在差量更新速度非常快的情况下（比如极短的时间里多次操作同一个 DOM），用户实际上只能看到最后一次更新的效果。这种场景下，前面几次的更新动作虽然意义不大，但都会触发重渲染流程，带来大量不必要的高耗能操作</p>
+<p>这时就需要请 <code>batch</code> 来帮忙了，<code>batch</code> 的作用是缓冲每次生成的补丁集，它会把收集到的多个补丁集暂存到队列中，再将最终的结果交给渲染函数，最终实现集中化的 DOM 批量更新</p>
+<h2 id="diff-算法的优化"><a href="#diff-算法的优化" class="headerlink" title="diff 算法的优化"></a>diff 算法的优化</h2><p>Vue2.x 中的 vdom 是全量的对比（每个节点不论写死还是动态的都会一层一层比较，这就浪费了大部分时间在对比静态节点上）</p>
+<p>Vue3.x 新增了动态标记（<code>patch flag</code>），与上次虚拟节点对比时，只对比带有 <code>patch flag</code> 的节点（动态数据所在的节点）；并可通过 <code>flag</code> 信息知道当前节点要对比的具体内容。</p>
+<p>vue 的特点是底层为 Virtual DOM，上层包含有大量静态信息的模版。为了兼容手写 <code>render function</code>，最大化利用模版静态信息，vue3.x 采用了<strong>动静结合的解决方案</strong>，将 vdom 的操作颗粒度变小，每次触发更新不再以组件为单位进行遍历，主要更改如下</p>
+<ul>
+<li>Vue3.x 提出动静结合的 <code>DOM diff</code> 思想，动静结合的 <code>DOM diff</code> 其实是在<strong>预编译阶段进行了优化</strong>。之所以能够做到预编译优化，是因为 <code>Vue core</code> 可以静态分析 <code>template</code>，在解析模版时，整个 <code>parse</code> 的过程是利用正则表达式顺序解析模板，当解析到开始标签、闭合标签和文本的时候都会分别执行对应的回调函数，来达到构造 <code>AST</code> 树的目的。</li>
+<li>借助预编译过程，Vue 可以做到的预编译优化就很强大了。比如在预编译时标记出模版中可能变化的组件节点，再次进行渲染前 <code>diff</code> 时就可以跳过“永远不会变化的节点”，而只需要对比“可能会变化的动态节点”。<strong>这也就是动静结合的 <code>DOM diff</code> 将 <code>diff</code> 成本与模版大小正相关优化到与动态节点正相关的理论依据</strong>。</li>
+</ul>
+<h3 id="Q-预编译是什么"><a href="#Q-预编译是什么" class="headerlink" title="Q: 预编译是什么"></a>Q: 预编译是什么</h3><p>A:<br>对于 Vue 组件来说，模板编译只会在组件实例化的时候编译一次，生成渲染函数之后在也不会进行编译。因此，编译对组件的 runtime 是一种性能损耗。</p>
+<p>而模板编译的目的仅仅是将 <code>template</code> 转化为 <code>render function</code>，这个过程，正好可以在项目构建的过程中完成，这样可以让实际组件在 runtime 时直接跳过模板渲染，进而提升性能，这个在<strong>项目构建的编译 <code>template</code> 的过程，就是预编译</strong>。</p>
+<h2 id="update-性能提高"><a href="#update-性能提高" class="headerlink" title="update 性能提高"></a>update 性能提高</h2><h3 id="hoistStatic-静态提升"><a href="#hoistStatic-静态提升" class="headerlink" title="hoistStatic 静态提升"></a>hoistStatic 静态提升</h3><p>Vue2.x 无论元素是否参与更新，每次都会重新创建然后再渲染<br>Vue3.x 对于不参与更新的元素，会进行静态提升，只会被创建一次，在渲染时直接复用即可</p>
+<p>例如：下面我们利用 Vue3.x Template Explorer 来直观感受一下：</p>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>共创1<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>共创2<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>{{name}}<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>静态提升前</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">...</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        _openBlock(),</span><br><span class="line">        _createBlock(<span class="string">'div'</span>, <span class="literal">null</span>, [</span><br><span class="line">            _createVNode(<span class="string">'div'</span>, <span class="literal">null</span>, <span class="string">'共创1'</span>),</span><br><span class="line">            _createVNode(<span class="string">'div'</span>, <span class="literal">null</span>, <span class="string">'共创2'</span>),</span><br><span class="line">            _createVNode(</span><br><span class="line">                <span class="string">'div'</span>,</span><br><span class="line">                <span class="literal">null</span>,</span><br><span class="line">                _toDisplayString(_ctx.name),</span><br><span class="line">                <span class="number">1</span> <span class="comment">/* TEXT */</span></span><br><span class="line">            ),</span><br><span class="line">        ])</span><br><span class="line">    )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>静态提升之后</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> _hoisted_1 = <span class="comment">/*#__PURE__*/</span> _createVNode(</span><br><span class="line">    <span class="string">'div'</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">'共创1'</span>,</span><br><span class="line">    -<span class="number">1</span> <span class="comment">/* HOISTED */</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">const</span> _hoisted_2 = <span class="comment">/*#__PURE__*/</span> _createVNode(</span><br><span class="line">    <span class="string">'div'</span>,</span><br><span class="line">    <span class="literal">null</span>,</span><br><span class="line">    <span class="string">'共创2'</span>,</span><br><span class="line">    -<span class="number">1</span> <span class="comment">/* HOISTED */</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">...</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        _openBlock(),</span><br><span class="line">        _createBlock(<span class="string">'div'</span>, <span class="literal">null</span>, [</span><br><span class="line">            _hoisted_1,</span><br><span class="line">            _hoisted_2,</span><br><span class="line">            _createVNode(</span><br><span class="line">                <span class="string">'div'</span>,</span><br><span class="line">                <span class="literal">null</span>,</span><br><span class="line">                _toDisplayString(_ctx.name),</span><br><span class="line">                <span class="number">1</span> <span class="comment">/* TEXT */</span></span><br><span class="line">            ),</span><br><span class="line">        ])</span><br><span class="line">    )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>从以上代码中我们可以看出，<code>_hoisted_1</code> 和 <code>_hoisted_2</code> 两个方法被提升到了渲染函数 <code>render</code> 之外，也就是我们说的静态提升。通过静态提升可以避免每次渲染的时候都要重新创建这些对象，从而大大提高了渲染效率。</p>
+<h3 id="cacheHandlers-事件侦听器缓存"><a href="#cacheHandlers-事件侦听器缓存" class="headerlink" title="cacheHandlers 事件侦听器缓存"></a>cacheHandlers 事件侦听器缓存</h3><p>Vue2.x 中，绑定事件每次触发都要重新生成全新的 function 去更新，cacheHandlers 是 Vue3.x 中提供的事件缓存对象，当 cacheHandlers 开启，会自动生成一个内联函数，同时生成一个静态节点。当事件再次触发时，只需从缓存中调用即可，无需再次更新。<br>默认情况下onClick会被视为动态绑定，所以每次都会追踪它的变化，但是同一个函数没必要追踪变化，直接缓存起来复用即可。</p>
+<p>例如：下面我们同样是通过 Vue 3 Template Explorer，来看一下事件监听器缓存的作用：</p>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span> @<span class="attr">click</span>=<span class="string">"todo"</span>&gt;</span>做点有趣的事<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>该段 html 经过编译后变成我们下面的结构(未开启事件监听缓存)：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">...</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (_openBlock(),_createBlock(<span class="string">'div'</span>, <span class="literal">null</span>, [</span><br><span class="line">            _createVNode(<span class="string">'div'</span>,{ <span class="attr">onClick</span>: _ctx.todo}, <span class="string">'做点有趣的事'</span>, <span class="number">8</span> <span class="comment">/* PROPS */</span>,</span><br><span class="line">                [<span class="string">'onClick'</span>]),</span><br><span class="line">        ])</span><br><span class="line">    )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>当我们开启事件监听器缓存后：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">render</span>(<span class="params">...</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> (_openBlock(),_createBlock(<span class="string">'div'</span>, <span class="literal">null</span>, [</span><br><span class="line">            _createVNode(<span class="string">'div'</span>,{</span><br><span class="line">                    <span class="attr">onClick</span>:    <span class="comment">//开启监听后</span></span><br><span class="line">                        _cache[<span class="number">1</span>] || (_cache[<span class="number">1</span>] = <span class="function">(<span class="params">...args</span>) =&gt;</span>_ctx.todo(...args)),</span><br><span class="line">                },<span class="string">'做点有趣的事'</span>),</span><br><span class="line">        ])</span><br><span class="line">    )</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>我们可以对比开启事件监听缓存前后的代码，转换之后的代码, 大家可能还看不懂, 但是不要紧，我们只需要观察有没有静态标记即可，在 Vue3.x 的 diff 算法中, 只有有静态标记的才会进行比较, 才会进行追踪。</p>
+<h3 id="SSR-渲染"><a href="#SSR-渲染" class="headerlink" title="SSR 渲染"></a>SSR 渲染</h3><p>Vue2.x 中也是有 SSR 渲染的，但是 Vue3.x 中的 SSR 渲染相对于 Vue2 来说，性能方面也有对应的提升。</p>
+<p>当存在大量静态内容时，这些内容会被当作纯字符串推进一个 buffer 里面，即使存在动态的绑定，会通过模版插值潜入进去。这样会比通过虚拟 dmo 来渲染的快上很多。</p>
+<p>当静态内容大到一个量级的时候，会用_createStaticVNode 方法在客户端去生成一个 static node，这些静态 node，会被直接 innerHtml，就不需要再创建对象，然后根据对象渲染。</p>
+<h2 id="按需编译，体积比-Vue2-x-更小（Tree-shaking-support）"><a href="#按需编译，体积比-Vue2-x-更小（Tree-shaking-support）" class="headerlink" title="按需编译，体积比 Vue2.x 更小（Tree-shaking support）"></a>按需编译，体积比 Vue2.x 更小（Tree-shaking support）</h2><p>在 Vue 3 中，通过<strong>将大多数全局 API 和内部帮助程序移至 ES 模块导出来</strong>，实现了这一目标。这使现代的打包工具可以静态分析模块依赖性并删除未使用的导出相关的代码。模板编译器还会生成友好的 Tree-shaking 代码，在模板中实际使用了该功能时才导入该功能的帮助程序。<br>框架的某些部分永远不会 Tree-shaking，因为它们对于任何类型的应用都是必不可少的。我们将这些必不可少的部分的度量标准称为基准尺寸。尽管增加了许多新功能，但 Vue 3 的基准大小压缩后约为 10 KB，还不到 Vue 2 (运行时大小压缩为 23 KB) 的一半。</p>
+<h2 id="Compostion-API-组合API-注入API"><a href="#Compostion-API-组合API-注入API" class="headerlink" title="Compostion API: 组合API/注入API"></a>Compostion API: 组合API/注入API</h2><blockquote>
+<p>Vue2.x 中，我们一般会采用 mixin 来复用逻辑代码，用倒是挺好用的，不过也存在一些问题：<strong>例如代码来源不清晰、方法属性等冲突</strong>。基于此在 Vue3.x 中引入了 Composition API（组合API），<strong>使用纯函数分隔复用代码</strong>。和 React 中的 hooks 的概念很相似。</p>
+</blockquote>
+<p>优点：</p>
+<ul>
+<li>更好的逻辑复用和代码组织</li>
+<li>更好的类型推导</li>
+</ul>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>X: {{ x }}<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>Y: {{ y }}<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> { defineComponent, onMounted, onUnmounted, ref } <span class="keyword">from</span> <span class="string">"vue"</span>;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">const</span> useMouseMove = <span class="function">() =&gt;</span> {</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> x = ref(<span class="number">0</span>);</span></span><br><span class="line"><span class="javascript">    <span class="keyword">const</span> y = ref(<span class="number">0</span>);</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="keyword">function</span> <span class="title">move</span>(<span class="params">e</span>) </span>{</span></span><br><span class="line"><span class="javascript">        x.value = e.clientX;</span></span><br><span class="line"><span class="javascript">        y.value = e.clientY;</span></span><br><span class="line"><span class="javascript">    }</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    onMounted(<span class="function">() =&gt;</span> {</span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.addEventListener(<span class="string">"mousemove"</span>, move);</span></span><br><span class="line"><span class="javascript">    });</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    onUnmounted(<span class="function">() =&gt;</span> {</span></span><br><span class="line"><span class="javascript">        <span class="built_in">window</span>.removeEventListener(<span class="string">"mousemove"</span>, move);</span></span><br><span class="line"><span class="javascript">    });</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">    <span class="keyword">return</span> { x, y };</span></span><br><span class="line"><span class="javascript">};</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent({</span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> {</span></span><br><span class="line"><span class="javascript">        <span class="keyword">const</span> { x, y } = useMouseMove();</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript">        <span class="keyword">return</span> { x, y };</span></span><br><span class="line"><span class="javascript">    }</span></span><br><span class="line"><span class="javascript">});</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>compositon api 提供了以下几个函数：</p>
+<ul>
+<li><code>setup</code></li>
+<li><code>ref</code></li>
+<li><code>reactive</code></li>
+<li><code>watchEffect</code></li>
+<li><code>watch</code></li>
+<li><code>computed</code></li>
+<li><code>toRefs</code></li>
+<li>生命周期的 <code>hooks</code></li>
+</ul>
+<h3 id="都说-Composition-API-与-React-Hook-很像，说说区别"><a href="#都说-Composition-API-与-React-Hook-很像，说说区别" class="headerlink" title="都说 Composition API 与 React Hook 很像，说说区别"></a>都说 Composition API 与 React Hook 很像，说说区别</h3><p>从 <code>React Hook</code> 的实现角度看，<code>React Hook</code> 是根据 <code>useState</code> 调用的顺序来确定下一次重渲染时的 <code>state</code> 是来源于哪个 <code>useState</code>，所以出现了以下限制</p>
+<ul>
+<li>不能在循环、条件、嵌套函数中调用Hook</li>
+<li>必须确保总是在你的 React 函数的顶层调用 Hook</li>
+<li><code>useEffect、useMemo</code> 等函数必须手动确定依赖关系</li>
+</ul>
+<p>而 <code>Composition API</code> 是基于 Vue 的响应式系统实现的，与 <code>React Hook</code> 的相比</p>
+<ul>
+<li>声明在 <code>setup</code> 函数内，一次组件实例化只调用一次 <code>setup</code>，而 <code>React Hook</code> 每次重渲染都需要调用 Hook，使得 React 的 GC 比 Vue 更有压力，性能也相对于 Vue 来说也较慢。</li>
+<li><code>Compositon API</code> 的调用不需要顾虑调用顺序，也可以在循环、条件、嵌套函数中使用</li>
+<li>响应式系统自动实现了依赖收集，进而组件的部分的性能优化由 Vue 内部自己完成，而 <code>React Hook</code> 需要手动传入依赖，而且必须必须保证依赖的顺序，让 <code>useEffect、useMemo</code> 等函数正确的捕获依赖变量，否则会由于依赖不正确使得组件性能下降。</li>
+</ul>
+<blockquote>
+<p>虽然 <code>Compositon API</code> 看起来比 <code>React Hook</code> 好用，但是其设计思想也是借鉴 <code>React Hook</code> 的。</p>
+</blockquote>
+<h2 id="新增的三个组件-Fragment、Teleport、Suspense"><a href="#新增的三个组件-Fragment、Teleport、Suspense" class="headerlink" title="新增的三个组件 Fragment、Teleport、Suspense"></a>新增的三个组件 Fragment、Teleport、Suspense</h2><h3 id="Fragment"><a href="#Fragment" class="headerlink" title="Fragment"></a>Fragment</h3><blockquote>
+<p>在书写 Vue2 时，由于组件必须只有一个根节点，很多时候会添加一些没有意义的节点用于包裹。 <code>Fragment</code> 组件就是用于解决这个问题的（这和 React 中的 <code>Fragment</code> 组件是一样的）。</p>
+</blockquote>
+<p>这意味着现在可以这样写组件了。</p>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">/* App.vue */</span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">header</span>&gt;</span>...<span class="tag">&lt;/<span class="name">header</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">main</span> <span class="attr">v-bind</span>=<span class="string">"$attrs"</span>&gt;</span>...<span class="tag">&lt;/<span class="name">main</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">footer</span>&gt;</span>...<span class="tag">&lt;/<span class="name">footer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> {};</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>或者这样子写</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// app.js</span></span><br><span class="line"><span class="keyword">import</span> { defineComponent, h, Fragment } <span class="keyword">from</span> <span class="string">'vue'</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent({</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> {</span><br><span class="line">        <span class="keyword">return</span> h(Fragment, {}, [</span><br><span class="line">            h(<span class="string">'header'</span>, {}, [<span class="string">'...'</span>]),</span><br><span class="line">            h(<span class="string">'main'</span>, {}, [<span class="string">'...'</span>]),</span><br><span class="line">            h(<span class="string">'footer'</span>, {}, [<span class="string">'...'</span>]),</span><br><span class="line">        ]);</span><br><span class="line">    }</span><br><span class="line">});</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="Teleport"><a href="#Teleport" class="headerlink" title="Teleport"></a>Teleport</h3><blockquote>
+<p><code>Teleport</code> 其实就是 React 中的 <code>Portal</code>。<code>Portal</code> 提供了一种将子节点渲染到存在于父组件以外的 DOM 节点的优秀的方案。</p>
+</blockquote>
+<p>一个 <code>portal</code> 的典型用例是当父组件有 <code>overflow: hidden</code> 或 <code>z-index</code> 样式时，但你需要子组件能够在视觉上“跳出”其容器。例如，对话框、悬浮卡以及提示框。</p>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/* App.vue */</span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>123<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Teleport</span> <span class="attr">to</span>=<span class="string">"#container"</span>&gt;</span></span><br><span class="line">        Teleport</span><br><span class="line">    <span class="tag">&lt;/<span class="name">Teleport</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> { defineComponent } <span class="keyword">from</span> <span class="string">"vue"</span>;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent({</span></span><br><span class="line"><span class="javascript">    <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> {}</span></span><br><span class="line"><span class="javascript">});</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">/* index.html */</span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"app"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">"container"</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><img src="/posts/152167171/image_9.png" alt="Teleport 示例"></p>
+<h3 id="Suspense"><a href="#Suspense" class="headerlink" title="Suspense"></a>Suspense</h3><blockquote>
+<p><code>Suspense</code> 让你的组件在渲染之前进行“等待”，并在等待时显示 <code>fallback</code> 的内容。这和React中的Supense是一样的。</p>
+</blockquote>
+<figure class="highlight html"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">// App.vue</span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">Suspense</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">template</span> #<span class="attr">default</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">AsyncComponent</span> /&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">template</span> #<span class="attr">fallback</span>&gt;</span></span><br><span class="line">            Loading...</span><br><span class="line">        <span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">Suspense</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">lang</span>=<span class="string">"ts"</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> { defineComponent } <span class="keyword">from</span> <span class="string">"vue"</span>;</span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> AsyncComponent <span class="keyword">from</span> <span class="string">'./AsyncComponent.vue'</span>;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent({</span></span><br><span class="line"><span class="javascript">    <span class="attr">name</span>: <span class="string">"App"</span>,</span></span><br><span class="line"><span class="javascript">    </span></span><br><span class="line"><span class="javascript">    <span class="attr">components</span>: {</span></span><br><span class="line"><span class="javascript">        AsyncComponent</span></span><br><span class="line"><span class="javascript">    }</span></span><br><span class="line"><span class="javascript">});</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"></span><br><span class="line">// AsyncComponent.vue</span><br><span class="line"><span class="tag">&lt;<span class="name">template</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>Async Component<span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">template</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">lang</span>=<span class="string">"ts"</span>&gt;</span><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">import</span> { defineComponent } <span class="keyword">from</span> <span class="string">"vue"</span>;</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">const</span> sleep = <span class="function">() =&gt;</span> {</span></span><br><span class="line"><span class="javascript">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">resolve</span> =&gt;</span> <span class="built_in">setTimeout</span>(resolve, <span class="number">1000</span>));</span></span><br><span class="line"><span class="javascript">};</span></span><br><span class="line"><span class="javascript"></span></span><br><span class="line"><span class="javascript"><span class="keyword">export</span> <span class="keyword">default</span> defineComponent({</span></span><br><span class="line"><span class="javascript">    <span class="keyword">async</span> <span class="function"><span class="title">setup</span>(<span class="params"></span>)</span> {</span></span><br><span class="line"><span class="javascript">        <span class="keyword">await</span> sleep();</span></span><br><span class="line"><span class="javascript">    }</span></span><br><span class="line"><span class="javascript">});</span></span><br><span class="line"><span class="javascript"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></tbody></table></figure>
+
+
+<h1 id="computed-及-watch-的理解"><a href="#computed-及-watch-的理解" class="headerlink" title="computed 及 watch 的理解"></a>computed 及 watch 的理解</h1><h2 id="computed-的实现原理"><a href="#computed-的实现原理" class="headerlink" title="computed 的实现原理"></a>computed 的实现原理</h2><blockquote>
+<p><code>computed</code> 本质是一个惰性求值的观察者 <code>computed watcher</code>。其内部通过 <code>this.dirty</code> 属性标记计算属性是否需要重新求值。</p>
+</blockquote>
+<p>当 <code>computed</code> 的依赖状态发生改变时,就会通知这个惰性的 <code>watcher</code>，<code>computed watcher</code> 通过 <code>this.dep.subs.length</code> 判断有没有订阅者</p>
+<ul>
+<li>有的话，会重新计算，然后对比新旧值，如果变化了，会重新渲染。 (Vue 想确保不仅仅是计算属性依赖的值发生变化，而是当计算属性最终计算的值发生变化时才会触发渲染 <code>watcher</code> 重新渲染，本质上是一种优化。)</li>
+<li>没有的话，仅仅把 <code>this.dirty = true</code> (当计算属性依赖于其他数据时，属性并不会立即重新计算，只有之后其他地方需要读取属性的时候，它才会真正计算，即具备 <code>lazy</code>（懒计算）特性。)</li>
+</ul>
+<h2 id="watch-的理解"><a href="#watch-的理解" class="headerlink" title="watch 的理解"></a>watch 的理解</h2><p><code>watch</code> 没有缓存性，更多的是观察的作用，可以监听某些数据执行回调。当我们需要深度监听对象中的属性时，可以打开 <code>deep:true</code> 选项，这样便会对对象中的每一项进行监听。<strong>这样会带来性能问题，优化的话可以使用字符串形式监听</strong>。</p>
+<blockquote>
+<p>注意：<code>Watcher</code>: 观察者对象，实例分为 <code>渲染 watcher</code>(render watcher)，<code>计算属性 watcher</code>(computed watcher)，<code>侦听器 watcher</code>(user watcher)三种。</p>
+</blockquote>
+<h1 id="Vue-渲染过程"><a href="#Vue-渲染过程" class="headerlink" title="Vue 渲染过程"></a>Vue 渲染过程</h1><p><img src="/posts/152167171/image_10.png" alt="Vue 渲染过程"></p>
+<p>调用 <code>compile</code> 函数，生成 <code>render 函数字符串</code>，编译过程如下：</p>
+<ul>
+<li><code>parse</code> 使用大量的正则表达式对 <code>template</code> 字符串进行解析，将标签、指令、属性等转化为抽象语法树 AST。<code>模板 -&gt; AST （最消耗性能）</code></li>
+<li><code>optimize</code> 遍历 AST，找到其中的一些动态节点并进行标记，方便在页面重渲染的时候进行 diff 比较时，直接跳过这一些静态节点，<strong>优化 runtime 的性能</strong></li>
+<li><code>generate</code> 将最终的 AST 转化为 <code>render 函数字符串</code></li>
+</ul>
+<p>调用 <code>new Watcher</code> 函数，监听数据的变化，当数据发生变化时，Render 函数执行生成 vnode 对象<br>调用 <code>patch</code> 方法，对比新旧 vnode 对象，通过 DOM diff 算法，添加、修改、删除真正的 DOM 元素</p>
+<h1 id="keep-alive-实现原理"><a href="#keep-alive-实现原理" class="headerlink" title="keep-alive 实现原理"></a>keep-alive 实现原理</h1><blockquote>
+<p><code>keep-alive</code> 组件接受三个参数：<code>include</code>，<code>exclude</code>，<code>max</code></p>
+</blockquote>
+<ul>
+<li><code>include</code>：指定需要缓存的 <code>组件 name</code> 集合，参数格式支持 <code>String, RegExp, Array</code>。当为字符串时，多个组件名称以逗号隔开</li>
+<li><code>exclude</code>：指定不需要缓存的 <code>组件 name</code> 集合，参数格式与 <code>include</code> 一致</li>
+<li><code>max</code>：指定最多可缓存组件的数量，超出上限使用 <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/LRU">LRU的策略</a> 置换缓存数据。，参数格式支持 <code>String, Number</code></li>
+</ul>
+<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p><code>keep-alive</code> 实例会缓存对应组件的 <code>VNode</code>，如果命中缓存，直接从缓存对象中返回对应的 <code>VNode</code></p>
+<p><code>LRU(Last recently used)</code> 算法根据数据的历史访问记录来进行淘汰数据，其核心思想是“如果数据最近被访问过，那么将来被访问的几率更高”。（墨菲定律：越担心的事情越会发生）</p>
+<h1 id="为什么访问-data-属性不需要带-data"><a href="#为什么访问-data-属性不需要带-data" class="headerlink" title="为什么访问 data 属性不需要带 data"></a>为什么访问 data 属性不需要带 data</h1><blockquote>
+<p>vue 中访问属性代理 <code>this.data.xxx</code> 转换 <code>this.xxx</code> 的实现</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/** 将 某一个对象的属性 访问 映射到 对象的某一个属性成员上 */</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">proxy</span> (<span class="params">target, prop, key</span>) </span>{</span><br><span class="line">  <span class="built_in">Object</span>.defineProperty(target, key, {</span><br><span class="line">    <span class="attr">enumerable</span>: <span class="literal">true</span>,</span><br><span class="line">    <span class="attr">configurable</span>: <span class="literal">true</span>,</span><br><span class="line">    get () {</span><br><span class="line">      <span class="keyword">return</span> target[prop][key];</span><br><span class="line">    },</span><br><span class="line">    set (newVal) {</span><br><span class="line">      target[prop][key] = newVal;</span><br><span class="line">    }</span><br><span class="line">  })</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure><!-- flag of hidden posts -->
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/152167171.html">https://bljj-dbld.github.io/posts/152167171.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/%E6%B7%B1%E5%85%A5%E5%8E%9F%E7%90%86/"># 深入原理</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

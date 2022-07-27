@@ -1,0 +1,333 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P13 理解声明合并 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P13 理解声明合并</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">二月 25, 2022&nbsp;&nbsp;20:41:05</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/TypeScript/">TypeScript</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="理解声明合并"><a href="#理解声明合并" class="headerlink" title="理解声明合并"></a>理解声明合并</h1><p>声明合并是 <code>TS</code> 中的一个独特概念，所谓声明合并就是指编译器会把程序多个地方具有相同声明合并为一个声明，这样做有一个好处，可以将程序中散落在各处的声明合并在一起。比如你在程序中多个地方定义了同一个名字的接口，那么你在使用接口的时候，就会对这个多处的定义同时具有感知能力。通过声明合并就可以避免对接口成员的遗漏</p>
+<h2 id="多种声明合并"><a href="#多种声明合并" class="headerlink" title="多种声明合并"></a>多种声明合并</h2><h3 id="接口的声明合并"><a href="#接口的声明合并" class="headerlink" title="接口的声明合并"></a>接口的声明合并</h3><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    <span class="attr">x</span>: <span class="built_in">number</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    <span class="attr">y</span>: <span class="built_in">number</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">let</span> a: A = {</span><br><span class="line">    <span class="attr">x</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">y</span>: <span class="number">2</span></span><br><span class="line">} <span class="comment">// 会提示需要 x, y</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>当你在第一个接口 <code>A</code> 中定义 <code>y: string</code> ,那么其他相同名称中的 <code>y</code> 也得是相同类型，否则回报错！</p>
+<p>当你在接口中声明方法，那会实现方法的重载。</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    ...</span><br><span class="line">    foo(bar: <span class="built_in">string</span>): <span class="built_in">number</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    ...</span><br><span class="line">    foo(bar: <span class="built_in">number</span>): <span class="built_in">string</span>;</span><br><span class="line">    foo(bar: <span class="built_in">string</span>[]): <span class="built_in">number</span>[]</span><br><span class="line">}</span><br><span class="line"><span class="keyword">let</span> a: A = {</span><br><span class="line">    ...</span><br><span class="line">    foo (bar: <span class="built_in">any</span>) {</span><br><span class="line">        <span class="keyword">return</span> bar</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>函数重置的过程中呢需要注意函数声明的顺序，因为编译器会按顺序匹配，那么在接口合并的时候，顺序如何确定的呢？有几个原则</p>
+<ol>
+<li>在接口内部按书写顺序确定</li>
+<li>接口之间呢，会按照后面的接口会排在前面</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    ...</span><br><span class="line">    foo(bar: <span class="built_in">string</span>): <span class="built_in">number</span> <span class="comment">// 3</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    ...</span><br><span class="line">    foo(bar: <span class="built_in">number</span>): <span class="built_in">string</span>; <span class="comment">// 1</span></span><br><span class="line">    foo(bar: <span class="built_in">string</span>[]): <span class="built_in">number</span>[] <span class="comment">// 2</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="3">
+<li>但是有一个例外，当函数的参数是 字符串字面量 的话，那这个声明就会提升到整个函数声明的最顶端。</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    ...</span><br><span class="line">    foo(bar: <span class="built_in">string</span>): <span class="built_in">number</span> <span class="comment">// 5</span></span><br><span class="line">    foo(bar: <span class="string">'a'</span>): <span class="built_in">number</span> <span class="comment">// 2</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">interface</span> A {</span><br><span class="line">    ...</span><br><span class="line">    foo(bar: <span class="built_in">number</span>): <span class="built_in">string</span>; <span class="comment">// 3</span></span><br><span class="line">    foo(bar: <span class="built_in">string</span>[]): <span class="built_in">number</span>[] <span class="comment">// 4</span></span><br><span class="line">    foo(bar: <span class="number">1</span>): <span class="built_in">string</span> <span class="comment">// 1</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="命名空间-与-其他类型-的合并"><a href="#命名空间-与-其他类型-的合并" class="headerlink" title="命名空间 与 其他类型 的合并"></a>命名空间 与 其他类型 的合并</h3><blockquote>
+<p>需要注意的一个问题是：</p>
+<ol>
+<li>命名空间中导出的成员是不允许重复定义的。</li>
+<li>与 其他类型 合并时，一定得放在 其他类型 的后面。</li>
+</ol>
+</blockquote>
+<ol>
+<li>与 函数 声明合并</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Lib</span> (<span class="params"></span>) </span>{}</span><br><span class="line"><span class="keyword">namespace</span> Lib {</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">let</span> version = <span class="string">'v1.0'</span></span><br><span class="line">}</span><br><span class="line"><span class="built_in">console</span>.log(Lib.version) <span class="comment">// v1.0</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>在 <code>js</code> 中给一个函数创建过程中增加一些属性是很常见的模式，通过命名空间和函数的声明合并，也可以实现这类模式。</p>
+<ol start="2">
+<li>与 类 声明合并</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> </span>{}</span><br><span class="line"><span class="keyword">namespace</span> C {</span><br><span class="line">    <span class="keyword">export</span> <span class="keyword">let</span> status = <span class="number">1</span></span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getStatus</span> (<span class="params"></span>) </span>{</span><br><span class="line">        <span class="keyword">return</span> status</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="built_in">console</span>.log(C);</span><br><span class="line"><span class="built_in">console</span>.log(C.status)</span><br><span class="line"><span class="built_in">console</span>.log(C.getStatus()); <span class="comment">// 1</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>命名空间内导出的 变量 &amp; 方法 相当于给类添加了一些静态的 属性 &amp; 方法。而不是在 <code>new</code> 出的对象中。</p>
+<ol start="3">
+<li>与 枚举 声明合并</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enum</span> Color {</span><br><span class="line">    Red,</span><br><span class="line">    Blue,</span><br><span class="line">    Yello</span><br><span class="line">}</span><br><span class="line"><span class="keyword">namespace</span> Color {</span><br><span class="line">    <span class="keyword">export</span> <span class="function"><span class="keyword">function</span> <span class="title">getRed</span> (<span class="params"></span>) </span>{</span><br><span class="line">        <span class="keyword">return</span> Color.Red</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="built_in">console</span>.log(Color);</span><br><span class="line"><span class="built_in">console</span>.log(Color.getRed()); <span class="comment">// 0</span></span><br></pre></td></tr></tbody></table></figure>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3943423985.html">https://bljj-dbld.github.io/posts/3943423985.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/4115532424.html">P14 编写声明类库</a>
+            
+            
+            <a class="next" rel="next" href="/posts/433217635.html">P12 使用命名空间</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

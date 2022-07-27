@@ -1,0 +1,318 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P9.1 高级类型：索引类型 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P9.1 高级类型：索引类型</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 24, 2022&nbsp;&nbsp;20:50:13</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h2 id="交叉类型"><a href="#交叉类型" class="headerlink" title="交叉类型"></a>交叉类型</h2><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> DogInterface {</span><br><span class="line">  run(): <span class="built_in">void</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">interface</span> CatInterface {</span><br><span class="line">  jump(): <span class="built_in">void</span></span><br><span class="line">}</span><br><span class="line"><span class="keyword">let</span> pet: DogInterface &amp; CatInterface <span class="comment">// 变量 pet 就是 DogInterface &amp; CatInterface 交叉类型</span></span><br><span class="line"><span class="comment">// pet 将会同时具备两个接口的所有方法</span></span><br><span class="line">pet = {</span><br><span class="line">  run () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'跑'</span>)</span><br><span class="line">  }</span><br><span class="line">  jump () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'跳'</span>)</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>所以由此可以得知：从名称上看，给人的感觉交叉类型是取接口的交集，其实是并集，即多个接口中的定义都应包含在内。</p>
+</blockquote>
+<h2 id="联合类型"><a href="#联合类型" class="headerlink" title="联合类型"></a>联合类型</h2><blockquote>
+<p>通俗的讲，联合类型就是指，声明的类型并不确定，可以为多个接口中的<strong>某一个</strong></p>
+</blockquote>
+<p>举个小例子：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a: <span class="built_in">number</span> | <span class="built_in">string</span> = <span class="number">1</span> || <span class="string">'1'</span> <span class="comment">// 变量 a 既可以取值数字类型 或者 字符串类型</span></span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="字面量类型"><a href="#字面量类型" class="headerlink" title="字面量类型"></a>字面量类型</h3><p>有的时候呢，我们不仅需要限定一个变量的类型，而且还需要限定变量的取值在某一个特定的范围内。</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> b: <span class="string">'a'</span> | <span class="string">'b'</span> | <span class="string">'c'</span> <span class="comment">// 变量 b 不但被限制为取值字符串类型，而且还只能取值 a, b, c 中的某一个值</span></span><br><span class="line"><span class="keyword">let</span> c: <span class="number">1</span> | <span class="number">2</span> | <span class="number">3</span> <span class="comment">// 同理， 变量 c 的取值只能是 1, 2, 3</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>变量 b 不但被限制为取值字符串类型，而且还只能取值 a, b, c 中的某一个值。同理， 变量 c 的取值只能是 1, 2, 3</p>
+<h3 id="对象的联合类型"><a href="#对象的联合类型" class="headerlink" title="对象的联合类型"></a>对象的联合类型</h3><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个 Dog 类</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dog</span> <span class="title">implements</span> <span class="title">DogInterface</span> </span>{</span><br><span class="line">  <span class="title">constructor</span> (<span class="params"><span class="keyword">public</span> name: <span class="built_in">string</span></span>) {</span><br><span class="line">    <span class="built_in">this</span>.name = name</span><br><span class="line">  }</span><br><span class="line">  run () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.name + <span class="string">'跑起来了'</span>);</span><br><span class="line">  }</span><br><span class="line">  eat () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.name + <span class="string">'在吃地上香香的粑粑'</span>);</span><br><span class="line">  }</span><br><span class="line">  }</span><br><span class="line">  <span class="comment">// 定义一个 Cat 类</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Cat</span> <span class="title">implements</span> <span class="title">CatInterface</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params"><span class="keyword">public</span> name: <span class="built_in">string</span></span>) {</span><br><span class="line">    <span class="built_in">this</span>.name = name</span><br><span class="line">  }</span><br><span class="line">  jump () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.name + <span class="string">'跳到好高'</span>)</span><br><span class="line">  }</span><br><span class="line">  eat () {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.name + <span class="string">'在吃猫粮'</span>);</span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个 枚举</span></span><br><span class="line"><span class="built_in">enum</span> Master {</span><br><span class="line">  Boy,</span><br><span class="line">  Gril</span><br><span class="line">}</span><br><span class="line"><span class="comment">// 获得一个对象的联合类型</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getPet</span> (<span class="params">master: Master</span>) </span>{</span><br><span class="line">  <span class="built_in">console</span>.log(master);</span><br><span class="line">  <span class="keyword">let</span> pet = master === Master.Boy ? <span class="keyword">new</span> Dog(<span class="string">'小狗'</span>) : <span class="keyword">new</span> Cat(<span class="string">'小猫'</span>)</span><br><span class="line">  <span class="keyword">return</span> pet</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>当我们配合枚举 <code>menu</code> 使用：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 定义一个 枚举</span></span><br><span class="line"><span class="built_in">enum</span> Master {</span><br><span class="line">  Boy,</span><br><span class="line">  Gril</span><br><span class="line">}</span><br><span class="line"><span class="comment">// 获得一个对象的联合类型</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getPet</span> (<span class="params">master: Master</span>) </span>{</span><br><span class="line">  <span class="keyword">let</span> pet = master === Master.Boy ? <span class="keyword">new</span> Dog(<span class="string">'小狗'</span>) : <span class="keyword">new</span> Cat(<span class="string">'小猫'</span>)</span><br><span class="line">  <span class="keyword">return</span> pet</span><br><span class="line">}</span><br><span class="line"><span class="keyword">let</span> master = Master.Boy</span><br><span class="line"><span class="built_in">console</span>.log(master, getPet(master));</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义多个与半径相关的接口</span></span><br><span class="line"><span class="keyword">interface</span> Square {</span><br><span class="line">  <span class="attr">kind</span>: <span class="string">'square'</span>;</span><br><span class="line">  size: <span class="built_in">number</span>;</span><br><span class="line">}</span><br><span class="line"><span class="comment">// 是不允许修改在 接口 中已定义的变量值</span></span><br><span class="line"><span class="comment">// let square: Square = {</span></span><br><span class="line"><span class="comment">// kind: 'a'</span></span><br><span class="line"><span class="comment">// }</span></span><br><span class="line"><span class="keyword">interface</span> Rectangle {</span><br><span class="line">  <span class="attr">kind</span>: <span class="string">'rectangle'</span>;</span><br><span class="line">  width: <span class="built_in">number</span>;</span><br><span class="line">  height: <span class="built_in">number</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个类型别名</span></span><br><span class="line"><span class="keyword">type</span> Shape = Square | Rectangle</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取范围的函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">area</span> (<span class="params">s: Shape</span>) </span>{</span><br><span class="line">  <span class="keyword">switch</span> (s.kind) {</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'square'</span>:</span><br><span class="line">      <span class="keyword">return</span> s.size **<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'rectangle'</span>:</span><br><span class="line">      <span class="keyword">return</span> s.height * s.width;</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在此的基础上，如果我们想扩展枚举的话，就会有 bug 存在</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">interface</span> Circle {</span><br><span class="line">  <span class="attr">kind</span>: <span class="string">'circle'</span>;</span><br><span class="line">  r: <span class="built_in">number</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义一个类型别名</span></span><br><span class="line"><span class="keyword">type</span> Shape = Square | Rectangle | Circle</span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(area({<span class="attr">kind</span>: <span class="string">'circle'</span>, <span class="attr">r</span>: <span class="number">1</span>})); <span class="comment">// 会输出 undefined</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>之后在不更改原 <code>area</code> 函数的情况下，会获取不到相应的值的，问题是 Typescript 并没有检测出错误</p>
+<p>为了防止出现这样子的错误，一共有两种解决方案：</p>
+<ol>
+<li>声明函数 <code>area</code> 的返回值： <code>function area (s: Shape): number {...}</code></li>
+<li>在 <code>swith</code> 中添加错误处理机制：</li>
+</ol>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">area</span> (<span class="params">s: Shape</span>) </span>{</span><br><span class="line">  <span class="keyword">switch</span> (s.kind) {</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'square'</span>:</span><br><span class="line">      <span class="keyword">return</span> s.size **<span class="number">2</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'rectangle'</span>:</span><br><span class="line">      <span class="keyword">return</span> s.height * s.width;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">'circle'</span>:</span><br><span class="line">      <span class="keyword">return</span> <span class="built_in">Math</span>.PI * s.r ** <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">    <span class="comment">// 处理错误</span></span><br><span class="line">      <span class="keyword">return</span> (<span class="function">(<span class="params">e: <span class="built_in">never</span></span>) =&gt;</span> {<span class="keyword">throw</span> <span class="keyword">new</span> <span class="built_in">Error</span>(e)})(s)</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="built_in">console</span>.log(area({<span class="attr">kind</span>: <span class="string">'circle'</span>, <span class="attr">r</span>: <span class="number">1</span>})); <span class="comment">// 3.141592653589793</span></span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>在 <code>swith</code> 中 <code>never</code> 类型可以确保 <code>area</code> 总是穷尽 (exhaust) 了所有 <code>Shape</code> 的可能类型。</p>
+</blockquote>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3333365415.html">https://bljj-dbld.github.io/posts/3333365415.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/2238754712.html">P9.3 高级类型：映射类型</a>
+            
+            
+            <a class="next" rel="next" href="/posts/1671919051.html">P9.2 高级类型：索引类型</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

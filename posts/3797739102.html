@@ -1,0 +1,374 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>Less 和 Sass 的使用 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Less 和 Sass 的使用</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">三月 9, 2022&nbsp;&nbsp;19:24:27</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/CSS/">CSS</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="基础概念"><a href="#基础概念" class="headerlink" title="基础概念"></a>基础概念</h1><p>由于CSS功能比较弱，代码的复用性比较弱，为了更方便地编写CSS，程序员们想到可以更方便的文件设计样式，然后再转换为CSS。这种方式就成为CSS预处理。而Less和Sass就是目前最流行的CSS预处理文件。</p>
+<p>这两种方式实现的功能类似，都具备如下所示的基础功能增强：</p>
+<ul>
+<li>变量，CSS不支持变量，导致相同的数值需要复制粘贴，采用Less或Sass就可以指定变量，重复的地方直接使用变量即可</li>
+<li>混合，CSS无法实现样式代码的复用，使用Less和Sass可以复用Class的样式</li>
+<li>继承，CSS无法实现样式的继承，而Less和Sass可以更好地继承另一个Class的样式</li>
+<li>嵌套，Css中嵌套的指定比较麻烦，而且不直观，使用Less和Sass可以改善这种情况</li>
+<li>运算，Css中不支持数值的运算，使用Less和Sass可以支持比较丰富的数学运算</li>
+</ul>
+<h1 id="LESS"><a href="#LESS" class="headerlink" title="LESS"></a>LESS</h1><h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>Less使用 <code>@</code> 字符指定变量，使用方式如下所示：</p>
+<figure class="highlight less"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@color:</span> <span class="number">#4D926F</span>;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">h2</span> {</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">@color</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="插值"><a href="#插值" class="headerlink" title="插值"></a>插值</h3><figure class="highlight less"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@direction:</span> left;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.myPadding</span>{</span><br><span class="line">  <span class="selector-tag">padding-</span><span class="variable">@{direction}</span>: <span class="selector-tag">20px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>最终转换为CSS代码如下所示：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.myPadding</span> {</span><br><span class="line">  <span class="attribute">padding-left</span>: <span class="number">20px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+
+<h2 id="混合"><a href="#混合" class="headerlink" title="混合"></a>混合</h2><p>Less可以将一个定义好的 Class 引入另一个 Class 中，从而达到样式的复用，同时支持参数的调用，类似其他语言中方法调用的效果，代码如下所示：</p>
+<figure class="highlight less"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.rounded-corners</span> (<span class="variable">@radius</span>: <span class="number">5px</span>) {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="variable">@radius</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="variable">@radius</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="variable">@radius</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="selector-class">.rounded-corners</span>;</span><br><span class="line">}</span><br><span class="line"><span class="selector-id">#footer</span> {</span><br><span class="line">  <span class="selector-class">.rounded-corners</span>(<span class="number">10px</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>最终转换为CSS代码如下所示：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">}</span><br><span class="line"><span class="selector-id">#footer</span> {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>Less如果希望在 Class 中继承另一个 Class 的样式，可以采用与混合功能一样的实现方式，直接将被继承的样式直接加入即可，代码如下所示：</p>
+<figure class="highlight less"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.rounded-corners</span> (<span class="variable">@radius</span>: <span class="number">5px</span>) {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="variable">@radius</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="variable">@radius</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="variable">@radius</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.content</span> {</span><br><span class="line">  <span class="selector-class">.rounded-corners</span>;</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">20px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="嵌套"><a href="#嵌套" class="headerlink" title="嵌套"></a>嵌套</h2><p>在原始的CSS中，每个嵌套方式需要一一指定，导致写起来很繁琐，而且不直观，在Less中可以直接按照层次写即可。代码如下所示：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="selector-tag">h1</span> {</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">26px</span>;</span><br><span class="line">    <span class="attribute">font-weight</span>: bold;</span><br><span class="line">  }</span><br><span class="line">  <span class="selector-tag">p</span> { <span class="attribute">font-size</span>: <span class="number">12px</span>;</span><br><span class="line">    <span class="selector-tag">a</span> { <span class="attribute">text-decoration</span>: none;</span><br><span class="line">      &amp;<span class="selector-pseudo">:hover</span> { <span class="attribute">border-width</span>: <span class="number">1px</span> }</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>而转换为CSS后，对应的代码如下所示：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#header</span> <span class="selector-tag">h1</span> {</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">26px</span>;</span><br><span class="line">  <span class="attribute">font-weight</span>: bold;</span><br><span class="line">}</span><br><span class="line"><span class="selector-id">#header</span> <span class="selector-tag">p</span> {</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">12px</span>;</span><br><span class="line">}</span><br><span class="line"><span class="selector-id">#header</span> <span class="selector-tag">p</span> <span class="selector-tag">a</span> {</span><br><span class="line">  <span class="attribute">text-decoration</span>: none;</span><br><span class="line">}</span><br><span class="line"><span class="selector-id">#header</span> <span class="selector-tag">p</span> <span class="selector-tag">a</span><span class="selector-pseudo">:hover</span> {</span><br><span class="line">  <span class="attribute">border-width</span>: <span class="number">1px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>可以看到在 Less 中，可以直接在 <code>{}</code> 中增加样式即可表示层次关系，而且层次关系可以循环嵌套下去，而 CSS 中则相当繁琐，需要一层一层指定下去。</p>
+<h2 id="运算"><a href="#运算" class="headerlink" title="运算"></a>运算</h2><p>在Less中，可以直接对数值进行运算，大大方便开发者。代码如下所示：</p>
+<figure class="highlight less"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@the-border:</span> <span class="number">1px</span>;</span><br><span class="line"><span class="variable">@base-color:</span> <span class="number">#111</span>;</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">@base-color</span> * <span class="number">3</span>;</span><br><span class="line">  <span class="attribute">border-right</span>: <span class="variable">@the-border</span> * <span class="number">2</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>转换为 CSS 后，对应的代码如下：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="attribute">color</span>: <span class="number">#333333</span>;</span><br><span class="line">  <span class="attribute">border-right</span>: <span class="number">2px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="SASS"><a href="#SASS" class="headerlink" title="SASS"></a>SASS</h1><p>Sass 包含两种文本格式，一种是 <code>.sass</code> 格式的，采用 <code>python</code> 类似的严格缩进，不使用 <code>{}</code> 和 <code>;</code> 作为分隔符。一种是 <code>.scss</code>，采用 <code>{}</code> 和 <code>;</code> 进行分隔，是标准的 CSS 语法。<code>.scss</code> 是 Sass 最新的默认格式。后续介绍也都以此格式进行介绍。</p>
+<h2 id="变量-1"><a href="#变量-1" class="headerlink" title="变量"></a>变量</h2><p>Sass使用 <code>$</code> 字符指定变量，代码如下所示：</p>
+<figure class="highlight scss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$color</span>: <span class="number">#4D926F</span>;</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">h2</span> {</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">$color</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="插值-1"><a href="#插值-1" class="headerlink" title="插值"></a>插值</h3><figure class="highlight scss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$direction</span>: left;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.myPadding</span>{</span><br><span class="line">  <span class="attribute">padding</span>-#{<span class="variable">$direction</span>}: <span class="number">20px</span>;                             </span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>转换为 CSS 后，对应的代码如下：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.myPadding</span>{</span><br><span class="line">  <span class="attribute">padding-left</span>: <span class="number">20px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="混合-1"><a href="#混合-1" class="headerlink" title="混合"></a>混合</h2><p>Sass中可以将一些公共样式进行复用，也支持指定参数。在使用中，需要使用 <code>@mixin</code> 参数指定复用的样式，并使用 <code>@include</code> 进行引用，代码如下所示：</p>
+<figure class="highlight scss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">@mixin</span> rounded-corners (<span class="variable">$radius</span>: <span class="number">5px</span>) {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="variable">$radius</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="variable">$radius</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="variable">$radius</span>;</span><br><span class="line">  <span class="keyword">@content</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="keyword">@include</span> rounded-corners(){<span class="attribute">background</span>: <span class="variable">$color</span>;};</span><br><span class="line">}</span><br><span class="line"><span class="selector-id">#footer</span> {</span><br><span class="line">  <span class="keyword">@include</span> rounded-corners(<span class="number">10px</span>);</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>转换为 CSS 后，对应的代码如下：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  <span class="attribute">background</span>: red;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#footer</span> {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="number">10px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="继承-1"><a href="#继承-1" class="headerlink" title="继承"></a>继承</h2><p>Sass 中可以继承另外一些样式的代码，在 Sass 中可以使用 <code>@extend</code> 继承样式，代码如下所示：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.rounded-corners</span> {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.content</span> {</span><br><span class="line">  <span class="keyword">@extend</span> .rounded-corners;</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">20px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>转换为 CSS 后，对应的代码如下：</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-class">.rounded-corners</span>, <span class="selector-class">.content</span> {</span><br><span class="line">  <span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -webkit-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">  -moz-<span class="attribute">border-radius</span>: <span class="number">5px</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.content</span> {</span><br><span class="line">  <span class="attribute">font-size</span>: <span class="number">20px</span>;</span><br><span class="line">}</span><br><span class="line"></span><br></pre></td></tr></tbody></table></figure>
+
+<p>可以看到 Less 中混合和继承使用相同的实现方式，而 Sass 中继承和混合采用不同关键字进行实现。</p>
+<p>在大作数情况下 <code>@mixin</code> 会比 <code>@extend</code> 更好，但是它们俩都有自己的一席之地。**当样式和选择器之间的关系在某些方面比较紧密的时候，使用 <code>@extend</code>**。除此之外，你可以使用 <code>@mixin</code> 在任何地方。</p>
+<h2 id="嵌套-1"><a href="#嵌套-1" class="headerlink" title="嵌套"></a>嵌套</h2><p>对于嵌套的语法，Sass与Less基本一致，实现的代码如下所示</p>
+<figure class="highlight css"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="selector-tag">h1</span> {</span><br><span class="line">    <span class="attribute">font-size</span>: <span class="number">26px</span>;</span><br><span class="line">    <span class="attribute">font-weight</span>: bold;</span><br><span class="line">  }</span><br><span class="line">  <span class="selector-tag">p</span> { <span class="attribute">font-size</span>: <span class="number">12px</span>;</span><br><span class="line">    <span class="selector-tag">a</span> { <span class="attribute">text-decoration</span>: none;</span><br><span class="line">      &amp;<span class="selector-pseudo">:hover</span> { <span class="attribute">border-width</span>: <span class="number">1px</span> }</span><br><span class="line">    }</span><br><span class="line">  }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>可以看到，与Less语法一致。</p>
+<h2 id="运算-1"><a href="#运算-1" class="headerlink" title="运算"></a>运算</h2><p>进行通用运算，基本的算法与Less也相同，代码如下所示：</p>
+<figure class="highlight scss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$the-border</span>: <span class="number">1px</span>;</span><br><span class="line"><span class="variable">$base-color</span>: <span class="number">#111</span>;</span><br><span class="line"></span><br><span class="line"><span class="selector-id">#header</span> {</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">$base-color</span> * <span class="number">3</span>;</span><br><span class="line">  <span class="attribute">border-right</span>: <span class="variable">$the-border</span> * <span class="number">2</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h1 id="LESS-和-SASS-的主要区别"><a href="#LESS-和-SASS-的主要区别" class="headerlink" title="LESS 和 SASS 的主要区别"></a>LESS 和 SASS 的主要区别</h1><h2 id="变量标识符不同"><a href="#变量标识符不同" class="headerlink" title="变量标识符不同"></a>变量标识符不同</h2><p>sass中规定，以美元符号 <code>$</code> 开头的即表示变量，而less中以符号 <code>@</code> 开头表示变量。</p>
+<h2 id="变量插值方式不同"><a href="#变量插值方式不同" class="headerlink" title="变量插值方式不同"></a>变量插值方式不同</h2><p>在两种语言中，变量都可以以一定的方式插入到字符串中去，这个特性极为有用，但两种语言的插入方式不同，具体请看下例：</p>
+<figure class="highlight scss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//sass 中</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$direction</span>: left;</span><br><span class="line"><span class="selector-class">.myPadding</span>{</span><br><span class="line">  <span class="attribute">padding</span>-#{<span class="variable">$direction</span>}: <span class="number">20px</span>;                             </span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//less中</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@direction</span>: left;</span><br><span class="line"></span><br><span class="line"><span class="selector-class">.myPadding</span>{</span><br><span class="line">  <span class="attribute">padding</span>-@{<span class="attribute">direction</span>}: <span class="number">20px</span>;</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">//编译后的css代码是相同的，如下：</span></span><br><span class="line"></span><br><span class="line"><span class="selector-class">.myPadding</span>{</span><br><span class="line">  <span class="attribute">padding-left</span>: <span class="number">20px</span>;</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="变量作用域"><a href="#变量作用域" class="headerlink" title="变量作用域"></a>变量作用域</h2><p>在 <code>sass 3.4.0</code> 之前，sass 可以说是没有局部变量和全局变量之分的，即后声明的同名变量总是会覆盖之前的同名变量，不管后声明的变量是位于何处。先看一段熟悉的js代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代码块A</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>{</span><br><span class="line">  a = <span class="number">5</span>;</span><br><span class="line">  alert(a);               <span class="comment">//a = 5;</span></span><br><span class="line">})();</span><br><span class="line">alert(a);                 <span class="comment">//a = 5;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p>由于闭包的作用，匿名函数内部可以引用到外部的变量a,因此上面的代码可以正常运行。再来看下面这个:</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//代码块B</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> a = <span class="number">1</span>;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params"></span>)</span>{</span><br><span class="line">  <span class="keyword">var</span> a = <span class="number">5</span>;</span><br><span class="line">  alert(a);               <span class="comment">//a = 5;</span></span><br><span class="line">})();</span><br><span class="line">alert(a);                 <span class="comment">//a = 1;</span></span><br></pre></td></tr></tbody></table></figure>
+
+<p><code>sass 3.4.0之前</code> 的变量设计思想是类似于 <strong>代码块A</strong> 的，即不带关键字var的局部变量声明，而less的思想类似 <strong>代码块B</strong>，带关键字var的局部变量声明。</p>
+<p><code>sass 3.4.0之后</code>，改进了，并还附送了彩蛋 <code>!global</code></p>
+<p>举例说明：</p>
+<figure class="highlight scss"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$color</span>: blue;</span><br><span class="line"><span class="selector-tag">a</span>{</span><br><span class="line">  <span class="variable">$color</span>: red;</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">$color</span>;               <span class="comment">//red</span></span><br><span class="line">}</span><br><span class="line"><span class="selector-tag">p</span>{</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">$color</span>;               <span class="comment">//blue</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">//但是，若使用 !global</span></span><br><span class="line"></span><br><span class="line"><span class="selector-tag">span</span>{</span><br><span class="line">  <span class="variable">$color</span>: yellow !global;</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">$color</span>;               <span class="comment">//yellow</span></span><br><span class="line">}</span><br><span class="line"><span class="selector-tag">div</span>{</span><br><span class="line">  <span class="attribute">color</span>: <span class="variable">$color</span>;               <span class="comment">//yellow</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3797739102.html">https://bljj-dbld.github.io/posts/3797739102.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1243066710.html">Hello World</a>
+            
+            
+            <a class="next" rel="next" href="/posts/212067372.html">P15 配置 tsconfig.json</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

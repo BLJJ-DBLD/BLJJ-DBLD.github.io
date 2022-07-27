@@ -1,0 +1,397 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P3 枚举类型（enum） | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P3 枚举类型（enum）</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 7, 2022&nbsp;&nbsp;20:32:16</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/TypeScript/">TypeScript</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>先看下面这段 js 代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initByRole</span>(<span class="params">role</span>) </span>{</span><br><span class="line">    <span class="keyword">if</span> (role === <span class="number">1</span> || role === <span class="number">2</span>) {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (role === <span class="number">3</span> || role === <span class="number">4</span>) {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    } <span class="keyword">else</span> <span class="keyword">if</span> (role === <span class="number">5</span>) {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    } <span class="keyword">else</span> {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>通过阅读上面代码，了解到的问题有二：</p>
+<ol>
+<li>可读性差：很难记住数字的含义</li>
+<li>可维护性差：硬编码，牵一发动全身</li>
+</ol>
+<p>而 TypeScript 中枚举的出现，弥补了这两个缺点。</p>
+<p>枚举的定义是：一组有名字的常量集合。比喻的可以理解为是电话本（用户的号码【对应变量内容】可能会发生变化，但是名称【对应变量名】却不会）。</p>
+<blockquote>
+<p>注意：枚举成员的值是 <strong>只读类型</strong></p>
+</blockquote>
+<h2 id="数字枚举（存在反向映射）"><a href="#数字枚举（存在反向映射）" class="headerlink" title="数字枚举（存在反向映射）"></a>数字枚举（存在反向映射）</h2><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 数字枚举</span></span><br><span class="line"><span class="built_in">enum</span> Role {</span><br><span class="line">    Reporter = <span class="number">1</span>, <span class="comment">// 特意从数字 1 开始，否则默认数字 0 开始</span></span><br><span class="line">    Developer, <span class="comment">// 后续字段会按照前一个字段默认 +1</span></span><br><span class="line">    Maintainer,</span><br><span class="line">    Owner,</span><br><span class="line">    Guest</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>通过 console.log 可以看出打印看看。</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">console</span>.log(Role.Reporter) <span class="comment">// 输出 1</span></span><br><span class="line"><span class="built_in">console</span>.log(Role.Developer) <span class="comment">// 输出 2</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">console</span>.log(Role)<span class="comment">// 输出的是一个对象。但是这个对象中的数据远比你认为的要多。</span></span><br><span class="line"><span class="comment">// 输出如下：</span></span><br><span class="line">{</span><br><span class="line">  <span class="number">1</span>: <span class="string">"Reporter"</span>,</span><br><span class="line">  <span class="number">2</span>: <span class="string">"Developer"</span>,</span><br><span class="line">  <span class="number">3</span>: <span class="string">"Maintainer"</span>,</span><br><span class="line">  <span class="number">4</span>: <span class="string">"Owner"</span>,</span><br><span class="line">  <span class="number">5</span>: <span class="string">"Guest"</span>,</span><br><span class="line">  <span class="attr">Developer</span>: <span class="number">2</span>,</span><br><span class="line">  <span class="attr">Guest</span>: <span class="number">5</span>,</span><br><span class="line">  <span class="attr">Maintainer</span>: <span class="number">3</span>,</span><br><span class="line">  <span class="attr">Owner</span>: <span class="number">4</span>,</span><br><span class="line">  <span class="attr">Reporter</span>: <span class="number">1</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>具体执行的过程 ts -&gt; js 是如何生成的?</p>
+<p>通过在 TypeScript 官网中的执行，可以从 <a target="_blank" rel="noopener" href="https://www.typescriptlang.org/play#code/KYOwrgtgBASg9gG2FA3gKCp2wAOcBOALsPlALxQCMANFAPR1SCeToPCGgc3KAOpoOraVUgAPqBpzUAw-4DIVQJhKgDbzAJdHcoABn4CMWACLAAbsARwcJWgyiA4FUC3fl0Ct1oCx5QJDGgc0dAskqAAOUBUcuelQA1JWWYAsgEMASxBCQJA9bygAeQB3MPxqCIBxMGAAZ0I0AF8gA">这里</a> 看出它的执行代码。</p>
+<p>在这里，我也把转移后的代码复制在下面：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="comment">// 数字枚举</span></span><br><span class="line"><span class="keyword">var</span> Role;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">Role</span>) </span>{</span><br><span class="line">    Role[Role[<span class="string">"Reporter"</span>] = <span class="number">1</span>] = <span class="string">"Reporter"</span>;</span><br><span class="line">    Role[Role[<span class="string">"Developer"</span>] = <span class="number">2</span>] = <span class="string">"Developer"</span>;</span><br><span class="line">    Role[Role[<span class="string">"Maintainer"</span>] = <span class="number">3</span>] = <span class="string">"Maintainer"</span>;</span><br><span class="line">    Role[Role[<span class="string">"Owner"</span>] = <span class="number">4</span>] = <span class="string">"Owner"</span>;</span><br><span class="line">    Role[Role[<span class="string">"Guest"</span>] = <span class="number">5</span>] = <span class="string">"Guest"</span>;</span><br><span class="line">})(Role || (Role = {}));</span><br></pre></td></tr></tbody></table></figure>
+
+<p>拆解后阅读起来会方便很多，通过拆解第一行：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Role[<span class="string">"Reporter"</span>] = <span class="number">1</span></span><br><span class="line">Role[<span class="number">1</span>] = <span class="string">"Reporter"</span></span><br><span class="line"><span class="comment">// 输出 Role</span></span><br><span class="line">{</span><br><span class="line">    <span class="number">1</span>: <span class="string">"Reporter"</span>,</span><br><span class="line">    <span class="string">"Reporter"</span>: <span class="number">1</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>解读就是：在内层中，枚举的成员被当作了 key ，枚举的值被当作了 value 。之后在外一层中，枚举的值被当作了 key ，枚举的成员又被当作了 value 。这种方式叫做 <a target="_blank" rel="noopener" href="https://baike.baidu.com/item/%E5%8F%8D%E5%90%91%E6%98%A0%E5%B0%84/20835372?fr=aladdin">反向映射（来源百度百科）</a>。</p>
+<h2 id="字符串枚举"><a href="#字符串枚举" class="headerlink" title="字符串枚举"></a>字符串枚举</h2><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 字符串枚举</span></span><br><span class="line"><span class="built_in">enum</span> Message {</span><br><span class="line">  Success = <span class="string">'恭喜你，你成功'</span>,</span><br><span class="line">  Fail = <span class="string">'抱歉，失败了'</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在官网编译后：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="keyword">var</span> Message;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">Message</span>) </span>{</span><br><span class="line">    Message[<span class="string">"Success"</span>] = <span class="string">"\u606D\u559C\u4F60\uFF0C\u4F60\u6210\u529F"</span>;</span><br><span class="line">    Message[<span class="string">"Fail"</span>] = <span class="string">"\u62B1\u6B49\uFF0C\u5931\u8D25\u4E86"</span>;</span><br><span class="line">})(Message || (Message = {}));</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>可以看出，在字符串枚举中，不存在反向映射。</p>
+</blockquote>
+<h2 id="异构枚举（不推荐使用，容易混淆）"><a href="#异构枚举（不推荐使用，容易混淆）" class="headerlink" title="异构枚举（不推荐使用，容易混淆）"></a>异构枚举（不推荐使用，容易混淆）</h2><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 异构枚举</span></span><br><span class="line"><span class="built_in">enum</span> Answer {</span><br><span class="line">  N,</span><br><span class="line">  Y = <span class="string">'yes'</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>编译后：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 异构枚举</span></span><br><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="comment">// 异构枚举</span></span><br><span class="line"><span class="keyword">var</span> Answer;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">Answer</span>) </span>{</span><br><span class="line">    Answer[Answer[<span class="string">"N"</span>] = <span class="number">0</span>] = <span class="string">"N"</span>;</span><br><span class="line">    Answer[<span class="string">"Y"</span>] = <span class="string">"yes"</span>;</span><br><span class="line">})(Answer || (Answer = {}));</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="枚举成员"><a href="#枚举成员" class="headerlink" title="枚举成员"></a>枚举成员</h2><figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 枚举成员</span></span><br><span class="line"><span class="built_in">enum</span> Char {</span><br><span class="line">  <span class="comment">// const</span></span><br><span class="line">  a, <span class="comment">// </span></span><br><span class="line">  b = Char.a,</span><br><span class="line">  c = <span class="number">1</span> + <span class="number">3</span>,</span><br><span class="line">  <span class="comment">// computed</span></span><br><span class="line">  d = <span class="built_in">Math</span>.random(),</span><br><span class="line">  e = <span class="string">'123'</span>.length</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>编译后：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="comment">// 枚举成员</span></span><br><span class="line"><span class="keyword">var</span> Char;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">Char</span>) </span>{</span><br><span class="line">    <span class="comment">// const</span></span><br><span class="line">    Char[Char[<span class="string">"a"</span>] = <span class="number">0</span>] = <span class="string">"a"</span>;</span><br><span class="line">    Char[Char[<span class="string">"b"</span>] = <span class="number">0</span>] = <span class="string">"b"</span>;</span><br><span class="line">    Char[Char[<span class="string">"c"</span>] = <span class="number">4</span>] = <span class="string">"c"</span>;</span><br><span class="line">    <span class="comment">// computed</span></span><br><span class="line">    Char[Char[<span class="string">"d"</span>] = <span class="built_in">Math</span>.random()] = <span class="string">"d"</span>;</span><br><span class="line">    Char[Char[<span class="string">"e"</span>] = <span class="string">'123'</span>.length] = <span class="string">"e"</span>;</span><br><span class="line">})(Char || (Char = {}));</span><br></pre></td></tr></tbody></table></figure>
+
+<p>可以看出被分为了两类，分别是：<strong>常量枚举成员</strong>，<strong>要被计算的枚举成员</strong></p>
+<ol>
+<li>常量(const)枚举成员</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Char[Char[<span class="string">"a"</span>] = <span class="number">0</span>] = <span class="string">"a"</span>;</span><br><span class="line">Char[Char[<span class="string">"b"</span>] = <span class="number">0</span>] = <span class="string">"b"</span>;</span><br><span class="line">Char[Char[<span class="string">"c"</span>] = <span class="number">4</span>] = <span class="string">"c"</span>;</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>可以看出，常量枚举成员都是在编译时就设置好了的。</p>
+</blockquote>
+<ol start="2">
+<li>计算(computed)枚举成员</li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Char[Char[<span class="string">"d"</span>] = <span class="built_in">Math</span>.random()] = <span class="string">"d"</span>;</span><br><span class="line">Char[Char[<span class="string">"e"</span>] = <span class="string">'123'</span>.length] = <span class="string">"e"</span>;</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>计算枚举成员：需要被计算的枚举成员，非常量的表达式。这类枚举成员的值不会在编译阶段执行，而会被保留到程序的执行阶段。<br>❗注意：在计算枚举成员后面的枚举成员，<strong>不能出现没有初始值的情况</strong>。<a target="_blank" rel="noopener" href="https://www.typescriptlang.org/zh/play#code/PTAEizzQ+OUBCNA0VBYAUAUwHYFcC2oDCALAQwCdQBvJUUEUAYwHtUBnAFwtAIBoqw2AjUALy5CRAHSc2NQaACMoANSgAzBzbV6mAA7pmyACZs90gLIFmeUUQKo9dTAAoAlKsSVk0gOQyATEo+iAGzQAc3MXSmpAc79AW79aBhY2ADMkAF8gA">举个错误栗子🌰</a>，主要看错误提示：<code>Enum member must have initializer.</code>。虽然会抛错，但是 typescript 依然会将这段代码编译。<br>如果想在发生编译错误时不生成 js 文件，可以在 typescript.json 中将 <code>"noEmitHelpers": true</code>。其他的配置项内容可以 <a href="tslang.cn/docs/handbook/compiler-options.html">点这里</a></p>
+</blockquote>
+<p>下面是常数项和计算所得项的完整定义，引用自 <a target="_blank" rel="noopener" href="https://ts.xcatliu.com/advanced/enum.html#%E5%B8%B8%E6%95%B0%E9%A1%B9%E5%92%8C%E8%AE%A1%E7%AE%97%E6%89%80%E5%BE%97%E9%A1%B9">TypeScript 入门教程</a></p>
+<ul>
+<li>不具有初始化函数并且之前的枚举成员是常数。在这种情况下，当前枚举成员的值为上一个枚举成员的值加 1。但第一个枚举元素是个例外。如果它没有初始化方法，那么它的初始值为 0。</li>
+<li>枚举成员使用常数枚举表达式初始化。常数枚举表达式是 TypeScript 表达式的子集，它可以在编译阶段求值。当一个表达式满足下面条件之一时，它就是一个常数枚举表达式：<ul>
+<li>数字字面量</li>
+<li>引用之前定义的常数枚举成员（可以是在不同的枚举类型中定义的）如果这个成员是在同一个枚举类型中定义的，可以使用非限定名来引用</li>
+<li>带括号的常数枚举表达式</li>
+<li>+, -, ~ 一元运算符应用于常数枚举表达式</li>
+<li>+, -, *, /, %, &lt;&lt;, &gt;&gt;, &gt;&gt;&gt;, &amp;, |, ^ 二元运算符，常数枚举表达式做为其一个操作对象。若常数枚举表达式求值后为 NaN 或 Infinity，则会在编译阶段报错</li>
+</ul>
+</li>
+</ul>
+<h2 id="常量枚举"><a href="#常量枚举" class="headerlink" title="常量枚举"></a>常量枚举</h2><p>源 ts 代码：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常量枚举</span></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">enum</span> Month {</span><br><span class="line">  Jan,</span><br><span class="line">  Fed,</span><br><span class="line">  Mar</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>编译输出 js 后：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>是的，你没有看错。常量枚举就是有这么个特性：会在编译阶段被移除</p>
+</blockquote>
+<p>当时它存在不是没有意义的，<strong>当我们不需要对象，但是需要对象的值的时候，就可以使用常量枚举</strong>。而且会减少我们编译环境下的代码。</p>
+<p>当我们只要输出枚举 Month 的值：</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 常量枚举</span></span><br><span class="line"><span class="keyword">const</span> <span class="built_in">enum</span> Month {</span><br><span class="line">  Jan,</span><br><span class="line">  Fed,</span><br><span class="line">  Mar</span><br><span class="line">}</span><br><span class="line"><span class="keyword">const</span> month = [Month.Jan, Month.Fed, Month.Mar]</span><br></pre></td></tr></tbody></table></figure>
+
+<p>编译后：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="keyword">const</span> month = [<span class="number">0</span> <span class="comment">/* Jan */</span>, <span class="number">1</span> <span class="comment">/* Fed */</span>, <span class="number">2</span> <span class="comment">/* Mar */</span>];</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="解决问题"><a href="#解决问题" class="headerlink" title="解决问题"></a>解决问题</h2><p>还记得首页的题目吗？改成使用枚举的方式。</p>
+<figure class="highlight typescript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">enum</span> argumentsRole {</span><br><span class="line">  a = <span class="number">1</span>,</span><br><span class="line">  b,</span><br><span class="line">  c,</span><br><span class="line">  d,</span><br><span class="line">  e</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initByRole</span> (<span class="params">role: argumentsRole</span>) </span>{</span><br><span class="line">  <span class="keyword">if</span> (role === <span class="number">1</span> || role === <span class="number">2</span>) {</span><br><span class="line">    <span class="comment">// do sth</span></span><br><span class="line">  } <span class="keyword">else</span> <span class="keyword">if</span> (role === <span class="number">3</span> || role === <span class="number">4</span>) {</span><br><span class="line">    <span class="comment">// do sth</span></span><br><span class="line">  } <span class="keyword">else</span> <span class="keyword">if</span> (role === <span class="number">5</span>) {</span><br><span class="line">    <span class="comment">// do sth</span></span><br><span class="line">  } <span class="keyword">else</span> {</span><br><span class="line">    <span class="comment">// do sth</span></span><br><span class="line">  }</span><br><span class="line">}</span><br><span class="line"><span class="keyword">const</span> a: argumentsRole = argumentsRole.c</span><br><span class="line">initByRole(a)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在转译成 javascript</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">"use strict"</span>;</span><br><span class="line"><span class="keyword">var</span> argumentsRole;</span><br><span class="line">(<span class="function"><span class="keyword">function</span> (<span class="params">argumentsRole</span>) </span>{</span><br><span class="line">    argumentsRole[argumentsRole[<span class="string">"a"</span>] = <span class="number">1</span>] = <span class="string">"a"</span>;</span><br><span class="line">    argumentsRole[argumentsRole[<span class="string">"b"</span>] = <span class="number">2</span>] = <span class="string">"b"</span>;</span><br><span class="line">    argumentsRole[argumentsRole[<span class="string">"c"</span>] = <span class="number">3</span>] = <span class="string">"c"</span>;</span><br><span class="line">    argumentsRole[argumentsRole[<span class="string">"d"</span>] = <span class="number">4</span>] = <span class="string">"d"</span>;</span><br><span class="line">    argumentsRole[argumentsRole[<span class="string">"e"</span>] = <span class="number">5</span>] = <span class="string">"e"</span>;</span><br><span class="line">})(argumentsRole || (argumentsRole = {}));</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">initByRole</span>(<span class="params">role</span>) </span>{</span><br><span class="line">    <span class="keyword">if</span> (role === <span class="number">1</span> || role === <span class="number">2</span>) {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (role === <span class="number">3</span> || role === <span class="number">4</span>) {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (role === <span class="number">5</span>) {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">else</span> {</span><br><span class="line">        <span class="comment">// do sth</span></span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="keyword">const</span> a = argumentsRole.c;</span><br><span class="line">initByRole(a);</span><br></pre></td></tr></tbody></table></figure>
+
+<hr>
+<blockquote>
+<p>TypeScript 的枚举类型的概念 <a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/builtin-types/enum">来源于 C#</a>。</p>
+</blockquote>
+<p>参考</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://ts.xcatliu.com/advanced/enum.html">枚举</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/dotnet/csharp/language-reference/builtin-types/enum">C# 枚举</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.tslang.cn/docs/handbook/compiler-options.html">TypeScript 编译选项</a></li>
+</ul>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3958135228.html">https://bljj-dbld.github.io/posts/3958135228.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/339853394.html">Windows Terminal 配置oh-my-posh主题</a>
+            
+            
+            <a class="next" rel="next" href="/posts/3961060538.html">P2 编写的第一个 TypeScript 程序</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

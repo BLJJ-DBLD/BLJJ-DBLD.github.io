@@ -1,0 +1,303 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>在 input 中实现 vue 中的依赖收集与响应 | BLJJ-DBLD Blog</title><meta name="robots" content="noindex">
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">在 input 中实现 vue 中的依赖收集与响应</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 16, 2022&nbsp;&nbsp;19:01:51</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>先学习的 <a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000018115762">这里的</a></p>
+<hr>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a>开始</h2><p>声明一个对象 <code>data</code>，可以视作 vue 中的 <code>data</code></p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> data = {</span><br><span class="line">    <span class="attr">r</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">g</span>: <span class="number">0</span>,</span><br><span class="line">    <span class="attr">b</span>: <span class="number">0</span></span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="添加-Observer"><a href="#添加-Observer" class="headerlink" title="添加 Observer"></a>添加 Observer</h2><p>作用在于将参数对象的属性变为响应式，只要对象的属性被读取或者被修改都能观察到。然后新建一个 <code>Observer</code> 实例，将 <code>data</code> 作为参数扔进去。这里的 <code>proxyData</code> 是将 <code>data</code> 的属性代理到以 <code>data</code> 为参数的 <code>Observer</code> 实例上去。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Observer</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params">obj</span>) {</span><br><span class="line">        <span class="built_in">this</span>.walk(obj)</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    walk (obj) {</span><br><span class="line">        <span class="built_in">Object</span>.keys(obj).forEach(<span class="function"><span class="params">prop</span> =&gt;</span> {</span><br><span class="line">            <span class="comment">// 对实例绑定数据</span></span><br><span class="line">            <span class="built_in">this</span>[prop] = obj[prop]</span><br><span class="line">            <span class="comment">// 对 data 属性做响应式拦截</span></span><br><span class="line">            <span class="built_in">this</span>.proxyData(obj, prop)</span><br><span class="line">            <span class="comment">// 对 vm 属性做定义反应式</span></span><br><span class="line">            <span class="built_in">this</span>.defineReactive(<span class="built_in">this</span>, prop, obj[prop])</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    proxyData (obj, prop) {</span><br><span class="line">        <span class="keyword">const</span> _this = <span class="built_in">this</span></span><br><span class="line">        <span class="built_in">Object</span>.defineProperty(obj, prop, {</span><br><span class="line">            get () {</span><br><span class="line">                <span class="keyword">return</span> _this[prop]</span><br><span class="line">            },</span><br><span class="line">            set (newVal) {</span><br><span class="line">                _this[prop] = newVal</span><br><span class="line">            }</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    defineReactive (obj, prop, value) {</span><br><span class="line">        <span class="built_in">Object</span>.defineProperty(obj, prop, {</span><br><span class="line">            get () {</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`<span class="subst">${prop}</span> - 被读取！`</span>)</span><br><span class="line">                <span class="keyword">return</span> value</span><br><span class="line">            },</span><br><span class="line">            set (newVal) {</span><br><span class="line">                <span class="keyword">if</span> (newVal === value) <span class="keyword">return</span></span><br><span class="line">                value = newVal</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`<span class="subst">${prop}</span> - 被读取！`</span>)</span><br><span class="line">            }</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="添加-Watcher"><a href="#添加-Watcher" class="headerlink" title="添加 Watcher"></a>添加 Watcher</h2><p><code>Watcher</code> 有点像 vue 中的 <code>computed</code>，实际上就是定义一个计算属性，这个计算属性依赖于前面 <code>data</code> 中的某些属性，由他们计算而得。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Watcher</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params">obj, prop, computed</span>) {</span><br><span class="line">        <span class="built_in">this</span>.getVal(obj, prop, computed)</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    getVal (obj, prop, computed) {</span><br><span class="line">        <span class="built_in">Object</span>.defineProperty(obj, prop, {</span><br><span class="line">            get () {</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`computed属性 - <span class="subst">${prop}</span>被读取！`</span>)</span><br><span class="line">                <span class="keyword">return</span> computed()</span><br><span class="line">            },</span><br><span class="line">            set () {</span><br><span class="line">                <span class="built_in">console</span>.error(<span class="string">'该值不允许被修改'</span>)</span><br><span class="line">            }</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>看起来没什么问题，所依赖的属性如果变了，计算属性只要再被查看（get方法）一次就可以更新了。但 vue 中的视图渲染是实时的，视图层依赖于数据层，数据变化了，视图层也会跟着变化，不需要手动更新。类比到这个例子就是计算属性如何才能在其所依赖的属性发生变化时被通知从而触发应有的事件？</p>
+<p><strong>这时我们先给Watcher加多一个callback，用于处理当依赖的数据被修改时，我这个计算属性该怎么响应</strong></p>
+<p>比如当依赖被修改时，我们就把这个计算属性的值打印出来</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Watcher</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params">obj, prop, computed, callback</span>) {</span><br><span class="line">        <span class="built_in">this</span>.getVal(obj, prop, computed, callback)</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    getVal (obj, prop, computed, callback) {</span><br><span class="line">        <span class="built_in">Object</span>.defineProperty(obj, prop, {</span><br><span class="line">            get () {</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`computed属性 - <span class="subst">${prop}</span>被读取！`</span>)</span><br><span class="line">                <span class="keyword">return</span> computed()</span><br><span class="line">            },</span><br><span class="line">            set () {</span><br><span class="line">                <span class="built_in">console</span>.error(<span class="string">'该值不允许被修改'</span>)</span><br><span class="line">            }</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Watcher(vm, <span class="string">'rgb'</span>, <span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="keyword">return</span> <span class="string">`rgb(<span class="subst">${vm.r}</span>, <span class="subst">${vm.g}</span>, <span class="subst">${vm.b}</span>)`</span></span><br><span class="line">}, <span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">`获取 <span class="subst">${vm.rgb}</span> !`</span>)</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<h2 id="添加-Dep"><a href="#添加-Dep" class="headerlink" title="添加 Dep"></a>添加 Dep</h2><p><code>Dep</code> 的用处在于当某一个属性（以下称‘自己’）被依赖了，将依赖自己的粉丝（们）–也就是 <code>Watcher(s)</code>，收集起来，假如自己发生了变化，能够及时通知粉丝们。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Dep</span> </span>{</span><br><span class="line">	<span class="title">constructor</span> (<span class="params"></span>) {</span><br><span class="line">		<span class="built_in">this</span>.deps = []</span><br><span class="line">	}</span><br><span class="line">	getDeps () {</span><br><span class="line">		<span class="comment">// 当没有回调 || 已经存在回调时跳出</span></span><br><span class="line">		<span class="keyword">if</span> (Dep.target || <span class="built_in">this</span>.deps.includes(Dep.target)) <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">		<span class="built_in">this</span>.deps.push(Dep.target)</span><br><span class="line">		<span class="built_in">console</span>.log(<span class="string">'依赖添加'</span>, Dep.target)</span><br><span class="line">	}</span><br><span class="line">	notify () {</span><br><span class="line">		<span class="built_in">this</span>.deps.forEach(<span class="function"><span class="params">dep</span> =&gt;</span> {</span><br><span class="line">			dep()</span><br><span class="line">		})</span><br><span class="line">	}</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>这里的 <code>Dep.target</code> 就是前面所说的 <code>callback</code> 方法了。这时我们改一下 <code>Watcher</code> 中的 <code>getVal</code></p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Watcher</span> </span>{</span><br><span class="line">    <span class="title">constructor</span> (<span class="params">obj, prop, computed, callback</span>) {</span><br><span class="line">        <span class="built_in">this</span>.getVal(obj, prop, computed, callback)</span><br><span class="line">    }</span><br><span class="line"></span><br><span class="line">    getVal (obj, prop, computed, callback) {</span><br><span class="line">        <span class="built_in">Object</span>.defineProperty(obj, prop, {</span><br><span class="line">            get () {</span><br><span class="line">				Dep.target = callback</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">`computed属性 - <span class="subst">${prop}</span>被读取！`</span>)</span><br><span class="line">                <span class="keyword">return</span> computed()</span><br><span class="line">            },</span><br><span class="line">            set () {</span><br><span class="line">                <span class="built_in">console</span>.error(<span class="string">'该值不允许被修改'</span>)</span><br><span class="line">            }</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>在计算属性被查看时，将 <code>callback</code> 赋值给 <code>Dep.target</code>，接下来就会调用其所依赖属性的 <code>getter</code>，我们只要在<code>getter</code> 里把 <code>callback</code> 给收集起来就行了。接下来修改依赖属性的 <code>getter</code> 方法。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">defineReactive</span>(<span class="params">obj, prop, val</span>)</span> {</span><br><span class="line">	<span class="keyword">const</span> dep = <span class="keyword">new</span> Dep()</span><br><span class="line">	<span class="built_in">Object</span>.defineProperty(obj, prop, {</span><br><span class="line">		<span class="function"><span class="title">get</span>(<span class="params"></span>)</span> {</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">`<span class="subst">${prop}</span> - 被读取！`</span>)</span><br><span class="line">			dep.getDeps() <span class="comment">// 收集 Wather</span></span><br><span class="line">			<span class="keyword">return</span> val</span><br><span class="line">		},</span><br><span class="line">		<span class="function"><span class="title">set</span>(<span class="params">newVal</span>)</span> {</span><br><span class="line">			<span class="keyword">if</span> (newVal == val) <span class="keyword">return</span></span><br><span class="line">			val = newVal</span><br><span class="line">			<span class="built_in">console</span>.log(<span class="string">`<span class="subst">${prop}</span> - 被修改！`</span>)</span><br><span class="line">			dep.notify()  <span class="comment">// 运行所有 callback</span></span><br><span class="line">		}</span><br><span class="line">	})</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure><!-- flag of hidden posts -->
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3665502492.html">https://bljj-dbld.github.io/posts/3665502492.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

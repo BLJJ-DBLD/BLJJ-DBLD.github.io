@@ -1,0 +1,386 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>Windows Terminal 配置oh-my-posh主题 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Windows Terminal 配置oh-my-posh主题</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">一月 10, 2022&nbsp;&nbsp;21:38:31</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">工具使用</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="1-安装-Window-Terminal"><a href="#1-安装-Window-Terminal" class="headerlink" title="1. 安装 Window Terminal"></a>1. 安装 Window Terminal</h1><blockquote>
+<p>Windows Terminal 需要在 MS store 里面下载，点<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/terminal/get-started">这里</a>。</p>
+<p>打不开时，可能需要用到代理 / 翻墙</p>
+</blockquote>
+<p>这其中的终端配置，包含比如<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/terminal/customize-settings/color-schemes">颜色配置</a>等。</p>
+<h1 id="2-在线安装-oh-my-posh-amp-posh-git"><a href="#2-在线安装-oh-my-posh-amp-posh-git" class="headerlink" title="2. 在线安装 oh-my-posh &amp; posh-git"></a>2. 在线安装 oh-my-posh &amp; posh-git</h1><p>在 Mac/Linux 下有 oh-my-zsh 主题，终于，Windows Terminal 的 PowerShell 也有 oh-my-posh 主题了。有了它，在 window 内咱就是那个最靓的那个仔。</p>
+<p><code>oh-my-posh</code> 是一个强大的 powerline 主题，类似于 Linux 下的 <code>oh-my-zsh</code>。</p>
+<p>相应的 github 官方项目中其实有具体的操作步骤，见：<a target="_blank" rel="noopener" href="https://ohmyposh.dev/">这里</a>。</p>
+<p>在这里，我将操作做个整理：</p>
+<blockquote>
+<p>以下的对终端内的操作请全部在管理员权限下进行！</p>
+</blockquote>
+<ol>
+<li>将 <code>CurrentUser</code> 的 <code>ExecutionPolicy(执行权限)</code> 从原来的 <code>Undefined</code> 更改成 <code>RemoteSigned</code></li>
+</ol>
+<ul>
+<li>命令是：<code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></li>
+<li>按提示输入 <code>Y</code> 即可。</li>
+</ul>
+<ol start="2">
+<li>接下来，你需要使用 <code>PowerShell Gallery</code> 来安装 <code>oh-my-posh</code>。</li>
+</ol>
+<ul>
+<li>命令有：</li>
+</ul>
+<ol>
+<li><code>Install-Module posh-git -Scope CurrentUser</code></li>
+<li><code>Install-Module oh-my-posh -Scope CurrentUser</code></li>
+</ol>
+<ul>
+<li>均按提示输入 <code>Y</code> 即可。</li>
+</ul>
+<blockquote>
+<p>注意：安装 oh-my-posh 需要进行翻墙，否则无法进行下载安装</p>
+</blockquote>
+<ol start="3">
+<li>都安装好之后，还需要更新配置文件 <code>$PROFILE</code>，类似于Linux Bash的.bashrc, 这是全局修改，而不是临时的设置喔~</li>
+<li>继续输入：<code>if (!(Test-Path -Path $PROFILE )) { New-Item -Type File -Path $PROFILE -Force }</code></li>
+<li>之后再输入：<code>notepad $PROFILE</code>，对该文件做修改</li>
+<li>对打开的 <code>$PROFILE</code> 文件中输入：</li>
+</ol>
+<figure class="highlight coq"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Import</span>-<span class="keyword">Module</span> posh-git</span><br><span class="line"><span class="keyword">Import</span>-<span class="keyword">Module</span> oh-my-posh</span><br><span class="line"><span class="keyword">Set</span>-PoshPrompt -Theme &lt;theme 名称&gt; // 这个是新版本 v3 中的命令，在 v2 版本下是：<span class="keyword">Set</span>-Theme &lt;theme 名称&gt;</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>保存后关闭记事本。想获取目前所有的主题列表的命令是：<code>Get-PoshThemes</code>。</p>
+</blockquote>
+<h1 id="3-离线安装-oh-my-posh-amp-posh-git"><a href="#3-离线安装-oh-my-posh-amp-posh-git" class="headerlink" title="3. 离线安装 oh-my-posh &amp; posh-git"></a>3. 离线安装 oh-my-posh &amp; posh-git</h1><h2 id="1-下载-nupkg-格式内容"><a href="#1-下载-nupkg-格式内容" class="headerlink" title="1. 下载 nupkg 格式内容"></a>1. 下载 nupkg 格式内容</h2><p>有时在内部环境中，也想使用 <code>oh-my-posh</code> 却苦于无法在线安装，这时，就需要我们自己手动去将安装包等内容手动引入内网内。</p>
+<p>这两个包需要从 <code>PowerShell Gallery</code> 中搜索下载，下载路径：<a target="_blank" rel="noopener" href="https://www.powershellgallery.com/packages/oh-my-posh">oh-my-posh</a> 和 <a href="powershellgallery.com/packages/posh-git">posh-git</a></p>
+<p>下载下来的是 <code>nupkg</code> 格式，按照官方文档进行离线安装，步骤如下：</p>
+<ol>
+<li>解锁 NuGet 包文件，打开终端，执行类似如下的命令<br><code>Unblock-File -Path C:\Downloads\xxx.nupkg</code></li>
+<li>查找默认模块目录</li>
+</ol>
+<ul>
+<li>打开 <code>PowerShell</code> 执行命令 <code>$env:PSModulePath</code> 查看模块所在目录。</li>
+<li>按优先级由高到低排序的。</li>
+<li>将下载下来的内容均放在高优先级的目录下</li>
+</ul>
+<ol start="3">
+<li>把 <code>nupkg</code> 文件后缀改为 <code>zip</code>，并解压</li>
+<li>删除里面与 NuGet 规范相关的文件，包括</li>
+</ol>
+<ul>
+<li><code>_rels</code></li>
+<li><code>package</code></li>
+<li><code>[Content_Types].xml</code></li>
+<li><code>&lt;xxx&gt;.nuspec</code></li>
+</ul>
+<ol start="5">
+<li>重命名文件夹</li>
+</ol>
+<ul>
+<li>文件夹解压后默认为<code>&lt;xxx&gt;.&lt;version&gt;</code> 的格式，我们把目录结构改为 <code>&lt;xxx&gt;/&lt;version&gt;</code>，并将所有文件移动到版本号文件夹下。</li>
+</ul>
+<h2 id="2-配置-PowerShell-与在线安装一致"><a href="#2-配置-PowerShell-与在线安装一致" class="headerlink" title="2. 配置 PowerShell 与在线安装一致"></a>2. 配置 PowerShell 与在线安装一致</h2><h2 id="3-在用户变量内配置-oh-my-posh-环境变量"><a href="#3-在用户变量内配置-oh-my-posh-环境变量" class="headerlink" title="3. 在用户变量内配置 oh-my-posh 环境变量"></a>3. 在用户变量内配置 oh-my-posh 环境变量</h2><blockquote>
+<p>配置环境变量的前提是已经拥有 oh-my-posh 相关的压缩包</p>
+</blockquote>
+<ol>
+<li>配置 <code>Path</code> 变量，在其中添加一行<br><code>C:\Users\&lt;username&gt;\AppData\Local\Programs\oh-my-posh\bin</code></li>
+</ol>
+<p>  这个路径是在线安装的默认路径，我们可以也手动安装到该路径下。</p>
+<ol start="2">
+<li>新增新的变量 <code>POSH_THEMES_PATH</code>，与主题包路径有关的配置<br><code>C:\Users\&lt;username&gt;\AppData\Local\Programs\oh-my-posh\themes</code></li>
+</ol>
+<p>到此全部结束！</p>
+<p>参照文章 &amp; GitHub:</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.misiyu.cn/article/134.html">Windows Terminal 配置oh-my-posh主题</a></li>
+<li><a target="_blank" rel="noopener" href="https://ohmyposh.dev/">Oh my Posh</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/terminal/get-started">安装和设置 Windows 终端</a></li>
+</ol>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/339853394.html">https://bljj-dbld.github.io/posts/339853394.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Windows-Terminal-%E9%85%8D%E7%BD%AE/"># Windows Terminal 配置</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/2246521759.html">NPM 包管理工具</a>
+            
+            
+            <a class="next" rel="next" href="/posts/3958135228.html">P3 枚举类型（enum）</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

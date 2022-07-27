@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P14 Redux 的学习 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P14 Redux 的学习</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;19:58:23</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="JavaScript-纯函数"><a href="#JavaScript-纯函数" class="headerlink" title="JavaScript 纯函数"></a>JavaScript 纯函数</h1><p>函数式编程中有一个概念叫纯函数，JavaScript 符合函数式编程的范式，所以也有纯函数的概念。</p>
+<p>在 React 中，纯函数的概念非常的重要！</p>
+<p>纯函数的维基百科定义：<br>在程序设计中，若一个函数符合以下要求，则它可能被认为是纯函数：</p>
+<ul>
+<li>此函数在相同的输入值时，需产生相同的输出。函数的输出和输入值以外的其他隐藏信息或状态无关，也和由I/O设备产生的外部输出无关。</li>
+<li>该函数不能有语义上可观察的函数副作用，诸如“触发事件”，使输出设备输出，或更改输出值以外物件的内容等。</li>
+</ul>
+<p>简单总结：</p>
+<ul>
+<li>确定的输入，一定会产生确定的输出<ul>
+<li>确定的输出是指，不会因为一些变量的变化导致输出的不确定。</li>
+</ul>
+</li>
+<li>函数在执行过程中，不会产生副作用<ul>
+<li>副作用 - 维基百科解释：函数副作用指当调用函数时，除了返回函数值之外，还对主调用函数产生附加的影响。例如修改全局变量（函数外的变量），修改参数或改变外部存储。</li>
+</ul>
+</li>
+</ul>
+<p>例子如下：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这是一个纯函数吗？ - Yes</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum1</span> (<span class="params">num1, num2</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> num1 + num2</span><br><span class="line">}</span><br><span class="line">sum1(<span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line">sum1(<span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line">sum1(<span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line">sum1(<span class="number">1</span>, <span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这是一个纯函数吗？ - No, 原因是这个函数会因为外部变量的变化导致不能产生确定的输出</span></span><br><span class="line"><span class="keyword">let</span> data2 = <span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum2</span> (<span class="params">num</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> data2 + num</span><br><span class="line">}</span><br><span class="line">sum2(<span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line">data2 = <span class="number">2</span></span><br><span class="line">sum2(<span class="number">2</span>) <span class="comment">// 4</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这是一个纯函数吗？ - Yes</span></span><br><span class="line"><span class="keyword">const</span> data3 = <span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">sum3</span> (<span class="params">num</span>) </span>{</span><br><span class="line">    <span class="keyword">return</span> data3 + num</span><br><span class="line">}</span><br><span class="line">sum3(<span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line">data3 = <span class="number">2</span> <span class="comment">// 会导致报错，而无法更改</span></span><br><span class="line">sum3(<span class="number">2</span>) <span class="comment">// 3</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 这是一个纯函数吗？ - No, 原因是这个函数会产生副作用，会更改输入</span></span><br><span class="line"><span class="keyword">const</span> obj = {</span><br><span class="line">    <span class="attr">name</span>: <span class="string">'lacy'</span></span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getName</span> (<span class="params">user</span>) </span>{</span><br><span class="line">    user.name = <span class="string">'jam'</span></span><br><span class="line">    <span class="keyword">return</span> user.name</span><br><span class="line">}</span><br><span class="line">getName(obj)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>为什么纯函数在函数式编程中非常重要？</p>
+<ul>
+<li>因为你可以安心的写和安心的用；</li>
+<li>你在写的时候保证了函数的纯度，只需要专心去实现自己的业务逻辑即可，不需要关心传入的内容或者依赖其他的外部变量；</li>
+<li>在用的时候，你确定你的输入内容不会被任意篡改，并且自己的确定的输入，一定会有确定的输出；</li>
+</ul>
+<p>在 React 中，就要求我们无论是函数还是 class 声明一个组件，这个组件都必须想纯函数一样，保护它们的 <code>props</code> 不被篡改：</p>
+<blockquote>
+<p>React 非常灵活，但它也有一个严格的规则：<br>所有 React 组件都必须像纯函数一样保护它们的 <code>props</code> 不被更改。</p>
+</blockquote>
+<h1 id="为什么需要-Redux"><a href="#为什么需要-Redux" class="headerlink" title="为什么需要 Redux"></a>为什么需要 Redux</h1><ol>
+<li>JavaScript 开发的应用程序，已经变得越来越复杂了<ul>
+<li>这些状态不再只是简单的对表单做个校验，也包括一些 UI 的状态，比如某些元素的选中，是否显示加载动效，分页等</li>
+</ul>
+</li>
+<li>管理不断变化的 state 是非常困难的<ul>
+<li>状态之间互相存在依赖，一个状态的变化会引起另一个状态的变化， View 页面也有可能会引起状态的变化</li>
+<li>当程序变得复杂时，state 在什么时候，因为什么原因而发生变化，发生了怎么样的变化，会变得非常难以控制和追踪</li>
+</ul>
+</li>
+<li>React 是在视图层帮助我们解决了 DOM 的渲染过程，但是 State 还是由我们自己来管理<ul>
+<li>无论是组件定义自己的 state，还是组件间通信通过 props 进行传递；也包括通过 Context 进行数据之间的共享</li>
+<li>React 主要负责帮助我们管理视图，state 如何维护最终还是我们自己决定</li>
+</ul>
+</li>
+</ol>
+<p>Redux 就是帮助我们管理 State 的容器：Redux 是 JavaScript 的状态容器，提供了可预测的状态管理；<br>Redux 除了和 React 一起使用外，它还可以和其他界面库一起来使用（比如 Vue ），并且它非常小（包括依赖在内，只有 2kb）</p>
+<h1 id="Redux-的三大原则"><a href="#Redux-的三大原则" class="headerlink" title="Redux 的三大原则"></a>Redux 的三大原则</h1><ol>
+<li>单一数据源<ol>
+<li>整个应用程序的 state 被存储再一棵 Object tree 中，并且这个 Object tree 只能存储一个 store 中；</li>
+<li>Redux 并没有强制要求我们不能创建多个 Store，但是那样子不利于数据的维护；</li>
+<li>单一的数据源可以让整个应用程序的 state 变得方便维护、追踪、修改；</li>
+</ol>
+</li>
+<li>State 是只读的<ol>
+<li>唯一修改 State 的方法一定是触发 action，不要试图在其他地方通过任何的方式来修改 State；</li>
+<li>这样子就确保了 View 或网络请求都不能直接修改 State，它们只能通过 action 来描述自己想要如何修改 state；</li>
+<li>这样确保所有的修改都被集中化处理，并且严格按照顺序执行，不用担心 race condition（竟态）的问题。</li>
+</ol>
+</li>
+<li>使用纯函数来执行修改<ol>
+<li>通过 reduce 将 旧state 和 action 联系在一起，并且返回一个新的 state</li>
+<li>随着应用程序的复杂度增加，我们可以将 reduce 拆分成多个小的 reducers ，分别操作不同的 state tree 的一部分</li>
+<li>但是所有的 reducer 都应该是纯函数，不能产生任何的副作用</li>
+</ol>
+</li>
+</ol>
+<h1 id="Redux-的使用"><a href="#Redux-的使用" class="headerlink" title="Redux 的使用"></a>Redux 的使用</h1><h2 id="Redux-流程图"><a href="#Redux-流程图" class="headerlink" title="Redux 流程图"></a>Redux 流程图</h2><p>首先先看一下大概的流程，有利于后续的理解</p>
+<p><img src="/posts/2578506661/image_1.png" alt="Redux 流程图"></p>
+<h2 id="Redux-的基本使用"><a href="#Redux-的基本使用" class="headerlink" title="Redux 的基本使用"></a>Redux 的基本使用</h2><p>目前环境下，我们只是在 Node 环境内做一个简单的使用。</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 1. 导入 Redux</span></span><br><span class="line"><span class="keyword">const</span> redux = <span class="built_in">require</span>(<span class="string">'redux'</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 2. 初始化的数据：initalState/defaultState</span></span><br><span class="line"><span class="keyword">const</span> initalState = {</span><br><span class="line">    <span class="attr">count</span>: <span class="number">0</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 3. 创建 reducer 方法 - 该方法必须是纯函数</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">reducer</span> (<span class="params">state = initalState<span class="comment">/* 设置初始值 */</span>, action</span>) </span>{</span><br><span class="line">    <span class="comment">// <span class="doctag">TODO:</span> 根据 action.type 的不同更改 state 值</span></span><br><span class="line">    <span class="comment">// 示例：</span></span><br><span class="line">    <span class="keyword">switch</span> (action.type) {</span><br><span class="line">        <span class="keyword">case</span> <span class="string">"ADD_COUNT"</span>:</span><br><span class="line">            <span class="keyword">return</span> {...state, <span class="attr">count</span>: state.count + action.count}</span><br><span class="line">        <span class="comment">// ... 更多的其他 Type</span></span><br><span class="line">        <span class="attr">default</span>:</span><br><span class="line">            <span class="keyword">return</span> state</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="comment">// 4. 利用 redux.createStore 方法 创建 store</span></span><br><span class="line"><span class="keyword">const</span> store = redux.createStore(<span class="comment">/* 第一个参数是 reducer 方法 */</span> reducer)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 如果想对 state 的变化做监听的话，可以使用 store.subscribe 方法。注意：必须在派发前！</span></span><br><span class="line">store.subscribe(<span class="function">() =&gt;</span> {</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">'state 发生了变化'</span>, store.getState())</span><br><span class="line">})</span><br><span class="line"></span><br><span class="line"><span class="comment">// 5. 设置 actions &amp;&amp; 派发（dispatch）action</span></span><br><span class="line"><span class="keyword">const</span> action1 = {<span class="attr">type</span>: <span class="string">"ADD_COUNT"</span>, <span class="attr">count</span>: <span class="number">15</span>}</span><br><span class="line"><span class="comment">// 派发</span></span><br><span class="line">store.dispatch(action1)</span><br></pre></td></tr></tbody></table></figure>
+
+<p>以上就是一个简单的 redux 的流程。</p>
+<h2 id="Redux-的模块化使用"><a href="#Redux-的模块化使用" class="headerlink" title="Redux 的模块化使用"></a>Redux 的模块化使用</h2><p>只使用 node 时，我们期望采用 ES6 的方式导入文件那该如何操作呢？</p>
+<ol>
+<li>当 node 版本在 13.2.x 以下时有两步操作：在 package.json 中添加： <figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">{</span><br><span class="line">    ...</span><br><span class="line">    + <span class="string">"type"</span>: <span class="string">"module"</span>,</span><br><span class="line">    <span class="string">"scripts"</span>: {</span><br><span class="line">        - <span class="string">"start"</span>: <span class="string">"node ./index.js"</span></span><br><span class="line">        + <span class="string">"start"</span>: <span class="string">"node --experimental-modules ./index.js"</span> <span class="comment">// 使用 Node 中的实验特性</span></span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure></li>
+<li>当 node 版本在 13.2.x 以上时，只需加入 <code>"type": "module"</code></li>
+</ol>
+<h2 id="Redux-的解耦"><a href="#Redux-的解耦" class="headerlink" title="Redux 的解耦"></a>Redux 的解耦</h2><p>前面，我们将 <code>Redux</code> 的基本使用，以及如何的运作基本了解清楚了。当我们还只是轻量使用时，或许会编写到一个 <code>store.js</code> 文件内，但是当内容增加后，难免到最后会变得难以维护。</p>
+<p>因此我们也会依据各个模块的不同功能来进行不同的文件划分。会在项目的顶级目录下创建一个 <code>./store</code> 文件夹以用来保存各种文件</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">|- store</span><br><span class="line">|-  |- actionCreator.js</span><br><span class="line">|-  |- constants.js</span><br><span class="line">|-  |- index.js</span><br><span class="line">|-  |- reducer.js</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="actionCreator-js"><a href="#actionCreator-js" class="headerlink" title="actionCreator.js"></a>actionCreator.js</h3><p><code>actionCreator</code> 即是 <code>action</code> 的集合。</p>
+<blockquote>
+<p>action 就是一个普通 JavaScript 对象（注意到没，这儿没有任何魔法!）用来描述发生了什么。</p>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> {</span><br><span class="line">    ADD_COUNT,</span><br><span class="line">    SUB_COUNT,</span><br><span class="line">    INCREMENT,</span><br><span class="line">    DECREMENT</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"./constants.js"</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> addCount = <span class="function">(<span class="params">count</span>) =&gt;</span> ({</span><br><span class="line">    <span class="attr">type</span>: ADD_COUNT,</span><br><span class="line">    count</span><br><span class="line">})</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> subCount = <span class="function">(<span class="params">count</span>) =&gt;</span> ({</span><br><span class="line">    <span class="attr">type</span>: SUB_COUNT,</span><br><span class="line">    count</span><br><span class="line">})</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> increament = <span class="function">() =&gt;</span> ({</span><br><span class="line">    <span class="attr">type</span>: INCREMENT</span><br><span class="line">})</span><br><span class="line"><span class="keyword">export</span> <span class="keyword">const</span> decreament = <span class="function">() =&gt;</span> ({</span><br><span class="line">    <span class="attr">type</span>: DECREMENT</span><br><span class="line">})</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>其中将 <code>type</code> 字段的值通过 <code>constants.js</code> 来引入，以来确保唯一性</p>
+</blockquote>
+<h3 id="reducer-js"><a href="#reducer-js" class="headerlink" title="reducer.js"></a>reducer.js</h3><figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> {</span><br><span class="line">    ADD_COUNT,</span><br><span class="line">    SUB_COUNT,</span><br><span class="line">    INCREMENT,</span><br><span class="line">    DECREMENT</span><br><span class="line">} <span class="keyword">from</span> <span class="string">'./constants.js'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> initalState = {</span><br><span class="line">    <span class="attr">count</span>: <span class="number">0</span></span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="function"><span class="keyword">function</span> (<span class="params">state = initalState, action</span>) </span>{</span><br><span class="line">    <span class="keyword">switch</span> (action.type) {</span><br><span class="line">        <span class="keyword">case</span> ADD_COUNT:</span><br><span class="line">            <span class="keyword">return</span> {</span><br><span class="line">                ...state,</span><br><span class="line">                <span class="attr">count</span>: state.count + action.count</span><br><span class="line">            }</span><br><span class="line">        <span class="keyword">case</span> SUB_COUNT:</span><br><span class="line">            <span class="keyword">return</span> {</span><br><span class="line">                ...state,</span><br><span class="line">                <span class="attr">count</span>: state.count - action.count</span><br><span class="line">            }</span><br><span class="line">        <span class="keyword">case</span> INCREMENT:</span><br><span class="line">            <span class="keyword">return</span> {</span><br><span class="line">                ...state,</span><br><span class="line">                <span class="attr">count</span>: state.count + <span class="number">1</span></span><br><span class="line">            }</span><br><span class="line">        <span class="keyword">case</span> DECREMENT:</span><br><span class="line">            <span class="keyword">return</span> {</span><br><span class="line">                ...state,</span><br><span class="line">                <span class="attr">count</span>: state.count - <span class="number">1</span></span><br><span class="line">            }</span><br><span class="line">        <span class="attr">default</span>:</span><br><span class="line">            <span class="keyword">return</span> {</span><br><span class="line">                ...state</span><br><span class="line">            }</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<h3 id="在组件内使用-store"><a href="#在组件内使用-store" class="headerlink" title="在组件内使用 store"></a>在组件内使用 <code>store</code></h3><ol>
+<li>首先在组件内导入该 <code>store</code>，包含的有 <code>store</code> 对象本身以及所用到的 <code>action</code></li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="keyword">import</span> store, {</span><br><span class="line">    addCount,</span><br><span class="line">    subCount</span><br><span class="line">} <span class="keyword">from</span> <span class="string">"../store"</span>;</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<ol start="2">
+<li>之后在类组件内使用该 <code>store</code></li>
+</ol>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">About</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    state = store.getState() <span class="comment">// 通过 getState 方法获取到数据</span></span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> {</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;&gt;</span></span></span><br><span class="line"><span class="xml">                ABOUT</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">h2</span>&gt;</span>当前值：{this.state.count}<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.addCount}</span>&gt;</span>+10<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{this.subCount}</span>&gt;</span>-5<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">hr</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">    addCount () {</span><br><span class="line">        store.dispatch(addCount(<span class="number">10</span>))</span><br><span class="line">    }</span><br><span class="line">    subCount () {</span><br><span class="line">        store.dispatch(subCount(<span class="number">5</span>))</span><br><span class="line">    }</span><br><span class="line">    componentDidMount () {</span><br><span class="line">        <span class="comment">// 订阅方法会返回一个对象，且是一个取消订阅方法</span></span><br><span class="line">        <span class="built_in">this</span>.unsubscribe = store.subscribe(<span class="function">() =&gt;</span> {</span><br><span class="line">            <span class="built_in">this</span>.setState(store.getState())</span><br><span class="line">        })</span><br><span class="line">    }</span><br><span class="line">    componentWillUnmount () {</span><br><span class="line">        <span class="comment">// 通过执行这个方法去注销订阅</span></span><br><span class="line">        <span class="built_in">this</span>.unsubscribe()</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></tbody></table></figure>
+
+<p>至此，就完成了 <code>Redux</code> 的解耦和在组件内的正常使用。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/2578506661.html">https://bljj-dbld.github.io/posts/2578506661.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1612587612.html">P15 React 的深入浅出</a>
+            
+            
+            <a class="next" rel="next" href="/posts/522225208.html">P13 react 过渡动画和纯函数使用</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>

@@ -1,0 +1,335 @@
+<!DOCTYPE html><html lang="zh-CN"><head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="BLJJ-DBLD">
+
+
+    <meta name="subtitle" content="微任务">
+
+
+
+
+<title>P6-前面的知识点补充 | BLJJ-DBLD Blog</title>
+
+
+
+    <link rel="icon" href="https://cdn.reorz.com/favicon.ico">
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    
+    
+    
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    
+    
+    
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/js/lightgallery.min.js"></script>
+    
+    
+    
+
+
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-SSN1WL65KY"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-SSN1WL65KY');
+</script>
+
+<meta name="generator" content="Hexo 5.4.0"><script>function loadCss(l){var d=document,h=d.head,s=d.createElement('link');s.rel='stylesheet';s.href=l;!function e(f){if (d.body)return f();setTimeout(function(){e(f)})}(function(){h.appendChild(s);});}loadCss('/style.css');loadCss('https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css');</script><noscript><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery.js@1.1.3/dist/css/lightgallery.min.css"></noscript></head>
+
+<body>
+    
+
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo"><a href="/">&lt; BLJJ-DBLD blog /&gt;</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">&lt; BLJJ-DBLD blog /&gt;</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">☰ Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">归档</a>
+                
+                    <a class="menu-item" href="/categories">分类</a>
+                
+                    <a class="menu-item" href="/tags">标签</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+
+            <div class="main">
+                <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">P6-前面的知识点补充</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">BLJJ-DBLD</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">十二月 7, 2021&nbsp;&nbsp;6:18:59</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/React/">React</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h1 id="setState-不可变的力量"><a href="#setState-不可变的力量" class="headerlink" title="setState 不可变的力量"></a>setState 不可变的力量</h1><p>首先我们做一个案例：<br><img src="/posts/1641527773/image_1.png" alt="案例图片"></p>
+<p>下面是对案例的一部分实现代码：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line"><span class="function"><span class="title">constructor</span>(<span class="params">props</span>)</span> {</span><br><span class="line">    <span class="built_in">super</span>(props);</span><br><span class="line">    <span class="built_in">this</span>.state = {</span><br><span class="line">        <span class="attr">friends</span>: [{</span><br><span class="line">            <span class="attr">name</span>: <span class="string">'lacey'</span>,</span><br><span class="line">            <span class="attr">age</span>: <span class="number">18</span></span><br><span class="line">        }, {</span><br><span class="line">            <span class="attr">name</span>: <span class="string">'jamediii'</span>,</span><br><span class="line">            <span class="attr">age</span>: <span class="number">25</span></span><br><span class="line">        }]</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"><span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">    <span class="keyword">return</span> (</span><br><span class="line">        <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">                {</span></span><br><span class="line"><span class="xml">                    this.state.friends.map(item =&gt; {</span></span><br><span class="line"><span class="xml">                        return (</span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;<span class="name">li</span> <span class="attr">key</span>=<span class="string">{item.name}</span>&gt;</span></span></span><br><span class="line"><span class="xml">                                <span class="tag">&lt;<span class="name">p</span>&gt;</span>名字：{item.name}<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">                                <span class="tag">&lt;<span class="name">p</span>&gt;</span>年龄：{item.age}<span class="tag">&lt;/<span class="name">p</span>&gt;</span></span></span><br><span class="line"><span class="xml">                            <span class="tag">&lt;/<span class="name">li</span>&gt;</span></span></span><br><span class="line"><span class="xml">                        )</span></span><br><span class="line"><span class="xml">                    })</span></span><br><span class="line"><span class="xml">                }</span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">ul</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> this.addPerson()}&gt;添加人物<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">    );</span><br><span class="line">}</span><br><span class="line">addPerson () {</span><br><span class="line">    <span class="built_in">this</span>.state.friends.push({</span><br><span class="line">        <span class="attr">name</span>: <span class="string">'tom'</span>,</span><br><span class="line">        <span class="attr">age</span>: <span class="number">23</span></span><br><span class="line">    })</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        <span class="attr">friends</span>: <span class="built_in">this</span>.state.friends</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>当你在启动后能够发现运行时是没有问题的，那是因为我们还未考虑到性能问题。当我们加入了 <code>shouldComponentUpdate</code> 方法（后面尽量简称为 <code>SCU</code>）对 <code>this.state.friends</code> 这个对象做浅比较时（在 <code>PureComponent</code> 类中，React 也是做了同样的比较）：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">shouldComponentUpdate (nextProps, nextState) {</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.state.friends !== nextState.friends) {</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span></span><br><span class="line">    }</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span></span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>会导致视图无法更新，无法更新的原因是更新后的 <code>nextState.friends</code> 的变量指针与 <code>state.friends</code> 的变量指针一致。因此我们的修改是：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">addPerson () {</span><br><span class="line">    <span class="comment">// 第一种更新 friends 的方式，不推荐</span></span><br><span class="line">    <span class="comment">// this.state.friends.push({</span></span><br><span class="line">    <span class="comment">//     name: 'tom',</span></span><br><span class="line">    <span class="comment">//     age: 23</span></span><br><span class="line">    <span class="comment">// })</span></span><br><span class="line">    <span class="comment">// this.setState({</span></span><br><span class="line">    <span class="comment">//     friends: this.state.friends</span></span><br><span class="line">    <span class="comment">// })</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 第二种更新 friends 的方式，推荐！</span></span><br><span class="line">    <span class="comment">// 1. 先对 this.state.friends 做浅拷贝</span></span><br><span class="line">    <span class="comment">// 2. 之后再将新的对象加入到这个新的 friends 数组中去。</span></span><br><span class="line">    <span class="keyword">const</span> friends = [...this.state.friends, {</span><br><span class="line">        <span class="attr">name</span>: <span class="string">'tom'</span>,</span><br><span class="line">        <span class="attr">age</span>: <span class="number">23</span></span><br><span class="line">    }]</span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        friends</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<p>实现 <code>age + 1</code> 的操作思路也是如此：</p>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">incrementAge (index) {</span><br><span class="line">    <span class="comment">// 1. 对 this.state.friends 做一个浅拷贝</span></span><br><span class="line">    <span class="keyword">const</span> friends = [...this.state.friends]</span><br><span class="line">    <span class="comment">// 2. 再进行内部的操作 &amp; setState</span></span><br><span class="line">    friends[index].age += <span class="number">1</span></span><br><span class="line">    <span class="built_in">this</span>.setState({</span><br><span class="line">        friends</span><br><span class="line">    })</span><br><span class="line">}</span><br><span class="line">...</span><br></pre></td></tr></tbody></table></figure>
+
+<blockquote>
+<p>需要注意的一点是，我们这里做的都只是浅拷贝，newFriends 数组内部的对象与 oldFriends 数组内部的对象保留的指针是一致的，因此当我们修改内部对象中的某一个属性时，两个数组对象中的那个内部对象是一致的。</p>
+</blockquote>
+<h1 id="全局事件传递"><a href="#全局事件传递" class="headerlink" title="全局事件传递"></a>全局事件传递</h1><blockquote>
+<p>在多个项目中都有事件总线（<code>event bus</code>）的概念，它是一个全局对象，可以利用它对全局的一些事件做监听与相应。</p>
+<p>在 Vue 中，可以通过声明一个 Vue 实例快速实现一个事件总线 <code>event bus</code>；<br>在 React 中，需要依赖一个 events 模块包，可以通过 npm 或者 yarn 来安装，命令是：<code>yarn add events</code></p>
+</blockquote>
+<p><code>events</code> 常用的 API：</p>
+<ul>
+<li>通过模块包中的 <code>EventEmitter</code> 类来声明一个 <code>eventBus</code> 全局对象</li>
+<li>发出事件：<code>eventBus.emit(event: string | symbol, ...args: any[])</code></li>
+<li>监听事件：<ul>
+<li><code>eventBus.addListener(event: string | symbol, listener: (...args: any[]) =&gt; void)</code></li>
+<li><code>eventBus.on(event: string | symbol, listener: (...args: any[]) =&gt; void)</code></li>
+</ul>
+</li>
+<li>移除事件监听：<ul>
+<li><code>eventBus.removeListener(event: string | symbol, listener: (...args: any[]) =&gt; void)</code></li>
+<li><code>eventBus.off(event: string | symbol, listener: (...args: any[]) =&gt; void)</code></li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>有四点需要引起注意：</p>
+<ol>
+<li>事件的监听应该放在组件生命周期中的：componentDidMount 方法中。</li>
+<li>当组件内存在事件监听时，一定要在该组件内的 componentWillUnmount 方法中对事件监听做移除</li>
+<li>事件监听与移除事件监听的方法是一套的，addListener &lt;-&gt;removeListerner；on &lt;-&gt; off</li>
+<li>事件监听中第二个参数函数中的参数与发出事件内的参数一一对应。</li>
+</ol>
+</blockquote>
+<figure class="highlight javascript"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> React, { PureComponent } <span class="keyword">from</span> <span class="string">'react'</span>;</span><br><span class="line"><span class="keyword">import</span> { EventEmitter } <span class="keyword">from</span> <span class="string">'events'</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 1. 需要先进行 eventBus 变量声明</span></span><br><span class="line"><span class="keyword">const</span> eventBus = <span class="keyword">new</span> EventEmitter()</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Home</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> {</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">             <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                Home</span></span><br><span class="line"><span class="xml">             <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">    handleHelloListerner (num, message) {</span><br><span class="line">        <span class="built_in">console</span>.log(num, message);</span><br><span class="line">    }</span><br><span class="line">    componentDidMount () {</span><br><span class="line">        <span class="comment">// 3. 对事件进行监听</span></span><br><span class="line">        <span class="comment">// eventBus.addListener('sayHello', this.handleHelloListerner)</span></span><br><span class="line">        eventBus.on(<span class="string">'sayHello'</span>, <span class="built_in">this</span>.handleHelloListerner)</span><br><span class="line">    }</span><br><span class="line">    componentWillUnmount () {</span><br><span class="line">        <span class="comment">// 4. 对事件取消监听</span></span><br><span class="line">        <span class="comment">// eventBus.removeListener('sayHello', this.handleHelloListerner)</span></span><br><span class="line">        eventBus.off(<span class="string">'sayHello'</span>, <span class="built_in">this</span>.handleHelloListerner)</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Polife</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> {</span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                Polife</span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">button</span> <span class="attr">onClick</span>=<span class="string">{e</span> =&gt;</span> this.emitHello()}&gt;事件传递<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">    emitHello () {</span><br><span class="line">        <span class="comment">// 2. 事件声明</span></span><br><span class="line">        eventBus.emit(<span class="string">'sayHello'</span>, <span class="number">123</span>, <span class="string">'hello home'</span>)</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">App</span> <span class="keyword">extends</span> <span class="title">PureComponent</span> </span>{</span><br><span class="line">    <span class="function"><span class="title">render</span>(<span class="params"></span>)</span> { </span><br><span class="line">        <span class="keyword">return</span> (</span><br><span class="line">            <span class="xml"><span class="tag">&lt;<span class="name">div</span>&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">Polife</span> /&gt;</span></span></span><br><span class="line"><span class="xml">                <span class="tag">&lt;<span class="name">Home</span> /&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span></span></span><br><span class="line">        );</span><br><span class="line">    }</span><br><span class="line">}</span><br><span class="line"> </span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> App;</span><br></pre></td></tr></tbody></table></figure>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>BLJJ-DBLD</span>
+                    </p>
+                
+                
+                    <p class="copyright-item">
+                        <span>Permalink:</span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1641527773.html">https://bljj-dbld.github.io/posts/1641527773.html</a></span>
+                    </p>
+                
+                
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/1331800139.html">P7 Ref 的使用 &amp; 受控/非受控组件</a>
+            
+            
+            <a class="next" rel="next" href="/posts/3526460681.html">P5 setState 详细解析 &amp; React 性能优化</a>
+            
+        </section>
+        <!-- <section class="post-comment">
+            <div id="disqus_thread"></div>
+        </section> -->
+
+    </article>
+</div>
+
+            </div>
+            <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>
+            © 2015-2022 BLJJ-DBLD | Elegant theme by Chic | <a href="https://stats.uptimerobot.com/J8kXJc8qlg" target="_blank">Status</a>
+        </span>
+    </div>
+</footer>
+
+    </div>
+
+
+<script src="/bundle.js"></script><script>
+        // this function is used to check current theme before page loaded.
+        (() => {
+            const currentTheme = window.localStorage && window.localStorage.getItem('theme') || '';
+            const isDark = currentTheme === 'dark';
+            const pagebody = document.getElementsByTagName('body')[0]
+            if (isDark) {
+                pagebody.classList.add('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Dark"
+            } else {
+                pagebody.classList.remove('dark-theme');
+                // mobile
+                document.getElementById("mobile-toggle-theme").innerText = "· Light"
+            }
+        })();
+    ;
+
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+;
+
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script></body></html>
