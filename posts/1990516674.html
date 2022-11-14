@@ -11,7 +11,7 @@
 
 
 
-<title>HTTP + 加密 + 认证 + 完整性保护 = HTTPS | BLJJ-DBLD Blog</title>
+<title>微前端的选择 | BLJJ-DBLD Blog</title>
 
 
 
@@ -121,7 +121,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">HTTP + 加密 + 认证 + 完整性保护 = HTTPS</h1>
+            <h1 class="post-title">微前端的选择</h1>
             
                 <div class="post-meta">
                     
@@ -130,14 +130,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">一月 11, 2022&nbsp;&nbsp;21:42:14</a>
+                        Date: <a href="#">十一月 14, 2022&nbsp;&nbsp;17:35:37</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/HTTP/">HTTP</a>
+                                <a href="/categories/%E5%B7%A5%E4%BD%9C%E7%BB%8F%E5%8E%86/">工作经历</a>
                             
                         </span>
                     
@@ -146,51 +146,192 @@
         </header>
 
         <div class="post-content">
-            <h1 id="1-HTTP-加上加密处理和认证以及完整性保护后即是-HTTPS"><a href="#1-HTTP-加上加密处理和认证以及完整性保护后即是-HTTPS" class="headerlink" title="1. HTTP 加上加密处理和认证以及完整性保护后即是 HTTPS"></a>1. HTTP 加上加密处理和认证以及完整性保护后即是 HTTPS</h1><p>HTTP 缺点：</p>
+            <h1 id="传统-Web-应用的利弊"><a href="#传统-Web-应用的利弊" class="headerlink" title="传统 Web 应用的利弊"></a>传统 Web 应用的利弊</h1><p>传统的前端研发模式进行开发，那么此时有两种项目设计策略：</p>
 <ol>
-<li>通信采用明文传输，容易被窃听</li>
-<li>无论是客户端 、服务端，都无法知晓确认通信方</li>
-<li>考虑到接收到的报文在通信途中已经遭到篡改的可能性</li>
+<li>将平台内多个系统放置同一个代码仓库维护 ，采用 SPA（Single-page Application） 单页应用模式</li>
+<li>将系统分为多个仓库维护，在首页聚合所有平台的入口，采用 MPA（Multi-page Application）多页应用模式</li>
 </ol>
-<p>所以基于 HTTP 的局限性，出现了 HTTPS</p>
-<ul>
-<li>简单来说，HTTPS = HTTP + 加密 + 认证 + 完整性保护</li>
-</ul>
-<h1 id="2-HTTPS-是身披-SSL-外壳的-HTTP"><a href="#2-HTTPS-是身披-SSL-外壳的-HTTP" class="headerlink" title="2. HTTPS 是身披 SSL 外壳的 HTTP"></a>2. HTTPS 是身披 SSL 外壳的 HTTP</h1><p>HTTPS 并非是应用层的一种新协议。只是 HTTP 通信接口部分用 SSL（Secure Socket Layer）和 TSL（Transport Layer Security）协议代替而已。</p>
-<p><img src="/posts/3829252120/image_1.png" alt="HTTPS 和 HTTP 的区别"></p>
-<h1 id="3-相互交换密钥的公开加密技术-amp-共享密钥加密技术"><a href="#3-相互交换密钥的公开加密技术-amp-共享密钥加密技术" class="headerlink" title="3. 相互交换密钥的公开加密技术 &amp; 共享密钥加密技术"></a>3. 相互交换密钥的公开加密技术 &amp; 共享密钥加密技术</h1><h2 id="3-1-相互交换密钥的公开加密技术"><a href="#3-1-相互交换密钥的公开加密技术" class="headerlink" title="3.1 相互交换密钥的公开加密技术"></a>3.1 相互交换密钥的公开加密技术</h2><p>SSL 采用一种叫做公开密钥加密（Public-Key cryptography）的加密处理方式。加密方法中加密算法是公开的，而密钥却是保密的。通过这种方式得以保证加密方法的安全性。</p>
-<h2 id="3-2-共享密钥加密技术"><a href="#3-2-共享密钥加密技术" class="headerlink" title="3.2 共享密钥加密技术"></a>3.2 共享密钥加密技术</h2><p>加密和解密使用同一把密钥的方式称为共享密钥加密（Common key crypto system），也被叫做对称密钥加密。</p>
-<h2 id="3-3-HTTPS-采用混合加密机制"><a href="#3-3-HTTPS-采用混合加密机制" class="headerlink" title="3.3 HTTPS 采用混合加密机制"></a>3.3 HTTPS 采用混合加密机制</h2><p>HTTPS 采用共享密钥加密和公开密钥加密两者并用的混合加密机制。</p>
-<p>不单纯采用公开密钥加密方式的原因是，公开密钥加密与共享密钥加密相比，其处理速度要慢很多。</p>
-<p>所以，利用两者各自的优势，在交换密钥环节使用公开密钥加密方式，之后的建立通信交换报文阶段则使用共享密钥加密方式</p>
-<p><img src="/posts/3829252120/image_2.png" alt="混合密钥加密机制"></p>
 <blockquote>
-<p>混合加密主要是为了解决 <code>HTTP</code> 中内容可能被窃听的问题。但是它并不能保证数据的完整性，也就是说在传输的时候数据是有可能被第三方篡改的，比如完全替换掉，所以说它并不能校验数据的完整性。如果需要做到这一点就需要使用到<strong>数字签名</strong>。</p>
+<p>若采用多个系统放置同一个项目内维护：</p>
 </blockquote>
-<h1 id="4-证明公开密钥正确性的证书"><a href="#4-证明公开密钥正确性的证书" class="headerlink" title="4. 证明公开密钥正确性的证书"></a>4. 证明公开密钥正确性的证书</h1><p>公开密钥加密方式还是存在一些问题，那就是无法证明公开密钥本身就是货真价实的公开密钥。在进行公开密钥传输时，有可能真正的公开密钥已经被攻击者替换掉了。</p>
-<p>所以为了解决这个问题，就需要第三方数字证书机构和其相关机构颁发的公开密钥证书。</p>
-<p>公开密钥证书的获取步骤：</p>
-<ol>
-<li>向证书机构提出公开密钥的证书申请。在判明提出者的身份之后进行下一步操作</li>
-<li>将服务器的公开密钥登录至数字认证机构</li>
-<li>数字认证机构使用<strong>自己的私有密钥</strong>对<strong>服务器的公开密钥</strong>做数字签名证书并将证书与公开密钥绑定。</li>
-<li>服务器会将这份由数字证书认证机构颁布的公钥证书发送给客户端，以进行公开密钥加密方式通信。</li>
-<li>接到证书的客户端会使用数字认证机构的公开密钥，对那张证书上的数字签名进行验证，一旦验证通过，就能确认两件事：<ol>
-<li>数字签名是由真实有效的数字认证机构颁布的</li>
-<li>服务器的公开密钥是值得信赖的</li>
-</ol>
+<ul>
+<li>优势：<ul>
+<li>统一的权限管控、统一的 Open API 开发能力</li>
+<li>更好的代码复用，基础库复用</li>
+<li>统一的运营管理能力</li>
+<li>不同系统可以很好的通信</li>
+<li>SPA 应用特有优势：</li>
+<li>更好的性能</li>
+<li>具备局部更新，无缝的用户体验</li>
+<li>提前预加载用户下一页的内容</li>
+</ul>
 </li>
-</ol>
-<blockquote>
-<p>为了能够安全的拿到数字证书机构的公开密钥。多数浏览器开发商发布版本时，会事先在<strong>内部植入常用认证机构的公开密钥</strong>。</p>
-</blockquote>
-<p>图解：</p>
-<p><img src="/posts/3829252120/image_3.png" alt="确保服务器的公开密钥是正确的"></p>
-<hr>
-<p>参考：</p>
-<ul>
-<li><a target="_blank" rel="noopener" href="https://www.amazon.cn/dp/B0153170B2">《图解 HTTP》</a></li>
+<li>劣势：<ul>
+<li>代码权限管控问题</li>
+<li>项目构建时间长</li>
+<li>需求发布相互阻塞</li>
+<li>代码 commit 混乱、分支混乱</li>
+<li>技术体系要求统一</li>
+<li>无法同时灰度多条产品功能</li>
+<li>代码回滚相互影响</li>
+<li>错误监控无法细粒度拆分</li>
 </ul>
+</li>
+</ul>
+<blockquote>
+<p>若采用拆分成多个仓库维护</p>
+</blockquote>
+<ul>
+<li>优势<ul>
+<li>可以以项目维度拆分代码，解决权限管控问题</li>
+<li>仅构建本项目代码，构建速度快</li>
+<li>可以使用不同的技术体系</li>
+<li>不存在同一个仓库维护时的 commit 混乱和分支混乱等问题</li>
+<li>功能灰度互不影响</li>
+</ul>
+</li>
+<li>劣势<ul>
+<li>用户在使用时体验割裂，会在不同平台间跳转，无法达到 SPA 应用带来的用户体验</li>
+<li>只能以页面维度拆分，无法拆分至区块部分，只能以业务为维度划分</li>
+<li>多系统同灰度策略困难</li>
+<li>公共包基础库重复加载</li>
+<li>不同系统间不可以直接通信</li>
+<li>公共部分只能每个系统独立实现，同一运维通知困难</li>
+<li>产品权限无法进行统一收敛</li>
+</ul>
+</li>
+</ul>
+<h1 id="微前端概念与微服务的差别"><a href="#微前端概念与微服务的差别" class="headerlink" title="微前端概念与微服务的差别"></a>微前端概念与微服务的差别</h1><p>微前端是指存在于浏览器中的微服务。</p>
+<p>微前端作为用户界面的一部分，通常由许多组件组成，并使用类似于React、Vue和Angular等框架来渲染组件。</p>
+<p>每个微前端都拥有独立的 git 仓库、package.json 和构建工具配置。因此，每个微前端都拥有独立的构建进程和独立的部署/CI。这通常意味着，每个仓库能快速构建。</p>
+<p><a target="_blank" rel="noopener" href="https://zh-hans.single-spa.js.org/docs/microfrontends-concept#%E5%AF%B9%E6%AF%94%E5%BE%AE%E6%9C%8D%E5%8A%A1">对比微服务的内容</a></p>
+<h1 id="微前端的选择与考虑"><a href="#微前端的选择与考虑" class="headerlink" title="微前端的选择与考虑"></a>微前端的选择与考虑</h1><p>目前微前端的实现方式有以下几种：</p>
+<ul>
+<li>路由分发：<ul>
+<li>优点：开发成本低，维护成本低，可行性高，不限技术栈，实现简单</li>
+<li>缺点：无法做到应用镶嵌</li>
+</ul>
+</li>
+<li>iFrame：<ul>
+<li>优点：开发成本低，维护成本低，可行性高，不限技术栈，实现简单</li>
+<li>缺点：无法 SEO；与主应用共享连接池，会影响页面的并行加载；兼容性差</li>
+</ul>
+</li>
+<li>纯 Web Components：开发成本高，维护成本低，可行性高，不限技术栈，实现简单</li>
+<li>结合 Web Components：开发成本高，维护成本低，可行性高，不限技术栈，实现简单</li>
+</ul>
+<p>我们前端团队在考虑框架有以下三种：</p>
+<ul>
+<li>Single-Spa：最早的前端微服务 Javascript 框架，兼容多种前端技术栈</li>
+<li>Qiankun：基于 Single-Spa，阿里系开源微前端框架<ul>
+<li>是通过监听 url change 事件，在路由变化时匹配到渲染的子应用并进行渲染，<strong>这个思路也是目前实现微前端的主流方式。</strong></li>
+</ul>
+</li>
+<li>Micro-app：是京东零售推出的基于类 WebComponent 进行渲染，从组件化的思维实现的微前端技术<ul>
+<li>当子应用支持 ssr 时，可配置支持 ssr</li>
+</ul>
+</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>对比项</th>
+<th>Single-Spa</th>
+<th>Qiankun</th>
+<th>Micro-app</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>框架体积</td>
+<td>20kb</td>
+<td>94kb</td>
+<td>30kb</td>
+</tr>
+<tr>
+<td>渲染原理</td>
+<td>路由监听</td>
+<td>路由监听 + 手动渲染</td>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/Web_Components/Using_custom_elements">customElement</a></td>
+</tr>
+<tr>
+<td>接入成本</td>
+<td>高</td>
+<td>中</td>
+<td>低</td>
+</tr>
+<tr>
+<td>多框架兼容（vue、react、angular）</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>CSS 样式隔离</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>JS 沙箱</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/Web_Components/Using_shadow_DOM">shadowDom</a></td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>预加载</td>
+<td>❌</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>webpack 兼容</td>
+<td>✅</td>
+<td>✅</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>vite 兼容</td>
+<td>❌</td>
+<td>❌</td>
+<td>✅(代价关闭沙箱)</td>
+</tr>
+</tbody></table>
+<ol>
+<li>Single-Spa</li>
+</ol>
+<ul>
+<li>不限技术栈</li>
+<li>支持独立部署每一个单页面应用</li>
+<li>在同一页面上使用多个前端框架，而不用刷新页面</li>
+</ul>
+<ol start="2">
+<li>Qiankun</li>
+</ol>
+<ul>
+<li>基于 single-spa 封装，提供了更加开箱即用的 API</li>
+<li>不限技术栈</li>
+<li>HTML Entry 接入方式，让你接入微应用像使用 iframe 一样简单</li>
+<li>样式隔离，确保微应用之间样式互相不干扰</li>
+<li>JS 沙箱，确保微应用之间全局变量/事件不冲突</li>
+<li>资源预加载，在浏览器空闲时间预加载未打开的微应用资源，加速微应用打开速度</li>
+</ul>
+<ol start="3">
+<li>Micro-app</li>
+</ol>
+<ul>
+<li>使用简单，接入微前端成本低</li>
+<li>零依赖</li>
+<li>兼容所有框架（不需要提供脚手架工具）</li>
+<li>提供了JS沙箱、样式隔离、元素隔离、预加载、资源地址补全、插件系统、数据通信等一系列完善的功能</li>
+</ul>
+<p>鉴于我们团队需要兼容 IE 低版本浏览器，再加上 Qiankun 的社区较 Micro 的久，有什么问题也能更快解决，所以选择了 Qiankun。</p>
+<h1 id="微前端与-SSR-微服务"><a href="#微前端与-SSR-微服务" class="headerlink" title="微前端与 SSR 微服务"></a>微前端与 SSR 微服务</h1><p><a target="_blank" rel="noopener" href="https://qinzhiqiang.cn/2020/09/%E5%BE%AE%E5%89%8D%E7%AB%AF%E4%B8%8Essr%E5%BE%AE%E6%9C%8D%E5%8A%A1/">https://qinzhiqiang.cn/2020/09/微前端与ssr微服务/</a></p>
 
         </div>
 
@@ -205,7 +346,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://bljj-dbld.github.io/posts/3829252120.html">https://bljj-dbld.github.io/posts/3829252120.html</a></span>
+                        <span><a href="https://bljj-dbld.github.io/posts/1990516674.html">https://bljj-dbld.github.io/posts/1990516674.html</a></span>
                     </p>
                 
                 
@@ -219,9 +360,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/HTTPS/"># HTTPS</a>
-                    
-                        <a href="/tags/SSL%E6%8F%A1%E6%89%8B/"># SSL握手</a>
+                        <a href="/tags/%E7%9B%9B%E8%B6%A3%E6%B8%B8%E6%88%8F/"># 盛趣游戏</a>
                     
                         
                 </span>
@@ -234,10 +373,8 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/posts/1747204526.html">对 Vue2.x 和 Vue3.x 的监听实现与理解</a>
             
-            
-            <a class="next" rel="next" href="/posts/339853394.html">Windows Terminal 配置oh-my-posh主题</a>
+            <a class="next" rel="next" href="/posts/1243066710.html">Hello World</a>
             
         </section>
         <!-- <section class="post-comment">
