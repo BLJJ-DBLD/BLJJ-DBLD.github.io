@@ -332,6 +332,9 @@
 </ul>
 <p>鉴于我们团队需要兼容 IE 低版本浏览器，再加上 Qiankun 的社区较 Micro 的久，有什么问题也能更快解决，所以选择了 Qiankun。</p>
 <h1 id="微前端与-SSR-微服务"><a href="#微前端与-SSR-微服务" class="headerlink" title="微前端与 SSR 微服务"></a>微前端与 SSR 微服务</h1><p><a target="_blank" rel="noopener" href="https://qinzhiqiang.cn/2020/09/%E5%BE%AE%E5%89%8D%E7%AB%AF%E4%B8%8Essr%E5%BE%AE%E6%9C%8D%E5%8A%A1/">https://qinzhiqiang.cn/2020/09/微前端与ssr微服务/</a></p>
+<h1 id="使用-Qiankun-遇到的坑"><a href="#使用-Qiankun-遇到的坑" class="headerlink" title="使用 Qiankun 遇到的坑"></a>使用 Qiankun 遇到的坑</h1><p>在负责的内容编辑器内，经常会因为要在线修改 [中文].csv 文件内容去打开一个页签 tag，页签 tag 是监听路由变化来差异化添加并匹配活跃 tag。</p>
+<p>对于中文，我们一向会通过 <code>encodeURIComponent</code> 方法进行转码再拼接，在 Qiankun 中是主应用通过手动监听路由的变化再根据路由来匹配反应给子应用，问题就出现在主应用传递到子应用的路由自动将转码后的中文又反转回中文了，导致传给子应用的路由里的中文又通过 <code>decodeURI</code> 转码回来，造成了创建了两个因为路由里中文不同的两个 tag。</p>
+<p>因为我们注定要将中文转码后再 <code>pushstate</code>，所以我这边的做法是在子应用的 <code>router.beforeEach</code> 中对中文进行拦截，再将中文手动进行 <code>encodeURIComponent</code> 再 <code>next(path)</code> 出去。</p>
 
         </div>
 
@@ -372,6 +375,8 @@
             </div>
         </section>
         <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/posts/3359950987.html">自定义拖拽表单</a>
             
             
             <a class="next" rel="next" href="/posts/1243066710.html">Hello World</a>

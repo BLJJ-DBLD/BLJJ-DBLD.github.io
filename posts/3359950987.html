@@ -11,7 +11,7 @@
 
 
 
-<title>Windows Terminal 配置oh-my-posh主题 | BLJJ-DBLD Blog</title>
+<title>自定义拖拽表单 | BLJJ-DBLD Blog</title>
 
 
 
@@ -121,7 +121,7 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Windows Terminal 配置oh-my-posh主题</h1>
+            <h1 class="post-title">自定义拖拽表单</h1>
             
                 <div class="post-meta">
                     
@@ -130,14 +130,14 @@
 
                     
                         <span class="post-time">
-                        Date: <a href="#">一月 10, 2022&nbsp;&nbsp;21:38:31</a>
+                        Date: <a href="#">十一月 14, 2022&nbsp;&nbsp;20:31:38</a>
                         </span>
                     
                     
                         <span class="post-category">
                     Category:
                             
-                                <a href="/categories/%E5%B7%A5%E5%85%B7%E4%BD%BF%E7%94%A8/">工具使用</a>
+                                <a href="/categories/%E5%B7%A5%E4%BD%9C%E7%BB%8F%E5%8E%86/">工作经历</a>
                             
                         </span>
                     
@@ -146,97 +146,51 @@
         </header>
 
         <div class="post-content">
-            <h1 id="1-安装-Window-Terminal"><a href="#1-安装-Window-Terminal" class="headerlink" title="1. 安装 Window Terminal"></a>1. 安装 Window Terminal</h1><blockquote>
-<p>Windows Terminal 需要在 MS store 里面下载，点<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/terminal/get-started">这里</a>。</p>
-<p>打不开时，可能需要用到代理 / 翻墙</p>
+            <blockquote>
+<p>因为我在公司主要负责的是内容编辑器，因此会涉及到诸多各式各样的表单配置，为了简化开发，节约时间成本，因此想到采用自定义拖拽表单来生成统一的表单结构。</p>
 </blockquote>
-<p>这其中的终端配置，包含比如<a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/terminal/customize-settings/color-schemes">颜色配置</a>等。</p>
-<h1 id="2-在线安装-oh-my-posh-amp-posh-git"><a href="#2-在线安装-oh-my-posh-amp-posh-git" class="headerlink" title="2. 在线安装 oh-my-posh &amp; posh-git"></a>2. 在线安装 oh-my-posh &amp; posh-git</h1><p>在 Mac/Linux 下有 oh-my-zsh 主题，终于，Windows Terminal 的 PowerShell 也有 oh-my-posh 主题了。有了它，在 window 内咱就是那个最靓的那个仔。</p>
-<p><code>oh-my-posh</code> 是一个强大的 powerline 主题，类似于 Linux 下的 <code>oh-my-zsh</code>。</p>
-<p>相应的 github 官方项目中其实有具体的操作步骤，见：<a target="_blank" rel="noopener" href="https://ohmyposh.dev/">这里</a>。</p>
-<p>在这里，我将操作做个整理：</p>
-<blockquote>
-<p>以下的对终端内的操作请全部在管理员权限下进行！</p>
-</blockquote>
-<ol>
-<li>将 <code>CurrentUser</code> 的 <code>ExecutionPolicy(执行权限)</code> 从原来的 <code>Undefined</code> 更改成 <code>RemoteSigned</code></li>
+<p>抽象的表单则必定有表单字段描述：<code>JSON schema</code></p>
+<h1 id="先了解-JSON-Schema"><a href="#先了解-JSON-Schema" class="headerlink" title="先了解 JSON Schema"></a>先了解 JSON Schema</h1><ol>
+<li>使用 JSON 的好处：</li>
 </ol>
 <ul>
-<li>命令是：<code>Set-ExecutionPolicy RemoteSigned -Scope CurrentUser</code></li>
-<li>按提示输入 <code>Y</code> 即可。</li>
+<li>能描述清楚现有表单字段的数据格式</li>
+<li>提供清晰的人工和机器可读文档</li>
+<li>完整的数据结构，有利于自动化测试</li>
+<li>完整的数据结构，有利于验证客户端提交数据的质量</li>
 </ul>
 <ol start="2">
-<li>接下来，你需要使用 <code>PowerShell Gallery</code> 来安装 <code>oh-my-posh</code>。</li>
+<li><p>什么是 JSON schema：JSON schema 本身就是一种数据结构，可以清晰的描述 JSON 数据的结构。<strong>是一种描述 JSON 数据的 JSON 数据</strong></p>
+</li>
+<li><p>使用 JSON schema 的好处：</p>
+</li>
 </ol>
 <ul>
-<li>命令有：</li>
+<li>JSON Schema 非常适用于基于 JSON 的 HTTP 的 API。</li>
+<li>JSON Schema 从 Java 的基本数据类型中对 JSON 结构进行校验，所以对 JSON 结构的校验可以理解为对每种不同数据类型的相应校验。</li>
+<li>接口测试中可以快速的定位到自己数据格式的正确性。</li>
 </ul>
-<ol>
-<li><code>Install-Module posh-git -Scope CurrentUser</code></li>
-<li><code>Install-Module oh-my-posh -Scope CurrentUser</code></li>
+<p>使用 JSON Schema 有它自己的一套规范，<a target="_blank" rel="noopener" href="https://json-schema.apifox.cn/">JSON Schema 规范（中文版）</a></p>
+<h1 id="表单与-Schema-相结合"><a href="#表单与-Schema-相结合" class="headerlink" title="表单与 Schema 相结合"></a>表单与 Schema 相结合</h1><blockquote>
+<p>如果说 Schema 是骨架，那表单就是肉体了。</p>
+</blockquote>
+<p>目前我们团队看到 自定义表单 成熟且好看的是 <a target="_blank" rel="noopener" href="https://xrender.fun/form-render">xrender</a></p>
+<p>其中囊括了 自定义表单、自定义表格、表单设计器 等高自定义化模块。</p>
+<h1 id="解析的选择"><a href="#解析的选择" class="headerlink" title="解析的选择"></a>解析的选择</h1><ol>
+<li>前端配置-后端解析</li>
 </ol>
-<ul>
-<li>均按提示输入 <code>Y</code> 即可。</li>
-</ul>
 <blockquote>
-<p>注意：安装 oh-my-posh 需要进行翻墙，否则无法进行下载安装</p>
+<p>默认的自定义组件参数已满足大部分需求，但有些额外的配置则需要自己与后端来进行规范</p>
 </blockquote>
-<ol start="3">
-<li>都安装好之后，还需要更新配置文件 <code>$PROFILE</code>，类似于Linux Bash的.bashrc, 这是全局修改，而不是临时的设置喔~</li>
-<li>继续输入：<code>if (!(Test-Path -Path $PROFILE )) { New-Item -Type File -Path $PROFILE -Force }</code></li>
-<li>之后再输入：<code>notepad $PROFILE</code>，对该文件做修改</li>
-<li>对打开的 <code>$PROFILE</code> 文件中输入：</li>
-</ol>
-<figure class="highlight coq"><table><tbody><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Import</span>-<span class="keyword">Module</span> posh-git</span><br><span class="line"><span class="keyword">Import</span>-<span class="keyword">Module</span> oh-my-posh</span><br><span class="line"><span class="keyword">Set</span>-PoshPrompt -Theme &lt;theme 名称&gt; // 这个是新版本 v3 中的命令，在 v2 版本下是：<span class="keyword">Set</span>-Theme &lt;theme 名称&gt;</span><br></pre></td></tr></tbody></table></figure>
-
-<blockquote>
-<p>保存后关闭记事本。想获取目前所有的主题列表的命令是：<code>Get-PoshThemes</code>。</p>
-</blockquote>
-<h1 id="3-离线安装-oh-my-posh-amp-posh-git"><a href="#3-离线安装-oh-my-posh-amp-posh-git" class="headerlink" title="3. 离线安装 oh-my-posh &amp; posh-git"></a>3. 离线安装 oh-my-posh &amp; posh-git</h1><h2 id="1-下载-nupkg-格式内容"><a href="#1-下载-nupkg-格式内容" class="headerlink" title="1. 下载 nupkg 格式内容"></a>1. 下载 nupkg 格式内容</h2><p>有时在内部环境中，也想使用 <code>oh-my-posh</code> 却苦于无法在线安装，这时，就需要我们自己手动去将安装包等内容手动引入内网内。</p>
-<p>这两个包需要从 <code>PowerShell Gallery</code> 中搜索下载，下载路径：<a target="_blank" rel="noopener" href="https://www.powershellgallery.com/packages/oh-my-posh">oh-my-posh</a> 和 <a href="powershellgallery.com/packages/posh-git">posh-git</a></p>
-<p>下载下来的是 <code>nupkg</code> 格式，按照官方文档进行离线安装，步骤如下：</p>
-<ol>
-<li>解锁 NuGet 包文件，打开终端，执行类似如下的命令<br><code>Unblock-File -Path C:\Downloads\xxx.nupkg</code></li>
-<li>查找默认模块目录</li>
-</ol>
-<ul>
-<li>打开 <code>PowerShell</code> 执行命令 <code>$env:PSModulePath</code> 查看模块所在目录。</li>
-<li>按优先级由高到低排序的。</li>
-<li>将下载下来的内容均放在高优先级的目录下</li>
-</ul>
-<ol start="3">
-<li>把 <code>nupkg</code> 文件后缀改为 <code>zip</code>，并解压</li>
-<li>删除里面与 NuGet 规范相关的文件，包括</li>
-</ol>
-<ul>
-<li><code>_rels</code></li>
-<li><code>package</code></li>
-<li><code>[Content_Types].xml</code></li>
-<li><code>&lt;xxx&gt;.nuspec</code></li>
-</ul>
-<ol start="5">
-<li>重命名文件夹</li>
-</ol>
-<ul>
-<li>文件夹解压后默认为<code>&lt;xxx&gt;.&lt;version&gt;</code> 的格式，我们把目录结构改为 <code>&lt;xxx&gt;/&lt;version&gt;</code>，并将所有文件移动到版本号文件夹下。</li>
-</ul>
-<h2 id="2-配置-PowerShell-与在线安装一致"><a href="#2-配置-PowerShell-与在线安装一致" class="headerlink" title="2. 配置 PowerShell 与在线安装一致"></a>2. 配置 PowerShell 与在线安装一致</h2><h2 id="3-在用户变量内配置-oh-my-posh-环境变量"><a href="#3-在用户变量内配置-oh-my-posh-环境变量" class="headerlink" title="3. 在用户变量内配置 oh-my-posh 环境变量"></a>3. 在用户变量内配置 oh-my-posh 环境变量</h2><blockquote>
-<p>配置环境变量的前提是已经拥有 oh-my-posh 相关的压缩包</p>
-</blockquote>
-<ol>
-<li>配置 <code>Path</code> 变量，在其中添加一行<br><code>C:\Users\&lt;username&gt;\AppData\Local\Programs\oh-my-posh\bin</code></li>
-</ol>
-<p>  这个路径是在线安装的默认路径，我们可以也手动安装到该路径下。</p>
+<p>这么做的优点是后端返回来的 schema 数据就是完整的，但是会因为访问的数据来源不确定、数据数量不确定而导致响应漫长。</p>
+<p>因此，这边后端做的优化是将请求的数据用 redis 做缓存。这样做确实极大的压缩了请求时间与次数。</p>
 <ol start="2">
-<li>新增新的变量 <code>POSH_THEMES_PATH</code>，与主题包路径有关的配置<br><code>C:\Users\&lt;username&gt;\AppData\Local\Programs\oh-my-posh\themes</code></li>
+<li>前端配置-前端解析</li>
 </ol>
-<p>到此全部结束！</p>
-<p>参照文章 &amp; GitHub:</p>
-<ol>
-<li><a target="_blank" rel="noopener" href="https://www.misiyu.cn/article/134.html">Windows Terminal 配置oh-my-posh主题</a></li>
-<li><a target="_blank" rel="noopener" href="https://ohmyposh.dev/">Oh my Posh</a></li>
-<li><a target="_blank" rel="noopener" href="https://docs.microsoft.com/zh-cn/windows/terminal/get-started">安装和设置 Windows 终端</a></li>
-</ol>
+<blockquote>
+<p>由后端来解析确实会介绍请求，但变相的却也增加了响应时间，从而影响用户体验。而表单初始化的渲染只需要字段和数值。</p>
+</blockquote>
+<p>由前端自己来解析也能将从表单整体的等待转为表单项的等待。从而使用户体验得到极大的提升。</p>
 
         </div>
 
@@ -251,7 +205,7 @@
                 
                     <p class="copyright-item">
                         <span>Permalink:</span>
-                        <span><a href="https://bljj-dbld.github.io/posts/339853394.html">https://bljj-dbld.github.io/posts/339853394.html</a></span>
+                        <span><a href="https://bljj-dbld.github.io/posts/3359950987.html">https://bljj-dbld.github.io/posts/3359950987.html</a></span>
                     </p>
                 
                 
@@ -265,7 +219,7 @@
                 <span class="tag">
                     
                     
-                        <a href="/tags/Windows-Terminal-%E9%85%8D%E7%BD%AE/"># Windows Terminal 配置</a>
+                        <a href="/tags/%E7%9B%9B%E8%B6%A3%E6%B8%B8%E6%88%8F/"># 盛趣游戏</a>
                     
                         
                 </span>
@@ -278,10 +232,10 @@
         </section>
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/posts/2246521759.html">NPM 包管理工具</a>
+                <a class="prev" rel="prev" href="/posts/4096372880.html">地图模块</a>
             
             
-            <a class="next" rel="next" href="/posts/3958135228.html">P3 枚举类型（enum）</a>
+            <a class="next" rel="next" href="/posts/1990516674.html">微前端的选择</a>
             
         </section>
         <!-- <section class="post-comment">
