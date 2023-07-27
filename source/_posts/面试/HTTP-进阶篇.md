@@ -40,13 +40,16 @@ date: 2022-02-07 16:46:17
 
 #### 总结 302、303、307 (临时)重定向
 
+均表示临时重定向，不同之处在于对待请求方法的不同处理以及是否允许将 POST 请求转化为 GET 请求。
+
 `302` 允许各种各样的重定向，一般情况下都会实现为到 `GET` 的重定向，但是不能确保 `POST` 会重定向为 `POST`；
-而 `303` 只允许任意请求到 `GET` 的重定向；
-`307` 和 `302` 一样，除了不允许 `POST` 到 `GET` 的重定向。
+而 `303` 将所有 POST 请求重定向为 GET 请求，然后发送新的 GET 请求到重定向目标地址；
+`307` 将原本的请求方法和请求体一并发送到新的URL。
 
 #### 总结 301、308 (永久)重定向
 
-`308` 的定义实际上和 `301` 是一致的，唯一的区别在于，`308` 状态码不允许浏览器将原本为 `POST` 的请求重定向到 `GET` 请求上。
+301状态码：客户端收到该状态码后会缓存重定向信息，下次访问时会直接跳转到新的 URL。
+308状态码：客户端收到该状态码后不会缓存重定向信息，每次访问都会重新发送原始请求。
 
 #### 总结临时重定向与永久重定向对 SEO 的影响
 
@@ -156,9 +159,9 @@ the part: `para5` does not belong to the request-URI is just a fragment
   - Viewport-Width
   - Width
 - `Content-Type` 的值只有以下三种(`Content-Type` 一般是指在 `POST` 请求中，`GET` 请求中设置没有实际意义)
-  - text/plain
-  - multipart/form-data
-  - application/x-www-form-urlencoded
+  - text/plain：文本
+  - multipart/form-data：文件上传格式
+  - application/x-www-form-urlencoded：formData 数据格式
 
 #### 复杂请求
 
@@ -196,7 +199,7 @@ Access-Control-Max-Age: 86400
 #### 附带身份凭证的请求
 
 一般而言，对于跨域 `XMLHttpRequest` 或 `Fetch` 请求，浏览器不会发送身份凭证信息。如果要发送凭证信息，需要设置 `XMLHttpRequest` 的某个特殊标志位。
-如果在发送请求的时候，给 `xhr` 设置了 `withCredentials` 为 true，从而向服务器发送 `Cookies`，如果服务端需要想客户端也发送 `Cookies` 的情况，需要服务器端也返回 `Access-Control-Allow-Credentials: true` 响应头信息。
+如果在发送请求的时候，给 `xhr` 设置了 `withCredentials` 为 true，从而向服务器发送 `Cookies`，如果服务端需要向客户端也发送 `Cookies` 的情况，需要服务器端也返回 `Access-Control-Allow-Credentials: true` 响应头信息。
 
 对于附带身份凭证的请求，服务器不得设置 `Access-Control-Allow-Origin` 的值为“*”。
 
@@ -232,6 +235,8 @@ A: 对于每一个 `HTTP` 请求而言，这些任务是会被放入一个任务
 举个例子，比如 `TianTian.com`，可以分出很多二级域名，比如 `Day1.TianTian.com`，`Day2.TianTian.com`，`Day3.TianTian.com`，这样子就可以有效解决队头阻塞问题。
 
 # HTTPS 和 HTTP 区别
+
+> https == http + 加密(混合密钥) + 身份验证(CA证书保证 = 某网站公钥 + 数字签名) + 数据完整性保护(数字签名保证)
 
 > HTTPS 要比 HTTP 多了 secure 安全性这个概念。实际上，HTTPS 并不是一个新的应用层协议，它其实就是 HTTP + TLS/SSL 协议组合而成，而安全性的保证正是 SSL/TLS 所做的工作。
 
@@ -485,7 +490,7 @@ head of line blocking: 线头阻塞，导致请求之间互相影响
 
 #### 1.1 改进:
 
-- 长连接(默认 keep-alive)，复用
+- 长连接(默认 connection: keep-alive)，复用
 - host 字段指定对应的虚拟站点
 - 新增功能:
   - 断点续传

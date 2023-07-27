@@ -45,9 +45,7 @@ date: 2022-01-10 21:38:31
 3. 对打开的 `$PROFILE` 文件中输入：
 
 ```
-Import-Module posh-git
-Import-Module oh-my-posh
-Set-PoshPrompt -Theme <theme 名称> // 这个是新版本 v3 中的命令，在 v2 版本下是：Set-Theme <theme 名称>
+oh-my-posh init pwsh --config "$env:POSH_THEMES_PATH/jandedobbeleer.omp.json" | Invoke-Expression
 ```
 
 > 保存后关闭记事本。想获取目前所有的主题列表的命令是：`Get-PoshThemes`。
